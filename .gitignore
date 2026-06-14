@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+
+# Environment
+.env
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+vite_log.txt
+backend_out.log
+backend_err.log
+
+# Database
+*.db
+*.sqlite
+test_*.db
+
+# ML Pipeline artifacts
+*.pkl
+ml_pipeline/data/raw/
+ml_pipeline/data/processed/
+ml_pipeline/data/models/
+mlruns/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Docker
+.docker/

@@ -1,113 +1,125 @@
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const NeuralNetworkViz = () => {
-  const canvasRef = useRef(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const [showChart, setShowChart] = useState(false);
+
+  const steps = [
+    "Ingesting 10M+ patient records...",
+    "Running XGBoost mortality predictor...",
+    "Running Random Forest risk classifier...",
+    "Computing 95% confidence intervals...",
+    "Generating 24-month trajectory..."
+  ];
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let animationId;
-    
-    // Setup nodes
-    const nodes = [];
-    const numNodes = 40;
-    
-    const resize = () => {
-      if (canvas.parentElement) {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
+    let currentStep = 0;
+    const interval = setInterval(() => {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        setActiveStep(currentStep);
+      } else {
+        clearInterval(interval);
+        setTimeout(() => setShowChart(true), 500);
       }
-    };
-    
-    resize();
-    window.addEventListener('resize', resize);
-    
-    for(let i=0; i<numNodes; i++) {
-      nodes.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.8,
-        vy: (Math.random() - 0.5) * 0.8,
-        radius: Math.random() * 2 + 1.5,
-        color: Math.random() > 0.5 ? '#8b5cf6' : '#06b6d4'
-      });
-    }
+    }, 800);
 
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Update and draw connections
-      for(let i=0; i<numNodes; i++) {
-        for(let j=i+1; j<numNodes; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          
-          if(dist < 100) {
-            ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `rgba(139, 92, 246, ${1 - dist/100})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-      
-      // Update and draw nodes
-      nodes.forEach(node => {
-        node.x += node.vx;
-        node.y += node.vy;
-        
-        if(node.x < 0 || node.x > canvas.width) node.vx *= -1;
-        if(node.y < 0 || node.y > canvas.height) node.vy *= -1;
-        
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        ctx.fillStyle = node.color;
-        ctx.fill();
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = node.color;
-      });
-      
-      animationId = requestAnimationFrame(draw);
-    };
-    
-    draw();
-    
-    return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationId);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row items-center gap-16 w-full">
-      <div className="flex-1 relative w-full h-[400px] md:h-[500px] bg-[#111827] rounded-3xl border border-[rgba(255,255,255,0.05)] overflow-hidden">
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] to-transparent opacity-50" />
+    <div className="w-full h-full min-h-[300px] flex flex-col md:flex-row items-center justify-center gap-8 p-6">
+      
+      {/* Left side: ML Pipeline */}
+      <div className="flex-1 w-full flex flex-col justify-center space-y-4">
+        {steps.map((step, idx) => (
+          <div key={idx} className="flex items-center gap-3">
+            <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center">
+              {idx < activeStep ? (
+                <div className="w-4 h-4 rounded-full bg-[var(--color-accent-emerald)] shadow-glow-emerald flex items-center justify-center">
+                  <svg className="w-3 h-3 text-[var(--landing-bg-dark)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                </div>
+              ) : idx === activeStep ? (
+                <div className="w-4 h-4 rounded-full border-2 border-[var(--color-accent-cyan)] border-t-transparent animate-spin" />
+              ) : (
+                <div className="w-4 h-4 rounded-full border border-[var(--color-border-strong)]" />
+              )}
+            </div>
+            <span className={`text-sm font-mono transition-colors duration-300 ${idx <= activeStep ? 'text-[var(--color-text-primary)]' : 'text-[var(--color-text-muted)]'}`}>
+              {step}
+            </span>
+          </div>
+        ))}
       </div>
 
-      <div className="flex-1 lg:pl-12">
-        <h2 className="text-4xl md:text-5xl font-bold text-[var(--color-text-primary)] mb-6 leading-tight">
-          Predict Mortality.<br/>Save Lives.
-        </h2>
-        <p className="text-xl text-[var(--color-text-secondary)] mb-8 font-light">
-          Our advanced neural networks analyze patient vitals, history, and demographics to provide accurate risk stratification upon admission.
-        </p>
-        <div className="grid grid-cols-2 gap-6">
-          <div className="p-4 rounded-2xl bg-[var(--color-bg-card)] border border-[rgba(255,255,255,0.02)]">
-            <div className="text-3xl font-bold text-[#8b5cf6] mb-2">ML</div>
-            <div className="text-sm text-[var(--color-text-secondary)]">Driven by clinical data</div>
-          </div>
-          <div className="p-4 rounded-2xl bg-[var(--color-bg-card)] border border-[rgba(255,255,255,0.02)]">
-            <div className="text-3xl font-bold text-[#06b6d4] mb-2">99%</div>
-            <div className="text-sm text-[var(--color-text-secondary)]">Uptime and reliability</div>
-          </div>
-        </div>
+      {/* Right side: Simulated Chart */}
+      <div className="flex-1 w-full h-[200px] bg-[var(--color-surface-1)] rounded-xl border border-[var(--color-border-subtle)] relative overflow-hidden flex items-end">
+        {/* Grid background */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]" />
+        
+        {/* Simulated Graph Line (SVG) */}
+        <AnimatePresence>
+          {showChart && (
+            <motion.svg 
+              initial={{ opacity: 0, pathLength: 0 }}
+              animate={{ opacity: 1, pathLength: 1 }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]" 
+              preserveAspectRatio="none" 
+              viewBox="0 0 100 100"
+            >
+              {/* Fake Confidence Interval Area */}
+              <motion.path 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.2 }}
+                transition={{ delay: 1 }}
+                d="M 0,80 Q 20,70 40,60 T 80,30 L 100,20 L 100,100 L 0,100 Z" 
+                fill="var(--color-accent-cyan)" 
+              />
+              {/* Fake Prediction Line */}
+              <motion.path 
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                d="M 0,80 Q 20,70 40,60 T 80,30 L 100,20" 
+                fill="none" 
+                stroke="var(--color-accent-cyan)" 
+                strokeWidth="2" 
+                strokeLinecap="round"
+              />
+              
+              {/* Surge Threshold Line */}
+              <motion.line 
+                initial={{ opacity: 0, x1: -100, x2: 0 }}
+                animate={{ opacity: 0.5, x1: 0, x2: 100 }}
+                transition={{ delay: 0.5 }}
+                x1="0" y1="40" x2="100" y2="40" 
+                stroke="var(--color-accent-rose)" 
+                strokeWidth="1" 
+                strokeDasharray="2,2" 
+              />
+            </motion.svg>
+          )}
+        </AnimatePresence>
+
+        {/* Floating tooltip mock */}
+        <AnimatePresence>
+          {showChart && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 }}
+              className="absolute top-4 left-4 bg-[var(--landing-bg-dark)] border border-[var(--color-border-strong)] rounded-md p-2 shadow-xl"
+            >
+              <div className="text-[8px] text-[var(--color-text-muted)] uppercase mb-1">Peak Prediction</div>
+              <div className="text-xs font-mono text-[var(--color-accent-cyan)] font-bold">1,240 Beds Needed</div>
+              <div className="text-[8px] text-[var(--color-accent-rose)] mt-1">Crosses Surge Capacity</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+
     </div>
   );
 };

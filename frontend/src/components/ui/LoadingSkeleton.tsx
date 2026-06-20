@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 
-const LoadingSkeleton = ({ variant = 'card', className }) => {
+const LoadingSkeleton = ({ variant = 'card', className = '' }: { variant?: string; className?: string }) => {
   const baseClass = "skeleton bg-elevated/50 relative overflow-hidden";
   const shimmerClass = "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/5 before:to-transparent";
 

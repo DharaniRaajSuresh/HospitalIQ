@@ -1,5 +1,6 @@
 import difflib
 import logging
+import re
 from typing import Any
 
 from backend.ai.gemini_client import GeminiClient
@@ -9,6 +10,11 @@ from backend.ai.project_context import KNOWN_DISEASES, KNOWN_DISEASE_ALIASES, KN
 
 logger = logging.getLogger(__name__)
 
+
+def _word_boundary_match(alias: str, text: str) -> bool:
+    """Match alias as whole word (or at word boundaries), not as substring."""
+    return bool(re.search(r'(^|[\s,.;:!?\'"]+)' + re.escape(alias) + r'($|[\s,.;:!?\'"]+)', text, re.IGNORECASE))
+
 SUGGESTED_QUESTIONS = [
     "What is the current bed availability across India?",
     "Compare mortality rates between Maharashtra and Kerala",
@@ -16,15 +22,21 @@ SUGGESTED_QUESTIONS = [
     "How many ICU beds are available in Delhi?",
     "What is the COVID-19 risk for patient with ID 2500?",
     "Simulate a Nipah outbreak in Kerala",
+    "What are the top causes of death in India?",
+    "Which hospitals in Tamil Nadu have the best cardiac care outcomes?",
+    "Show me the bed occupancy trend for Maharashtra",
+    "What is the fatality rate and R0 of each virus?",
+    "Compare hospital performance for Cancer treatment across states",
+    "How many patients have pre-existing conditions in our database?",
 ]
 
 INTENT_KEYWORDS = {
-    "bed_forecast": ["bed", "capacity", "occupancy", "icu", "ward", "beds"],
-    "mortality": ["mortality", "death", "survival", "fatality", "die", "fatal", "death rate"],
-    "hospital": ["hospital", "rank", "perform", "score", "best", "top", "rating", "accreditation"],
-    "pandemic": ["pandemic", "outbreak", "simulate", "scenario", "epidemic", "spread"],
-    "forecast": ["forecast", "trend", "predict", "future", "projection"],
-    "patient": ["patient", "risk", "vaccine", "vaccination", "virus", "registry", "blood group", "family history", "travel history", "condition"],
+    "bed_forecast": ["bed", "capacity", "occupancy", "icu", "ward", "beds", "available beds", "bed availability", "general ward", "emergency", "maternity", "pediatric"],
+    "mortality": ["mortality", "death", "survival", "fatality", "die", "fatal", "death rate", "cause of death", "died", "deaths", "mortality rate"],
+    "hospital": ["hospital", "rank", "perform", "score", "best", "top", "rating", "accreditation", "rankings", "comparison", "hospital performance", "success rate"],
+    "pandemic": ["pandemic", "outbreak", "simulate", "scenario", "epidemic", "spread", "simulation", "outbreak scenario", "cfr", "r0"],
+    "forecast": ["forecast", "trend", "predict", "future", "projection", "forecasting", "prediction", "trends", "upcoming", "next month"],
+    "patient": ["patient", "risk", "vaccine", "vaccination", "virus", "registry", "blood group", "family history", "travel history", "condition", "patient id", "patient record", "pre-existing", "blood type", "demographics"],
 }
 
 
@@ -43,6 +55,31 @@ def _fuzzy_match_word(word: str, choices: list[str], cutoff: float = 0.7) -> str
     return best
 
 
+def _match_aliases(aliases: dict, text: str, min_word_len: int = 3) -> str | None:
+    """Match aliases against text. Short aliases (< min_word_len) require word boundaries."""
+    for alias, canonical in sorted(aliases.items(), key=lambda x: -len(x[0])):
+        if len(alias) < min_word_len:
+            if _word_boundary_match(alias, text):
+                return canonical
+        else:
+            if alias in text:
+                return canonical
+    return None
+
+
+def _match_names(names: list, text: str, min_word_len: int = 3) -> str | None:
+    """Match full names against text. Short names require word boundaries."""
+    for name in sorted(names, key=lambda x: -len(x)):
+        nl = name.lower()
+        if len(nl) < min_word_len:
+            if _word_boundary_match(nl, text):
+                return name
+        else:
+            if nl in text:
+                return name
+    return None
+
+
 def _extract_entities(message: str) -> dict[str, Any]:
     msg_lower = message.lower()
     words = msg_lower.replace(",", "").replace(".", "").replace("?", "").replace("!", "").split()
@@ -53,34 +90,19 @@ def _extract_entities(message: str) -> dict[str, Any]:
     patient_id = None
 
     # Patient ID extraction
-    import re
     m = re.search(r'(?:patient\s*(?:id|#|number|no|num)?\s*)(\d+)', msg_lower)
     if m:
         patient_id = int(m.group(1))
 
     # Virus extraction
-    virus_names_lower = {v.lower(): v for v in KNOWN_VIRUSES}
-    for vl, orig in sorted(virus_names_lower.items(), key=lambda x: -len(x[0])):
-        if vl in msg_lower:
-            virus = orig
-            break
+    virus = _match_names(KNOWN_VIRUSES, msg_lower)
     if not virus:
-        for alias, canonical in sorted(KNOWN_VIRUS_ALIASES.items(), key=lambda x: -len(x[0])):
-            if alias in msg_lower:
-                virus = canonical
-                break
+        virus = _match_aliases(KNOWN_VIRUS_ALIASES, msg_lower)
 
     # Disease extraction
-    disease_names_lower = {d.lower(): d for d in KNOWN_DISEASES}
-    for dl, orig in sorted(disease_names_lower.items(), key=lambda x: -len(x[0])):
-        if dl in msg_lower:
-            disease = orig
-            break
+    disease = _match_names(KNOWN_DISEASES, msg_lower)
     if not disease:
-        for alias, canonical in sorted(KNOWN_DISEASE_ALIASES.items(), key=lambda x: -len(x[0])):
-            if alias in msg_lower:
-                disease = canonical
-                break
+        disease = _match_aliases(KNOWN_DISEASE_ALIASES, msg_lower)
     if not disease:
         for word in words:
             if len(word) < 3:
@@ -91,16 +113,9 @@ def _extract_entities(message: str) -> dict[str, Any]:
                 break
 
     # State extraction
-    state_names_lower = {s.lower(): s for s in KNOWN_STATES}
-    for sl, orig in sorted(state_names_lower.items(), key=lambda x: -len(x[0])):
-        if sl in msg_lower:
-            state = orig
-            break
+    state = _match_names(KNOWN_STATES, msg_lower)
     if not state:
-        for alias, canonical in sorted(KNOWN_STATE_ALIASES.items(), key=lambda x: -len(x[0])):
-            if alias in msg_lower:
-                state = canonical
-                break
+        state = _match_aliases(KNOWN_STATE_ALIASES, msg_lower)
     if not state:
         for word in words:
             if len(word) < 3:
@@ -210,9 +225,46 @@ class HospitalAIAssistant:
 
     def _fallback_response(self, intent: str) -> str:
         fallbacks = {
-            "bed": "I can help with bed availability data, but the AI model is currently offline.",
-            "mortality": "Mortality analysis requires the AI model. It's currently unavailable.",
-            "hospital": "Hospital rankings require the AI model. It's currently unavailable.",
-            "general": "I'm a HospitalIQ assistant powered by Google Gemini. Currently the AI model is initializing. Try again shortly.",
+            "bed_forecast": (
+                "I can help with bed availability data. Here's what I know:\n\n"
+                "The system tracks **122,880 monthly records** across **General, ICU, Maternity, Emergency, and Pediatric** wards "
+                "for all 30 Indian states. You can check specific state or ward-level availability on the **Forecasting** dashboard. "
+                "Try asking a specific question like *'How many ICU beds in Delhi?'* and the AI will give you exact numbers when online."
+            ),
+            "mortality": (
+                "Mortality analysis is available across **698,880 records** covering 7 cause categories (Accident, Cancer, Cardiac, etc.) "
+                "and 5 age groups. You can view detailed mortality analytics on the **Mortality Analytics** dashboard. "
+                "When the AI model is online, I can compare death rates between states, analyze causes, and identify risk clusters."
+            ),
+            "hospital": (
+                "Hospital performance data covers **162,080 records** across Government, Private, Trust, and Corporate hospitals. "
+                "Rankings are available for 12 disease categories including Cancer, Cardiac, and more. "
+                "Visit the **Rankings** dashboard to see top hospitals, or ask a specific question like "
+                "*'Best hospitals for cardiac care in Tamil Nadu'* when the AI is online."
+            ),
+            "pandemic": (
+                "Pandemic simulation data covers **296,638 monthly records** for 6 diseases: COVID-19, Ebola, H1N1, Marburg, Nipah, and SARS. "
+                "Each virus has registered fatality rates, R0 values, incubation periods, and vaccine data. "
+                "Try the **Pandemic Simulator** dashboard or ask *'Simulate a Nipah outbreak in Kerala'* when the AI model is online."
+            ),
+            "forecast": (
+                "Time-series forecasting uses XGBoost models for case and death projections. "
+                "Check the **Forecasting** dashboard for trend analysis and future projections."
+            ),
+            "patient": (
+                "Patient data includes **200,000 patient records** with demographics, **450,000+ vaccine records**, "
+                "**175,000+ travel records**, and **151,000+ family history records**. "
+                "Visit the **Patient Records** dashboard or ask about a specific patient ID when the AI model is online."
+            ),
         }
-        return fallbacks.get(intent, fallbacks["general"])
+        return fallbacks.get(intent, (
+            "HospitalIQ is your healthcare intelligence platform. I'm currently operating in offline mode — "
+            "the AI model needs to be reconnected. In the meantime, you can explore all dashboards directly:\n\n"
+            "- **Command Center** — Real-time statistics\n"
+            "- **Forecasting** — Bed availability & trends\n"
+            "- **Mortality Analytics** — Death rate analysis\n"
+            "- **Rankings** — Hospital performance\n"
+            "- **Patient Records** — Individual patient data\n"
+            "- **Pandemic Simulator** — Outbreak scenarios\n\n"
+            "Ask me anything and I'll answer with data when the AI is connected!"
+        ))

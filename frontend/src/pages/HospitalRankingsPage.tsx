@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Star, Filter, ArrowUpDown, Building, MapPin, ChevronLeft, ChevronRight, Activity, BedDouble, Clock, Award, Download } from 'lucide-react';
@@ -14,7 +13,7 @@ const DISEASES = ['', 'Cancer', 'Cardiac', 'Dengue', 'Diabetes', 'Hepatitis', 'M
 const TYPES = ['', 'Government', 'Private', 'Trust'];
 
 export default function HospitalRankingsPage() {
-  const [rankings, setRankings] = useState([]);
+  const [rankings, setRankings] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -28,14 +27,14 @@ export default function HospitalRankingsPage() {
 
   useEffect(() => {
     setLoading(true);
-    getHospitalRankings({ 
-      limit: PAGE_SIZE, 
-      offset: page * PAGE_SIZE, 
+    getHospitalRankings<any[]>({ 
+      limit: String(PAGE_SIZE), 
+      offset: String(page * PAGE_SIZE), 
       disease: filterDisease, 
       hospital_type: filterType 
-    }).then(data => {
+    }).then((data: any) => {
       setRankings(data || []);
-      setTotalCount(data._total || 0);
+      setTotalCount(data?._total || 0);
       setLoading(false);
     }).catch(() => {
       setRankings([]);
@@ -56,8 +55,8 @@ export default function HospitalRankingsPage() {
         <div className="flex gap-2 flex-wrap">
           <Button variant="secondary" size="sm" icon={Download}
             onClick={async () => {
-              const data = await getHospitalRankings({ limit: 1000, disease: filterDisease, hospital_type: filterType });
-              downloadCsv(data.map(h => ({ 'Hospital': h.hospital_name, 'State': h.state, 'District': h.district, 'Type': h.hospital_type, 'Disease': h.disease, 'Success Rate': h.success_rate, 'Beds': h.total_beds, 'Rating': (h.rating * 5).toFixed(1) })), 'top-1000-hospitals.csv');
+              const data: any = await getHospitalRankings<any[]>({ limit: '1000', disease: filterDisease, hospital_type: filterType });
+              downloadCsv(data?.map((h: any) => ({ 'Hospital': h.hospital_name, 'State': h.state, 'District': h.district, 'Type': h.hospital_type, 'Disease': h.disease, 'Success Rate': h.success_rate, 'Beds': h.total_beds, 'Rating': (h.rating * 5).toFixed(1) })) || [], 'top-1000-hospitals.csv');
             }}>Export Top 1000</Button>
           <select value={filterDisease} onChange={e => setFilterDisease(e.target.value)}
             className="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-sm text-white rounded-lg px-3 py-2 focus:outline-none focus:border-[var(--color-accent-amber)]">
@@ -75,7 +74,7 @@ export default function HospitalRankingsPage() {
       <GlassCard className="flex-1 overflow-hidden flex flex-col shadow-lg border border-[var(--color-border)]">
         <div className="overflow-x-auto flex-1">
           {loading ? (
-            <div className="p-6"><LoadingSkeleton type="table" /></div>
+            <div className="p-6"><LoadingSkeleton variant="table" /></div>
           ) : rankings.length === 0 ? (
             <div className="p-12 text-center text-[var(--color-text-muted)]">No hospitals match the selected filters.</div>
           ) : (

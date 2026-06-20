@@ -156,7 +156,7 @@ class ContextFetcher:
 
     def _get_hospital_stats(self, state: str = None, disease: str = None) -> dict:
         try:
-            return self._hospital_repo.get_summary_stats()
+            return self._hospital_repo.get_summary_stats(state=state, disease=disease)
         except Exception as e:
             logger.warning(f"Hospital stats failed: {e}")
             return {}

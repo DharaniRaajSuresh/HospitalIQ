@@ -81,11 +81,11 @@ def compute_risk_labels(row):
 
     # Composite risk score (0-1)
     risk_score = min(1.0, (
-        age_risk * 0.25 +
-        condition_risk * 0.20 +
+        age_risk * 0.35 +
+        condition_risk * 0.25 +
         travel_risk * 0.10 +
         family_risk * 0.10 +
-        virus_risk * 0.20 +
+        virus_risk * 0.05 +
         (1 - vax_protection) * 0.15
     ))
 
@@ -102,7 +102,7 @@ def generate_synthetic_data(n_patients=5000, n_viruses=6):
     np.random.seed(42)
     viruses = [
         {"name": "COVID-19", "fatality": 0.03, "reproductive": 3.2, "vaccine": True, "vax_eff": 0.85},
-        {"name": "Ebola", "fatality": 0.60, "reproductive": 2.0, "vaccine": False, "vax_eff": 0},
+        {"name": "Ebola", "fatality": 0.50, "reproductive": 1.8, "vaccine": True, "vax_eff": 0.76},
         {"name": "H1N1", "fatality": 0.01, "reproductive": 1.5, "vaccine": True, "vax_eff": 0.70},
         {"name": "Marburg", "fatality": 0.50, "reproductive": 1.8, "vaccine": False, "vax_eff": 0},
         {"name": "Nipah", "fatality": 0.55, "reproductive": 1.2, "vaccine": False, "vax_eff": 0},
@@ -112,16 +112,39 @@ def generate_synthetic_data(n_patients=5000, n_viruses=6):
 
     records = []
     for pid in range(n_patients):
+        # Skewed age distribution: ~40% under 30, ~35% 30-60, ~25% 60+
+        age_bucket = np.random.choice([0, 1, 2], p=[0.40, 0.35, 0.25])
+        if age_bucket == 0:
+            age = np.random.randint(1, 30)
+        elif age_bucket == 1:
+            age = np.random.randint(30, 60)
+        else:
+            age = np.random.randint(60, 90)
+
+        # Conditions more likely with age
+        if age < 30:
+            num_preexisting = np.random.choice([0, 0, 0, 0, 1])
+        elif age < 60:
+            num_preexisting = np.random.choice([0, 0, 1, 1, 2])
+        else:
+            num_preexisting = np.random.choice([0, 1, 2, 3])
+
+        # Travel more likely for working-age adults
+        if 20 <= age < 60:
+            recent_travel = np.random.choice([0, 0, 1])
+        else:
+            recent_travel = np.random.choice([0, 0, 0, 1])
+
         patient = {
-            "age": np.random.randint(1, 90),
+            "age": age,
             "blood_group": BLOOD_GROUP_MAP[np.random.choice(blood_groups)],
             "gender_male": np.random.randint(0, 2),
-            "num_preexisting": np.random.choice([0, 0, 0, 1, 1, 2, 3]),
+            "num_preexisting": num_preexisting,
             "num_doses": np.random.choice([0, 0, 1, 1, 2, 2, 3]),
             "has_covid_vaccine": np.random.randint(0, 2),
             "last_vaccine_days": np.random.randint(30, 730) if np.random.random() > 0.2 else 9999,
-            "recent_travel": np.random.randint(0, 2),
-            "num_trips": np.random.randint(0, 5),
+            "recent_travel": recent_travel,
+            "num_trips": np.random.randint(0, 5) if recent_travel else 0,
             "fam_high_risk": np.random.randint(0, 4),
             "fam_total": np.random.randint(2, 8),
         }

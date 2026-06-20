@@ -46,3 +46,7 @@ frontend/dist/
 
 # Docker
 .docker/
+
+# Output
+.vite/
+test_bed_output.json

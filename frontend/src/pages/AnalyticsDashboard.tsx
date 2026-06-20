@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { BarChart3, PieChart as PieChartIcon, LineChart as LineChartIcon, Download, Star } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
@@ -10,11 +9,11 @@ import { downloadCsv } from '../utils/exportCsv';
 const PIE_COLORS = ['#00f0ff', '#b026ff', '#ffd700', '#ff00ea'];
 
 export default function AnalyticsDashboard() {
-  const [stats, setStats] = useState(null);
-  const [hospitals, setHospitals] = useState([]);
-  const [byState, setByState] = useState([]);
-  const [allLoc, setAllLoc] = useState(null);
-  const [error, setError] = useState(null);
+  const [stats, setStats] = useState<any>(null);
+  const [hospitals, setHospitals] = useState<any[]>([]);
+  const [byState, setByState] = useState<any[]>([]);
+  const [allLoc, setAllLoc] = useState<any>(null);
+  const [error, setError] = useState<any>(null);
 
   useEffect(() => {
     getStats().then(setStats).catch(e => setError(e.message));
@@ -27,7 +26,7 @@ export default function AnalyticsDashboard() {
       setHospitals([{hospital_type: "Govt", count: g}, {hospital_type: "Private", count: p}, {hospital_type: "Trust", count: o}]);
     }).catch(e => setError(e.message));
 
-    getAllDistricts().then(results => {
+    getAllDistricts<any[]>().then((results: any[]) => {
       const rows = results.map(d => ({
         state: d.state,
         district: d.district,
@@ -51,7 +50,7 @@ export default function AnalyticsDashboard() {
     { name: 'Trust', value: otherHospitals || Math.round(totalFacilities * 0.2) },
   ];
 
-  const stateAgg = {};
+  const stateAgg: Record<string, any> = {};
   for (const r of byState) {
     if (!stateAgg[r.state]) stateAgg[r.state] = { name: r.state, beds: 0, hospitals: 0, deaths: 0, districts: new Set(), scores: [] };
     stateAgg[r.state].beds += r.beds;
@@ -109,8 +108,8 @@ export default function AnalyticsDashboard() {
                   </filter>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} opacity={0.3} />
-                <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                <XAxis dataKey="name" stroke="var(--border)" tick={{ fill: '#cbd5e1' }} fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--border)" tick={{ fill: '#cbd5e1' }} fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip cursor={{ fill: 'rgba(0, 240, 255, 0.05)' }} contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(10px)', borderColor: 'rgba(0, 240, 255, 0.2)', borderRadius: '12px', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)' }} itemStyle={{ color: '#fff', fontWeight: 'bold' }} />
                 <Bar dataKey="beds" name="Total Beds" fill="url(#neonCyanDash)" radius={[4, 4, 0, 0]} filter="url(#glowDash)" />
                 <Bar dataKey="avgScore" name="Avg Score" fill="url(#neonVioletDash)" radius={[4, 4, 0, 0]} filter="url(#glowDash)" />

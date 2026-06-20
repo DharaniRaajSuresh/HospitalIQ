@@ -2,12 +2,14 @@
 JWT authentication module for HospitalIQ API.
 Uses bcrypt for password hashing (FAANG-standard), JWT with HS256.
 Supports httpOnly cookies (primary) + Bearer header fallback for API clients.
+Google OAuth via Authlib for "Sign in with Google".
 """
 import os, logging
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 import bcrypt
+from authlib.integrations.starlette_client import OAuth
 from fastapi import Depends, HTTPException, Request, Response, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
@@ -29,6 +31,16 @@ BCRYPT_ROUNDS = 12
 
 security = HTTPBearer(auto_error=False)
 TOKEN_COOKIE_NAME = "hospitaliq_token"
+
+# Authlib OAuth client for Google Sign-In
+oauth = OAuth()
+oauth.register(
+    name="google",
+    client_id=settings.google_client_id,
+    client_secret=settings.google_client_secret,
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid email profile"},
+)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

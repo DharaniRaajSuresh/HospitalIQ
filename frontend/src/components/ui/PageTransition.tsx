@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const PageTransition = ({ children, locationKey }) => {
+const PageTransition = ({ children, locationKey = 'page' }) => {
   return (
     <AnimatePresence mode="wait">
       <motion.div

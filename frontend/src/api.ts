@@ -38,11 +38,20 @@ interface PatientListParams {
 const API_BASE = '/api/v1';
 
 function getToken(): string | null {
-  return (typeof window !== 'undefined' && (window as unknown as Record<string, string>).__auth_token) || null;
+  if (typeof window === 'undefined') return null;
+  // Fallback to memory if localStorage is somehow unavailable, but primarily use localStorage
+  return localStorage.getItem('__auth_token') || (window as unknown as Record<string, string>).__auth_token || null;
 }
 
-function setToken(tok: string): void {
-  if (typeof window !== 'undefined') (window as unknown as Record<string, string>).__auth_token = tok;
+export function setToken(tok: string | null): void {
+  if (typeof window === 'undefined') return;
+  if (tok) {
+    localStorage.setItem('__auth_token', tok);
+    (window as unknown as Record<string, string>).__auth_token = tok;
+  } else {
+    localStorage.removeItem('__auth_token');
+    delete (window as unknown as Record<string, string>).__auth_token;
+  }
 }
 
 const cache = new Map<string, CacheEntry>();
@@ -90,7 +99,9 @@ export async function authFetch<T = unknown>(path: string, options: AuthFetchOpt
     window.dispatchEvent(new CustomEvent('auth:logout'));
   }
   if (!res.ok) {
-    const err = new Error(`${res.status} ${res.statusText}`) as Error & { status: number };
+    let detail = '';
+    try { const body = await res.json(); detail = body.detail || JSON.stringify(body); } catch {}
+    const err = new Error(`${res.status}: ${detail || res.statusText}`) as Error & { status: number };
     err.status = res.status;
     throw err;
   }
@@ -119,6 +130,13 @@ export async function register(email: string, password: string, fullName: string
   });
   if (data.access_token) setToken(data.access_token);
   return data;
+}
+
+export async function setPassword(password: string): Promise<void> {
+  await authFetch('/auth/set-password', {
+    method: 'POST',
+    body: JSON.stringify({ password }),
+  });
 }
 
 export async function logout(): Promise<void> {

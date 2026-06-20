@@ -1,7 +1,6 @@
-// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Target, HeartPulse, Stethoscope, Search, Activity, Users } from 'lucide-react';
+import { ShieldAlert, Target, HeartPulse, Stethoscope, Search, Activity, Users, AlertTriangle } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
@@ -13,7 +12,7 @@ const MOCK_CAUSES = ['Cardiac', 'Respiratory', 'Infectious', 'Cancer', 'Accident
 
 export default function MortalityAnalytics() {
   const [district, setDistrict] = useState('');
-  const [districts, setDistricts] = useState([]);
+  const [districts, setDistricts] = useState<any[]>([]);
 
   const [ageGroup, setAgeGroup] = useState('45-64');
   const [cause, setCause] = useState('Cardiac');
@@ -27,7 +26,7 @@ export default function MortalityAnalytics() {
   const [primaryFactor, setPrimaryFactor] = useState('Age bracket (45-64) with cardiovascular history.');
 
   useEffect(() => {
-    getDistricts().then(d => {
+    getDistricts<any[]>().then((d: any[]) => {
       setDistricts(d);
       if (d.length && !district) setDistrict(d[0].district);
     }).catch(e => console.warn('Failed to load districts:', e));
@@ -79,7 +78,7 @@ export default function MortalityAnalytics() {
   const handlePredict = async () => {
     setLoading(true);
     try {
-      const data = await predictMortality({ district, age_group: ageGroup, cause, year: 2026, month: 6 });
+      const data: any = await predictMortality({ district, age_group: ageGroup, cause, year: '2026', month: '6' });
       const r = data.result;
       setResult(r);
       const rate = r.predicted_death_rate || 0;

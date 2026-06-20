@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 
-export default function AnimatedCounter({ value, formatter }) {
+export default function AnimatedCounter({ value, formatter }: { value: number | string; formatter?: (v: any) => string }) {
   // Parse numeric value
   let numericValue = null;
   let prefix = '';

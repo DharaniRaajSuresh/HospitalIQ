@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import GlassCard from './GlassCard';
 import AnimatedCounter from './AnimatedCounter';

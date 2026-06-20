@@ -37,10 +37,29 @@
   --color-bg-card: #0f172a;
   --color-accent-cyan: #00f0ff;
   --color-accent-emerald: #00ff9d;
+  --color-accent-amber: #ffb800;
+  --color-accent-rose: #ff3d6e;
   --color-accent-violet: #b026ff;
+  --color-surface-1: rgba(255, 255, 255, 0.03);
+  --color-surface-2: rgba(255, 255, 255, 0.06);
+  --color-surface-3: rgba(255, 255, 255, 0.10);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
   --color-text-primary: #f8fafc;
   --color-text-secondary: #cbd5e1;
   --color-text-muted: #64748b;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --shadow-glow-cyan: 0 0 20px rgba(0, 240, 255, 0.15), 0 0 60px rgba(0, 240, 255, 0.05);
+  --shadow-glow-violet: 0 0 20px rgba(176, 38, 255, 0.15), 0 0 60px rgba(176, 38, 255, 0.05);
+  --shadow-glow-emerald: 0 0 20px rgba(0, 255, 157, 0.15), 0 0 60px rgba(0, 255, 157, 0.05);
+
+  --landing-bg-dark: #0B1220;
+  --landing-bg-void: #05080f;
+  --landing-glass-bg: rgba(11, 18, 32, 0.4);
+  --landing-glass-border: rgba(255, 255, 255, 0.08);
+  --landing-gradient-text: linear-gradient(135deg, #00ff9d 0%, #00f0ff 50%, #b026ff 100%);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -99,7 +118,7 @@ body {
 }
 
 .sidebar-subtitle {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
   margin-top: 4px;
@@ -120,7 +139,7 @@ body {
   padding: 11px 16px;
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   transition: all 0.2s ease;
   border-radius: var(--radius-sm);
@@ -156,7 +175,7 @@ body {
 .sidebar-footer {
   padding: 16px 24px;
   border-top: 1px solid var(--border);
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
   font-weight: 500;
 }
@@ -185,7 +204,7 @@ body {
 }
 
 .card-title {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
   margin-bottom: 16px;
   color: var(--text-muted);
@@ -243,7 +262,7 @@ body {
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-muted);
   margin-top: 6px;
@@ -266,7 +285,7 @@ body {
 }
 
 .form-group label {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -280,7 +299,7 @@ body {
   border-radius: var(--radius-sm);
   padding: 11px 14px;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 15px;
   font-family: var(--font);
   outline: none;
   transition: all 0.2s ease;
@@ -302,7 +321,7 @@ body {
   border: none;
   border-radius: var(--radius-sm);
   padding: 11px 28px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   font-family: var(--font);
   cursor: pointer;
@@ -356,7 +375,7 @@ body {
 }
 
 .result-label {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-muted);
   margin-top: 6px;
@@ -380,7 +399,7 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 th {
@@ -390,7 +409,7 @@ th {
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 1px;
   border-bottom: 1px solid var(--border);
 }
@@ -399,7 +418,7 @@ td {
   padding: 11px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 tr:last-child td { border-bottom: none; }
@@ -424,7 +443,7 @@ tbody tr:hover {
   display: inline-block;
   padding: 3px 10px;
   border-radius: 20px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.3px;
 }
@@ -466,6 +485,16 @@ tbody tr:hover {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes gradient-x {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 10s ease infinite;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -485,6 +514,10 @@ tbody tr:hover {
 }
 
 /* Responsive */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 64px;

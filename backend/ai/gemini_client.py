@@ -14,10 +14,17 @@ logger = logging.getLogger(__name__)
 
 MODEL_PRIORITY = [
     "gemini-2.5-flash",
-    "gemini-3.1-flash-lite",
-    "gemini-flash-latest",
-    "gemini-2.0-flash-lite",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
 ]
+
+GENERATION_CONFIG = {
+    "temperature": 0.3,
+    "top_p": 0.9,
+    "top_k": 40,
+    "max_output_tokens": 2048,
+}
 
 
 class GeminiClient:
@@ -36,7 +43,10 @@ class GeminiClient:
         try:
             genai.configure(api_key=settings.gemini_api_key)
             self._model_name = MODEL_PRIORITY[self._model_index]
-            self._model = genai.GenerativeModel(self._model_name)
+            self._model = genai.GenerativeModel(
+                self._model_name,
+                generation_config=genai.types.GenerationConfig(**GENERATION_CONFIG),
+            )
             self._available = True
             logger.info(f"Gemini AI initialized (model: {self._model_name})")
         except Exception as e:
@@ -51,7 +61,10 @@ class GeminiClient:
             return False
         try:
             self._model_name = MODEL_PRIORITY[self._model_index]
-            self._model = genai.GenerativeModel(self._model_name)
+            self._model = genai.GenerativeModel(
+                self._model_name,
+                generation_config=genai.types.GenerationConfig(**GENERATION_CONFIG),
+            )
             logger.info(f"Falling back to Gemini model: {self._model_name}")
             self._available = True
             return True

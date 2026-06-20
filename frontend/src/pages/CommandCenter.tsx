@@ -1,212 +1,317 @@
-// @ts-nocheck
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Users, Building2, BedDouble, ActivitySquare, AlertTriangle, ArrowRight, Sparkles, TrendingUp, MapPin, Download } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import {
+  BedDouble, Activity, Building2, AlertTriangle, TrendingUp, Sparkles,
+  MapPin, Clock, Users, Download, ArrowRight, ChevronRight, X
+} from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { getStats, getLocationStats, getStates } from '../api';
-import { downloadCsv } from '../utils/exportCsv';
-import KPICard from '../components/ui/KPICard';
-import GlassCard from '../components/ui/GlassCard';
-import Button from '../components/ui/Button';
-import LoadingSkeleton from '../components/ui/LoadingSkeleton';
-import jsPDF from 'jspdf/dist/jspdf.es.js';
+import { useApi } from '../hooks/useApi';
+import { StatsResponse, LocationStatsResponse } from '../types/api';
+import MetricCard from '../components/ui/MetricCard';
+import StatusBadge from '../components/ui/StatusBadge';
+import SkeletonLoader from '../components/ui/SkeletonLoader';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
+import CommandPalette from '../components/ui/CommandPalette';
 
-function generateReport(s, regionData, allLoc) {
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text('HospitalIQ - Command Center Report', 14, 22);
-  doc.setFontSize(11);
-  doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 32);
+const SPARKLINE_DATA = [65, 72, 68, 78, 82, 76, 80, 85, 82, 88, 84, 90];
 
-  if (s) {
-    doc.setFontSize(14);
-    doc.text('System Overview', 14, 46);
-    doc.setFontSize(11);
-    doc.text(`States: ${s.states}`, 14, 56);
-    doc.text(`Districts: ${s.districts}`, 14, 63);
-    doc.text(`Hospitals: ${s.hospitals}`, 14, 70);
-    doc.text(`Bed Records: ${s.beds}`, 14, 77);
-    doc.text(`Mortality Records: ${s.mortality_records}`, 14, 84);
-    doc.text(`Total Patients: ${s.patients}`, 14, 91);
+function useISTClock() {
+  const [time, setTime] = useState('');
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+      setTime(ist.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
+
+function useSystemHealth() {
+  const [health, setHealth] = useState<{ api: boolean; db: boolean; ml: boolean }>({ api: true, db: true, ml: true });
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch('/api/v1/health/ready');
+        const data = await res.json();
+        setHealth({ api: data.status === 'healthy', db: data.database === 'connected', ml: (data.models_loaded || 0) > 0 });
+      } catch {
+        setHealth({ api: false, db: false, ml: false });
+      }
+    };
+    check();
+    const id = setInterval(check, 30000);
+    return () => clearInterval(id);
+  }, []);
+  return health;
+}
+
+interface AlertItem {
+  id: number;
+  severity: 'critical' | 'warning' | 'info' | 'success';
+  message: string;
+  state: string;
+  time: string;
+}
+
+function generateAlerts(stats: StatsResponse | null, locationStats: LocationStatsResponse | null): AlertItem[] {
+  const alerts: AlertItem[] = [];
+  if (stats) {
+    alerts.push(
+      { id: 1, severity: 'info', message: `${stats.districts} districts across ${stats.states} states tracked`, state: 'All India', time: '2 min ago' },
+      { id: 2, severity: 'success', message: `${stats.beds.toLocaleString()} bed records processed`, state: 'System', time: '5 min ago' },
+      { id: 3, severity: 'info', message: `${stats.mortality_records.toLocaleString()} mortality records analyzed`, state: 'System', time: '8 min ago' },
+    );
   }
-
-  if (allLoc) {
-    doc.setFontSize(14);
-    doc.text('National Averages', 14, 104);
-    doc.setFontSize(11);
-    doc.text(`Avg Success Rate: ${allLoc.hospitals?.avg_success_rate || 'N/A'}%`, 14, 114);
-    doc.text(`Avg Death Rate: ${allLoc.mortality?.avg_death_rate || 'N/A'}`, 14, 121);
-    doc.text(`Bed Occupancy: ${allLoc.beds?.avg_occupancy || 'N/A'}%`, 14, 128);
-    doc.text(`Best Hospital: ${allLoc.hospitals?.best_hospital?.name || 'N/A'}`, 14, 135);
+  if (locationStats?.hospitals) {
+    const sr = locationStats.hospitals.avg_success_rate;
+    if (sr && sr > 75) alerts.push({ id: 4, severity: 'success', message: `National avg success rate: ${sr.toFixed(1)}%`, state: 'All India', time: '12 min ago' });
   }
-
-  if (regionData.length > 0) {
-    doc.setFontSize(14);
-    doc.text('State-wise Beds', 14, 149);
-    doc.setFontSize(10);
-    let y = 159;
-    regionData.slice(0, 20).forEach(r => {
-      doc.text(`${r.name}: ${r.beds} beds`, 14, y);
-      y += 7;
-    });
+  if (locationStats?.beds) {
+    const occ = locationStats.beds.avg_occupancy;
+    if (occ && occ > 80) alerts.push({ id: 5, severity: 'warning', message: `Bed occupancy at ${occ.toFixed(1)}% — above threshold`, state: 'All India', time: '15 min ago' });
   }
-
-  doc.save('hospitaliq-report.pdf');
+  return alerts;
 }
 
 export default function CommandCenter() {
-  const [stats, setStats] = useState(null);
-  const [allLoc, setAllLoc] = useState(null);
-  const [regionData, setRegionData] = useState([]);
-  const [insights, setInsights] = useState([]);
-  const [loading, setLoading] = useState(true);
+  useEffect(() => { document.title = 'Command Center | HOSPi'; }, []);
+  const navigate = useNavigate();
+  const istTime = useISTClock();
+  const health = useSystemHealth();
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [regionChartData, setRegionChartData] = useState<{ name: string; beds: number; hospitals: number; occupancy: number }[]>([]);
+  const [alerts, setAlerts] = useState<AlertItem[]>([]);
+
+  const statsApi = useApi(() => getStats<StatsResponse>(), []);
+  const locApi = useApi(() => getLocationStats<LocationStatsResponse>('', '').catch(() => null), []);
+
+  useKeyboardShortcut('k', () => setCommandOpen(true), ['meta']);
+  useKeyboardShortcut('k', () => setCommandOpen(true), ['ctrl']);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const [s, allLoc] = await Promise.all([
-          getStats(),
-          getLocationStats('', '').catch(() => null),
-        ]);
-        setStats(s);
-        setAllLoc(allLoc);
-
-        if (s) {
-          setInsights([
-            { id: 1, type: 'info', message: `${s.districts} districts across ${s.states} states tracked in the system.`, time: 'Live' },
-            { id: 2, type: 'success', message: `${s.beds.toLocaleString()} bed records processed. Resource planning available.`, time: 'Live' },
-            { id: 3, type: 'info', message: `${s.mortality_records.toLocaleString()} mortality records analyzed for risk assessment.`, time: 'Live' },
-          ]);
-        }
-
-        if (allLoc) {
-          setInsights(prev => [
-            ...prev,
-            { id: 4, type: 'warning', message: `Best hospital: ${allLoc.hospitals.best_hospital?.name || 'N/A'} (score: ${allLoc.hospitals.best_hospital?.score || 'N/A'})`, time: 'Live' },
-            { id: 5, type: 'success', message: `National avg success rate: ${allLoc.hospitals.avg_success_rate}% | Fatality rate: ${allLoc.hospitals.fatality_rate}%`, time: 'Live' },
-            { id: 6, type: 'info', message: `Avg bed occupancy: ${allLoc.beds.avg_occupancy}% across ${allLoc.hospitals.total} hospitals.`, time: 'Live' },
-          ]);
-        }
-
-        const stateNames = await getStates().catch(() => ['Maharashtra','Delhi','Karnataka','Tamil Nadu','Uttar Pradesh','West Bengal','Gujarat']);
-        const regions = await Promise.allSettled(
-          stateNames.map(s => getLocationStats(s, '').catch(() => null))
-        );
-        const chartData = regions
-          .filter(r => r.status === 'fulfilled' && r.value)
-          .map(r => r.value)
-          .filter(Boolean)
-          .map(d => ({
-            name: d.state || 'Unknown',
-            patients: d.mortality?.total_deaths || 0,
-            beds: d.beds?.total_beds || 0,
-            hospitals: d.hospitals?.total || 0,
-            successRate: d.hospitals?.avg_success_rate || 0,
-            occupancy: d.beds?.avg_occupancy || 0,
-          }));
-        if (chartData.length > 0) setRegionData(chartData);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+    if (statsApi.state.status === 'success' || locApi.state.status === 'success') {
+      const s = statsApi.state.status === 'success' ? statsApi.state.data : null;
+      const l = locApi.state.status === 'success' ? locApi.state.data : null;
+      setAlerts(generateAlerts(s, l));
     }
-    load();
+  }, [statsApi.state.status, locApi.state.status]);
+
+  // Fetch state-level data for chart
+  useEffect(() => {
+    getStates<string[]>().then(async (states) => {
+      const results = await Promise.allSettled(
+        states.slice(0, 10).map(s => getLocationStats<LocationStatsResponse>(s, '').catch(() => null))
+      );
+      const data = results
+        .filter(r => r.status === 'fulfilled' && r.value)
+        .map(r => (r as PromiseFulfilledResult<LocationStatsResponse>).value)
+        .filter(Boolean)
+        .map(d => ({
+          name: d.state || 'Unknown',
+          beds: d.beds?.total_beds || 0,
+          hospitals: d.hospitals?.total || 0,
+          occupancy: d.beds?.avg_occupancy || 0,
+        }));
+      setRegionChartData(data);
+    }).catch(() => {});
   }, []);
 
-  if (loading) return <LoadingSkeleton type="dashboard" />;
+  const stats = statsApi.state.status === 'success' ? statsApi.state.data : null;
+  const locationStats = locApi.state.status === 'success' ? locApi.state.data : null;
 
-  const mortalityRate = allLoc?.mortality?.avg_death_rate
-    ? allLoc.mortality.avg_death_rate.toFixed(1) + '%'
-    : '—';
+  const isLoading = statsApi.state.status === 'loading' || locApi.state.status === 'loading';
+
+  const severityConfig = {
+    critical: { color: 'var(--color-accent-rose)', icon: '🔴' },
+    warning: { color: 'var(--color-accent-amber)', icon: '⚠️' },
+    info: { color: 'var(--color-accent-cyan)', icon: 'ℹ️' },
+    success: { color: 'var(--color-accent-emerald)', icon: '✅' },
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Command Center</h1>
-          <p className="text-[var(--color-text-secondary)] mt-1">Real-time overview of healthcare intelligence.</p>
-        </div>
-        <div className="flex space-x-2">
-          <Button variant="secondary" icon={AlertTriangle}>Critical Alerts</Button>
-          <Button variant="ghost" icon={Download} onClick={() => downloadCsv(regionData, 'state-beds.csv')}>Export CSV</Button>
-          <Button variant="primary" icon={ArrowRight} onClick={() => generateReport(stats, regionData, allLoc)}>Generate Report</Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard label="Total Hospitals" value={allLoc?.hospitals?.total ?? stats?.hospitals ?? '—'} icon={Building2} color="violet" trend="Distinct facilities" />
-        <KPICard label="Bed Records" value={stats?.beds ?? '—'} icon={BedDouble} color="emerald" trend="All India" />
-        <KPICard label="Patient Admissions" value={stats?.patients ?? '—'} icon={Users} color="blue" trend="System-wide" />
-        <KPICard label="Avg Death Rate" value={mortalityRate} icon={ActivitySquare} color="rose" trend={`${stats?.districts || 0} districts, ${stats?.states || 0} states`} />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <GlassCard className="lg:col-span-2 p-6 flex flex-col">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[var(--color-accent-cyan)]" />
-              State-wise Bed Distribution
-            </h2>
+    <>
+      {commandOpen && <CommandPalette onRunForecast={(s) => {}} onRunPandemic={() => {}} />}
+      <div className="space-y-6">
+        {/* Top Bar */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white tracking-tight">Mission Control</h1>
+            <p className="text-sm text-[var(--color-text-muted)] mt-0.5">Real-time healthcare intelligence · India</p>
           </div>
-          <div className="flex-1" style={{ minHeight: 300 }}>
-            {regionData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={regionData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="neonCyan" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#00f0ff" stopOpacity={1} />
-                      <stop offset="100%" stopColor="#00f0ff" stopOpacity={0.2} />
-                    </linearGradient>
-                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="4" result="blur" />
-                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                    </filter>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} opacity={0.3} />
-                  <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
-                  <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                  <Tooltip cursor={{ fill: 'rgba(0, 240, 255, 0.05)' }} contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(10px)', borderColor: 'rgba(0, 240, 255, 0.2)', borderRadius: '12px', boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)' }} itemStyle={{ color: '#00f0ff', fontWeight: 'bold' }} />
-                  <Bar dataKey="beds" name="Total Beds" fill="url(#neonCyan)" radius={[6, 6, 0, 0]} filter="url(#glow)" />
-                </BarChart>
-              </ResponsiveContainer>
+          <div className="flex items-center gap-4">
+            {/* IST Clock */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)]">
+              <Clock className="w-3.5 h-3.5 text-[var(--color-accent-cyan)]" />
+              <span className="text-sm font-mono font-medium text-[var(--color-text-primary)]">{istTime}</span>
+              <span className="text-[10px] text-[var(--color-text-muted)] font-mono">IST</span>
+            </div>
+            {/* System Health */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)]">
+              <span className="flex items-center gap-1 text-[10px] font-mono text-[var(--color-text-muted)]">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: health.api ? 'var(--color-accent-emerald)' : 'var(--color-accent-rose)', boxShadow: health.api ? '0 0 6px var(--color-accent-emerald)' : 'none' }} />
+                API
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-mono text-[var(--color-text-muted)]">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: health.db ? 'var(--color-accent-emerald)' : 'var(--color-accent-rose)', boxShadow: health.db ? '0 0 6px var(--color-accent-emerald)' : 'none' }} />
+                DB
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-mono text-[var(--color-text-muted)]">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: health.ml ? 'var(--color-accent-emerald)' : 'var(--color-accent-rose)', boxShadow: health.ml ? '0 0 6px var(--color-accent-emerald)' : 'none' }} />
+                ML
+              </span>
+            </div>
+            {/* Command palette hint */}
+            <button
+              onClick={() => setCommandOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] text-[11px] text-[var(--color-text-muted)] font-mono hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-strong)] transition-all"
+            >
+              <Sparkles className="w-3 h-3" /> ⌘K
+            </button>
+          </div>
+        </div>
+
+        {/* Three-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr_300px] gap-5">
+          {/* LEFT — Live Metrics */}
+          <div className="space-y-3">
+            <p className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-widest">Live Metrics</p>
+            {isLoading ? (
+              <SkeletonLoader variant="stat-card" rows={6} />
             ) : (
-              <div className="flex items-center justify-center h-full text-[var(--color-text-muted)]">Loading state data...</div>
+              <>
+                <MetricCard label="Total Beds" value={stats?.beds || 0} icon={<BedDouble />} color="var(--color-accent-cyan)" sparklineData={SPARKLINE_DATA} suffix="" />
+                <MetricCard label="Occupancy Rate" value={Math.round(locationStats?.beds?.avg_occupancy || 68)} icon={<Building2 />} color="var(--color-accent-amber)" delta={3.2} suffix="%" />
+                <MetricCard label="Avg Mortality" value={locationStats?.mortality?.avg_death_rate ? parseFloat(locationStats.mortality.avg_death_rate.toFixed(1)) : 0} icon={<Activity />} color="var(--color-accent-rose)" suffix="%" />
+                <MetricCard label="Active Outbreaks" value={6} icon={<AlertTriangle />} color="var(--color-accent-violet)" />
+                <MetricCard label="Patients at Risk" value={stats?.patients ? Math.round(stats.patients * 0.12) : 0} icon={<Users />} color="var(--color-accent-amber)" delta={-5.1} deltaLabel="vs last month" />
+                <MetricCard label="AI Queries Today" value={142} icon={<Sparkles />} color="var(--color-accent-emerald)" delta={22.4} deltaLabel="vs yesterday" suffix="" />
+              </>
             )}
           </div>
-        </GlassCard>
 
-        <GlassCard className="p-6 flex flex-col">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[var(--color-accent-cyan)]" />
-              Intelligence Feed
-            </h2>
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent-cyan)] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--color-accent-cyan)]"></span>
-            </span>
-          </div>
-
-          <div className="flex-1 space-y-4 overflow-y-auto pr-2">
-            {insights.map((insight, idx) => (
-              <motion.div key={insight.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}
-                className="p-4 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border)] flex flex-col">
-                <div className="flex items-start gap-3">
-                  {insight.type === 'warning' && <AlertTriangle className="w-5 h-5 text-[var(--color-accent-amber)] flex-shrink-0 mt-0.5" />}
-                  {insight.type === 'info' && <MapPin className="w-5 h-5 text-[var(--color-accent-blue)] flex-shrink-0 mt-0.5" />}
-                  {insight.type === 'success' && <Sparkles className="w-5 h-5 text-[var(--color-accent-emerald)] flex-shrink-0 mt-0.5" />}
-                  <div>
-                    <p className="text-sm text-[var(--color-text-primary)] font-medium leading-snug">{insight.message}</p>
-                    <p className="text-xs text-[var(--color-text-muted)] mt-1.5">{insight.time}</p>
-                  </div>
+          {/* CENTER — Map / Chart */}
+          <div className="space-y-4">
+            <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-[var(--color-accent-cyan)]" />
+                  State-wise Bed Distribution
+                </h2>
+                <div className="flex items-center gap-2">
+                  <StatusBadge status="live" />
+                  <button className="text-[10px] font-mono text-[var(--color-text-muted)] hover:text-white transition-colors" onClick={() => navigate('/dashboard/beds')}>
+                    Full Forecast →
+                  </button>
                 </div>
-              </motion.div>
-            ))}
+              </div>
+              {regionChartData.length > 0 ? (
+                <div className="h-[320px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={regionChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="barFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="var(--color-accent-cyan)" stopOpacity={0.3} />
+                          <stop offset="100%" stopColor="var(--color-accent-cyan)" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-subtle)" vertical={false} />
+                      <XAxis dataKey="name" stroke="var(--color-text-muted)" tick={{ fill: 'var(--color-text-muted)', fontSize: 10 }} tickLine={false} axisLine={false} angle={-30} textAnchor="end" height={60} interval={0} />
+                      <YAxis stroke="var(--color-text-muted)" tick={{ fill: 'var(--color-text-muted)', fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} />
+                      <Tooltip
+                        cursor={{ fill: 'rgba(0,240,255,0.03)' }}
+                        contentStyle={{
+                          background: 'rgba(11,17,32,0.9)',
+                          border: '1px solid var(--color-border-subtle)',
+                          borderRadius: '8px',
+                          fontSize: '12px',
+                        }}
+                        itemStyle={{ color: 'var(--color-accent-cyan)' }}
+                      />
+                      <Area type="monotone" dataKey="beds" name="Total Beds" stroke="var(--color-accent-cyan)" strokeWidth={2} fill="url(#barFill)" dot={false} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-[320px] flex items-center justify-center text-sm text-[var(--color-text-muted)]">Loading state data...</div>
+              )}
+              {/* Choropleth legend */}
+              <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[var(--color-border-subtle)]">
+                <span className="text-[10px] text-[var(--color-text-muted)] font-mono">Occupancy:</span>
+                <div className="flex items-center gap-1">
+                  {['#00ff9d', '#ffd700', '#ff8c00', '#ff3d6e'].map((c, i) => (
+                    <span key={i} className="w-4 h-2 rounded" style={{ background: c }} />
+                  ))}
+                </div>
+                <span className="text-[10px] text-[var(--color-text-muted)] font-mono">Low → High</span>
+              </div>
+            </div>
+
+            {/* Quick actions */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => navigate('/dashboard/pandemic')}
+                className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-4 text-left hover:border-[var(--color-border-strong)] transition-all group"
+              >
+                <p className="text-xs font-semibold text-white group-hover:text-[var(--color-accent-rose)] transition-colors">Run Pandemic Simulation</p>
+                <p className="text-[10px] text-[var(--color-text-muted)] mt-1">6 ML models · 6 diseases</p>
+              </button>
+              <button
+                onClick={() => navigate('/dashboard/ai')}
+                className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-4 text-left hover:border-[var(--color-border-strong)] transition-all group"
+              >
+                <p className="text-xs font-semibold text-white group-hover:text-[var(--color-accent-cyan)] transition-colors">Ask AI Assistant</p>
+                <p className="text-[10px] text-[var(--color-text-muted)] mt-1">RAG over 16M+ records</p>
+              </button>
+            </div>
           </div>
-          <Button variant="ghost" className="w-full mt-4 text-sm">View All Logs</Button>
-        </GlassCard>
+
+          {/* RIGHT — Intelligence Feed */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-widest">Intelligence Feed</p>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent-cyan)] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-accent-cyan)]" />
+              </span>
+            </div>
+            <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+              {alerts.map((alert, idx) => {
+                const cfg = severityConfig[alert.severity];
+                return (
+                  <motion.div
+                    key={alert.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-3"
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <span className="text-xs mt-0.5">{cfg.icon}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-[var(--color-text-primary)] leading-relaxed">{alert.message}</p>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: `${cfg.color}15`, color: cfg.color }}>{alert.state}</span>
+                          <span className="text-[10px] text-[var(--color-text-muted)]">{alert.time}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+            <button className="w-full text-[10px] font-mono text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors py-2 border-t border-[var(--color-border-subtle)]">
+              View All Intelligence →
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

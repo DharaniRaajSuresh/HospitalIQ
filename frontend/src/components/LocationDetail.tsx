@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { getLocationStats, getDistrictList, getLocalities } from '../api';
 import {
@@ -29,8 +28,8 @@ export default function LocationDetail({ state, onBack }) {
       getLocationStats(state),
       getDistrictList(state)
     ])
-    .then(([s, d]) => { setData(s); setDistricts(d); })
-    .catch(e => setError(e.message))
+    .then(([s, d]: [any, any]) => { setData(s); setDistricts(d); })
+    .catch((e: any) => setError(e.message))
     .finally(() => setLoading(false));
   }, [state]);
 
@@ -43,8 +42,8 @@ export default function LocationDetail({ state, onBack }) {
       getLocationStats(null, district),
       getLocalities(district)
     ])
-    .then(([s, l]) => { setData(s); setLocalities(l); })
-    .catch(e => setError(e.message))
+    .then(([s, l]: [any, any]) => { setData(s); setLocalities(l); })
+    .catch((e: any) => setError(e.message))
     .finally(() => setLoading(false));
   }
 
@@ -65,8 +64,8 @@ export default function LocationDetail({ state, onBack }) {
         getLocationStats(state),
         getDistrictList(state)
       ])
-      .then(([s, d]) => { setData(s); setDistricts(d); })
-      .catch(e => setError(e.message))
+      .then(([s, d]: [any, any]) => { setData(s); setDistricts(d); })
+      .catch((e: any) => setError(e.message))
       .finally(() => setLoading(false));
     }
   }

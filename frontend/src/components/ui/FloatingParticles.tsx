@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useRef } from 'react';
 
 const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }) => {
@@ -37,6 +36,12 @@ const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }) => 
     resize();
 
     class Particle {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;

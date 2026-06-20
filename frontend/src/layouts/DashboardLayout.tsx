@@ -1,6 +1,5 @@
-// @ts-nocheck
-import React, { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, 
@@ -16,8 +15,11 @@ import {
   Menu,
   Search,
   Bell,
-  User
+  LogOut,
+  Settings,
+  Lock
 } from 'lucide-react';
+import { getMe, logout, setPassword } from '../api';
 import PageTransition from '../components/ui/PageTransition';
 import FloatingParticles from '../components/ui/FloatingParticles';
 
@@ -36,7 +38,43 @@ const navItems = [
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showSetPw, setShowSetPw] = useState(false);
+  const [newPw, setNewPw] = useState('');
+  const [pwMsg, setPwMsg] = useState('');
+  const [userInfo, setUserInfo] = useState<{ name: string; role: string; initials: string } | null>(null);
+  const settingsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getMe().then((data: Record<string, unknown>) => {
+      if (data.authenticated) {
+        const name = (data.name as string) || (data.email as string) || 'User';
+        setUserInfo({
+          name,
+          role: (data.role as string) || 'Viewer',
+          initials: name.split(' ').map((s: string) => s[0]).join('').slice(0, 2).toUpperCase(),
+        });
+      }
+    }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const handleLogout = async () => {
+    setSettingsOpen(false);
+    await logout();
+    navigate('/login', { replace: true });
+  };
 
   const handleMouseMove = (e) => {
     document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
@@ -105,18 +143,6 @@ export default function DashboardLayout() {
             );
           })}
         </nav>
-        
-        <div className="p-4 border-t border-[var(--color-border)]">
-          <div className="flex items-center p-2 rounded-lg bg-[var(--color-bg-elevated)]">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[var(--color-accent-violet)] to-[var(--color-accent-cyan)] flex items-center justify-center text-sm font-bold text-white">
-              JD
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-white">Dr. John Doe</p>
-              <p className="text-xs text-[var(--color-text-muted)]">Chief Medical Officer</p>
-            </div>
-          </div>
-        </div>
       </motion.aside>
 
       {/* Main Content */}
@@ -148,11 +174,93 @@ export default function DashboardLayout() {
                 className="bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] text-[var(--color-text-primary)] text-sm rounded-full pl-10 pr-4 py-2 focus:outline-none focus:border-[var(--color-accent-cyan)] focus:bg-[rgba(255,255,255,0.05)] focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all w-full placeholder-[var(--color-text-muted)]"
               />
             </div>
-            
+
             <button className="p-2 rounded-full text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-bg-elevated)] relative">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[var(--color-accent-rose)] border-2 border-[var(--color-bg-primary)]"></span>
             </button>
+
+            {/* Settings dropdown */}
+            <div ref={settingsRef} className="relative">
+              <button
+                onClick={() => setSettingsOpen(!settingsOpen)}
+                className="p-2 rounded-full text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-bg-elevated)] transition-all"
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+              <AnimatePresence>
+                {settingsOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 w-64 bg-[#0B1220] border border-gray-800 rounded-xl shadow-2xl shadow-black/50 overflow-hidden"
+                  >
+                    <div className="px-4 py-3 border-b border-gray-800">
+                      <p className="text-sm font-medium text-white truncate">{userInfo?.name || 'User'}</p>
+                      <p className="text-xs text-gray-400 truncate">{userInfo?.role || ''}</p>
+                    </div>
+                    {!showSetPw ? (
+                      <>
+                        <button
+                          onClick={() => setShowSetPw(true)}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-[rgba(255,255,255,0.05)] transition-all"
+                        >
+                          <Lock className="w-4 h-4" />
+                          Set Password
+                        </button>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-[rgba(255,255,255,0.05)] transition-all"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Logout
+                        </button>
+                      </>
+                    ) : (
+                      <div className="p-4">
+                        <p className="text-xs text-gray-400 mb-3">Enter a password for email login:</p>
+                        <input
+                          type="password"
+                          value={newPw}
+                          onChange={e => setNewPw(e.target.value)}
+                          placeholder="New password"
+                          minLength={6}
+                          className="w-full bg-gray-900/50 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 mb-2"
+                        />
+                        {pwMsg && (
+                          <p className={`text-xs mb-2 ${pwMsg.includes('success') ? 'text-green-400' : 'text-red-400'}`}>{pwMsg}</p>
+                        )}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={async () => {
+                              setPwMsg('');
+                              if (newPw.length < 6) { setPwMsg('Min 6 characters'); return; }
+                              try {
+                                await setPassword(newPw);
+                                setPwMsg('Password set successfully');
+                                setNewPw('');
+                                setTimeout(() => { setShowSetPw(false); setPwMsg(''); }, 1500);
+                              } catch { setPwMsg('Failed to set password'); }
+                            }}
+                            className="flex-1 py-2 rounded-lg bg-cyan-600 text-white text-xs font-medium hover:bg-cyan-500 transition-all"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => { setShowSetPw(false); setNewPw(''); setPwMsg(''); }}
+                            className="flex-1 py-2 rounded-lg border border-gray-700 text-gray-300 text-xs font-medium hover:bg-gray-800 transition-all"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </header>
 

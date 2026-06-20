@@ -73,10 +73,75 @@ SessionLocal = sessionmaker(
 )
 
 
+def _run_migrations():
+    """Add Google OAuth columns to users table if missing (supports both SQLite and PostgreSQL)."""
+    try:
+        with engine.connect() as conn:
+            if "sqlite" in db_url:
+                result = conn.execute(text("PRAGMA table_info(users)")).fetchall()
+                existing = {row[1] for row in result}
+            else:
+                result = conn.execute(text(
+                    "SELECT column_name FROM information_schema.columns WHERE table_name='users'"
+                )).fetchall()
+                existing = {row[0] for row in result}
+
+        if "sqlite" in db_url:
+            # Check if hashed_password is NOT NULL — if so, recreate table to make it nullable
+            pw_notnull = any(row[1] == "hashed_password" and row[3] == 1 for row in result)
+            if pw_notnull:
+                logger.warning("⚠️ hashed_password is NOT NULL — recreating users table to allow Google-only users")
+                with engine.connect() as conn:
+                    conn.execute(text("""
+                        CREATE TABLE users_new (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            email VARCHAR(255) NOT NULL UNIQUE,
+                            hashed_password VARCHAR(255),
+                            google_id VARCHAR(255) UNIQUE,
+                            avatar_url VARCHAR(500),
+                            full_name VARCHAR(255),
+                            role VARCHAR(50) DEFAULT 'viewer',
+                            is_active BOOLEAN DEFAULT 1,
+                            created_at DATETIME
+                        )
+                    """))
+                    conn.execute(text("""
+                        INSERT INTO users_new (id, email, hashed_password, full_name, role, is_active, created_at)
+                        SELECT id, email, hashed_password, full_name, role, is_active, created_at FROM users
+                    """))
+                    conn.execute(text("DROP TABLE users"))
+                    conn.execute(text("ALTER TABLE users_new RENAME TO users"))
+                    conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS ix_users_email ON users(email)"))
+                    conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS ix_users_google_id ON users(google_id)"))
+                    conn.commit()
+                    logger.info("✅ users table recreated with nullable hashed_password")
+                # Re-read columns after recreation
+                result = conn.execute(text("PRAGMA table_info(users)")).fetchall()
+                existing = {row[1] for row in result}
+
+        for col, col_type in [("google_id", "VARCHAR(255)"), ("avatar_url", "VARCHAR(500)")]:
+            if col not in existing:
+                with engine.connect() as conn:
+                    conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} {col_type}"))
+                    conn.commit()
+                    logger.info("✅ Added column '%s' to users table", col)
+        # Add unique index for google_id if it doesn't exist (can't ALTER ADD CONSTRAINT in SQLite)
+        if "google_id" not in existing:
+            with engine.connect() as conn:
+                try:
+                    conn.execute(text("CREATE UNIQUE INDEX IF NOT EXISTS ix_users_google_id ON users(google_id)"))
+                    conn.commit()
+                except Exception:
+                    pass  # index may already exist
+    except Exception as e:
+        logger.warning("Migration note: %s (table may not exist yet, will be created below)", e)
+
+
 def init_db():
     """Initialize database tables"""
     logger.info("🔄 Initializing database tables...")
     Base.metadata.create_all(bind=engine)
+    _run_migrations()
     logger.info("✅ Database tables created/verified")
 
 

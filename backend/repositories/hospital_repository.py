@@ -66,6 +66,7 @@ class HospitalRepository(BaseRepository):
             "hospital_name": r.hospital_name,
             "district": r.district,
             "state": r.state,
+            "disease": r.disease,
             "hospital_type": r.hospital_type,
             "success_rate": r.success_rate,
             "avg_stay_days": r.avg_stay_days,
@@ -74,13 +75,18 @@ class HospitalRepository(BaseRepository):
             "accreditation": r.accreditation
         } for i, r in enumerate(results)]
 
-    def get_summary_stats(self) -> Dict[str, Any]:
-        """Get aggregated hospital statistics."""
-        result = self._db.query(
+    def get_summary_stats(self, state: str = None, disease: str = None) -> Dict[str, Any]:
+        """Get aggregated hospital statistics, optionally filtered by state and/or disease."""
+        q = self._db.query(
             func.avg(HospitalOutcome.success_rate).label("avg_success"),
             func.avg(HospitalOutcome.rating).label("avg_rating"),
             func.count(func.distinct(HospitalOutcome.hospital_id)).label("unique_hospitals")
-        ).first()
+        )
+        if state:
+            q = q.filter(HospitalOutcome.state == state)
+        if disease:
+            q = q.filter(HospitalOutcome.disease == disease)
+        result = q.first()
         return {
             "avg_success_rate": round(float(result.avg_success or 0), 2) if result.avg_success else 0.0,
             "avg_rating": round(float(result.avg_rating or 0), 2) if result.avg_rating else 0.0,

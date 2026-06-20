@@ -1,209 +1,386 @@
-// @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Activity, ShieldAlert, Syringe, Plane, Users, AlertTriangle, Info, XCircle } from 'lucide-react';
-import GlassCard from '../components/ui/GlassCard';
+import { ArrowLeft, ShieldAlert, Syringe, Plane, Users, Activity, AlertTriangle, ChevronRight, Info } from 'lucide-react';
 import { getPatient, getPatientRisk } from '../api';
+import { PatientDetailData, PatientRiskResponse, VaccineRecord, TravelRecord, FamilyRecord } from '../types/api';
+import PipelineVisualizer from '../components/ui/PipelineVisualizer';
+import StatusBadge from '../components/ui/StatusBadge';
+import Button from '../components/ui/Button';
 
-const VIRUS_NAMES = ["COVID-19","Ebola","H1N1","Marburg","Nipah","SARS"];
+const VIRUS_NAMES = ['COVID-19', 'Ebola', 'H1N1', 'Marburg', 'Nipah', 'SARS'];
+const AVATAR_COLORS = [
+  'from-cyan-500 to-blue-600', 'from-violet-500 to-purple-600', 'from-emerald-500 to-teal-600',
+  'from-rose-500 to-pink-600', 'from-amber-500 to-orange-600', 'from-indigo-500 to-blue-600',
+];
 
-export default function PatientDetail() {
-  const { id } = useParams();
-  const [data, setData] = useState(null);
-  const [virus, setVirus] = useState('COVID-19');
-  const [risk, setRisk] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [riskLoading, setRiskLoading] = useState(false);
-  const [error, setError] = useState(null);
+function getInitialColor(id: number): string {
+  return AVATAR_COLORS[id % AVATAR_COLORS.length];
+}
+
+function getInitials(name: string): string {
+  if (!name) return '?';
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+const PIPELINE_STEPS = [
+  { label: 'Loading patient profile...', status: 'pending' as const },
+  { label: 'Running RandomForest model...', status: 'pending' as const },
+  { label: 'Running GradientBoosting model...', status: 'pending' as const },
+  { label: 'Running XGBoost model...', status: 'pending' as const },
+  { label: 'Ensemble aggregation...', status: 'pending' as const },
+  { label: 'Computing risk score...', status: 'pending' as const },
+];
+
+function RiskGauge({ score }: { score: number }) {
+  const [animatedScore, setAnimatedScore] = useState(0);
+  const ref = useRef<number>(0);
 
   useEffect(() => {
-    getPatient(id).then(d => setData(d))
-      .catch(e => setError(e.message)).finally(() => setLoading(false));
-  }, [id]);
+    const duration = 1200;
+    const start = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setAnimatedScore(Math.round(score * eased));
+      if (progress < 1) ref.current = requestAnimationFrame(animate);
+    };
+    ref.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(ref.current);
+  }, [score]);
 
-  const computeRisk = () => {
-    setRiskLoading(true);
-    setRisk(null);
-    getPatientRisk(id, virus).then(d => setRisk(d))
-      .catch(e => setError(e.message)).finally(() => setRiskLoading(false));
+  const getColor = () => {
+    if (score < 30) return 'var(--color-accent-emerald)';
+    if (score < 55) return 'var(--color-accent-amber)';
+    if (score < 80) return '#f97316';
+    return 'var(--color-accent-rose)';
   };
 
-  if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin"></div></div>;
-  if (!data) return <div className="text-center py-20 text-gray-400">Patient not found</div>;
-
-  const { patient, vaccine_history, travel_history, family_history } = data;
-
-  const riskGauge = (val, label) => {
-    if (val === undefined || val === null) return null;
-    const pct = val * 100;
-    const color = pct < 20 ? 'bg-emerald-500' : pct < 40 ? 'bg-amber-500' : pct < 60 ? 'bg-orange-500' : 'bg-rose-500';
-    return (
-      <div className="space-y-1">
-        <div className="flex justify-between text-xs text-gray-400"><span>{label}</span><span>{pct.toFixed(1)}%</span></div>
-        <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-          <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} className={`h-full rounded-full ${color}`} />
-        </div>
-      </div>
-    );
-  };
+  const color = getColor();
+  const r = 60;
+  const circ = Math.PI * r;
+  const offset = circ - (animatedScore / 100) * circ;
 
   return (
-    <div className="space-y-6">
-      <Link to="/dashboard/patients" className="inline-flex items-center gap-2 text-sm text-cyan-400 hover:text-cyan-300 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Back to Patients
-      </Link>
-      {error && (
-        <div className="flex items-center gap-2 text-sm text-red-400 bg-red-400/10 rounded-lg px-4 py-2 mt-2">
-          <XCircle className="w-4 h-4 flex-shrink-0" /> {error}
-        </div>
-      )}
-
-      {/* Patient Info */}
-      <GlassCard>
-        <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center text-xl font-bold text-white flex-shrink-0">
-            {patient.patient_name?.charAt(0) || '?'}
-          </div>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold text-white">{patient.patient_name}</h1>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-3 text-sm">
-              <div><span className="text-gray-500">Age</span><p className="text-white">{patient.age || 'N/A'}</p></div>
-              <div><span className="text-gray-500">Blood Group</span><p className="text-white font-mono">{patient.blood_group || 'N/A'}</p></div>
-              <div><span className="text-gray-500">Gender</span><p className="text-white">{patient.gender || 'N/A'}</p></div>
-              <div><span className="text-gray-500">DOB</span><p className="text-white">{patient.dob || 'N/A'}</p></div>
-              <div><span className="text-gray-500">State</span><p className="text-white">{patient.state || 'N/A'}</p></div>
-              <div><span className="text-gray-500">District</span><p className="text-white">{patient.district || 'N/A'}</p></div>
-              <div className="col-span-2"><span className="text-gray-500">Contact</span><p className="text-white font-mono text-xs">{patient.contact || 'N/A'}</p></div>
-            </div>
-            {patient.pre_existing_conditions && (
-              <div className="mt-3 flex items-start gap-2 text-sm">
-                <Activity className="w-4 h-4 text-amber-400 mt-0.5" />
-                <div><span className="text-gray-500">Pre-existing Conditions:</span><p className="text-amber-300">{patient.pre_existing_conditions}</p></div>
-              </div>
-            )}
-          </div>
-        </div>
-      </GlassCard>
-
-      {/* Risk Prediction */}
-      <GlassCard>
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <ShieldAlert className="w-5 h-5 text-rose-400" /> Pandemic Risk Assessment
-        </h2>
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end mb-4">
-          <div className="flex-1">
-            <label className="text-xs text-gray-500 mb-1 block">Select Virus</label>
-            <select value={virus} onChange={e => setVirus(e.target.value)}
-              className="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-2.5 px-4 text-sm text-white focus:outline-none focus:border-cyan-500">
-              {VIRUS_NAMES.map(v => <option key={v} value={v}>{v}</option>)}
-            </select>
-          </div>
-          <button onClick={computeRisk} disabled={riskLoading}
-            className="px-5 py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
-            {riskLoading ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <ShieldAlert className="w-4 h-4" />}
-            Assess Risk
-          </button>
-        </div>
-
-        {risk && !risk.error && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-400">Risk Level:</span>
-              <span className={`text-lg font-bold px-3 py-1 rounded-lg ${
-                risk.risk_level === 'Low' ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' :
-                risk.risk_level === 'Moderate' ? 'text-amber-400 bg-amber-500/10 border border-amber-500/20' :
-                risk.risk_level === 'Elevated' ? 'text-orange-400 bg-orange-500/10 border border-orange-500/20' :
-                risk.risk_level === 'High' ? 'text-rose-400 bg-rose-500/10 border border-rose-500/20' :
-                'text-red-400 bg-red-500/10 border border-red-500/20'
-              }`}>{risk.risk_level}</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {riskGauge(risk.risk_score, 'Overall Risk Score')}
-              {riskGauge(risk.hospitalization_prob, 'Hospitalization Probability')}
-              {riskGauge(risk.mortality_prob, 'Mortality Probability')}
-            </div>
-            {risk.virus_info && (
-              <div className="text-xs text-gray-400 border-t border-gray-700 pt-3 mt-3">
-                <span className="text-gray-500">Virus: {risk.virus_name}</span>
-                <span className="ml-4">Fatality: {(risk.virus_info.fatality_rate * 100).toFixed(1)}%</span>
-                <span className="ml-4">R₀: {risk.virus_info.reproductive_rate}</span>
-                <span className="ml-4">Transmission: {risk.virus_info.transmission_mode}</span>
-                <span className="ml-4">Vaccine: {risk.virus_info.vaccine_available ? `Yes (${(risk.virus_info.vaccine_effectiveness * 100).toFixed(0)}% eff)` : 'No'}</span>
-              </div>
-            )}
-          </motion.div>
-        )}
-        {risk && risk.error && <p className="text-rose-400 text-sm">{risk.error}</p>}
-      </GlassCard>
-
-      {/* Vaccine History */}
-      <GlassCard>
-        <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-          <Syringe className="w-5 h-5 text-emerald-400" /> Vaccine History ({vaccine_history.length})
-        </h2>
-        {vaccine_history.length === 0 ? (
-          <p className="text-gray-500 text-sm">No vaccination records</p>
-        ) : (
-          <div className="space-y-2">
-            {vaccine_history.map(v => (
-              <div key={v.id} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
-                <div>
-                  <p className="text-white text-sm font-medium">{v.vaccine_name}</p>
-                  <p className="text-xs text-gray-500">Dose {v.dose_number} | {v.vaccination_date} | {v.hospital_name || 'N/A'}</p>
-                </div>
-                <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  {v.virus_name || 'General'} {v.effectiveness ? `(${(v.effectiveness * 100).toFixed(0)}%)` : ''}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </GlassCard>
-
-      {/* Travel History */}
-      <GlassCard>
-        <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-          <Plane className="w-5 h-5 text-cyan-400" /> Travel History ({travel_history.length})
-        </h2>
-        {travel_history.length === 0 ? (
-          <p className="text-gray-500 text-sm">No travel records</p>
-        ) : (
-          <div className="space-y-2">
-            {travel_history.map(t => (
-              <div key={t.id} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
-                <div>
-                  <p className="text-white text-sm">{t.from_location} → {t.to_location}</p>
-                  <p className="text-xs text-gray-500">{t.travel_date} to {t.return_date} | {t.purpose}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </GlassCard>
-
-      {/* Family History */}
-      <GlassCard>
-        <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-          <Users className="w-5 h-5 text-violet-400" /> Family History ({family_history.length})
-        </h2>
-        {family_history.length === 0 ? (
-          <p className="text-gray-500 text-sm">No family history records</p>
-        ) : (
-          <div className="space-y-2">
-            {family_history.map(f => (
-              <div key={f.id} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-0">
-                <div>
-                  <p className="text-white text-sm"><span className="text-gray-400">{f.relationship}:</span> {f.condition}</p>
-                  <p className="text-xs text-gray-500">Diagnosed at age {f.age_at_diagnosis} {f.is_deceased ? '| Deceased' : ''}</p>
-                </div>
-                {f.is_deceased && <AlertTriangle className="w-4 h-4 text-rose-400" />}
-              </div>
-            ))}
-          </div>
-        )}
-      </GlassCard>
+    <div className="flex flex-col items-center">
+      <svg width="160" height="100" viewBox="0 0 160 120">
+        <path d="M 20 100 A 60 60 0 0 1 140 100" fill="none" stroke="var(--color-surface-3)" strokeWidth="12" strokeLinecap="round" />
+        <path d="M 20 100 A 60 60 0 0 1 140 100" fill="none" stroke={color} strokeWidth="12" strokeLinecap="round"
+          strokeDasharray={circ} strokeDashoffset={offset}
+          style={{ transition: 'stroke-dashoffset 0.3s ease' }} />
+        <text x="80" y="70" textAnchor="middle" fill="white" fontSize="28" fontWeight="bold" fontFamily="var(--font-mono)">{animatedScore}</text>
+        <text x="80" y="88" textAnchor="middle" fill="var(--color-text-muted)" fontSize="9">Risk Score</text>
+      </svg>
     </div>
   );
 }
 
+function FeatureBar({ name, value, weight, category }: { name: string; value: number; weight: number; category: string }) {
+  const pct = Math.min(value * 100, 100);
+  const opacity = 0.3 + weight * 0.7;
+  return (
+    <div className="space-y-0.5">
+      <div className="flex justify-between text-[10px]">
+        <span className="text-[var(--color-text-muted)] truncate">{name}</span>
+        <span className="text-[var(--color-text-primary)] font-mono">{pct.toFixed(0)}%</span>
+      </div>
+      <div className="h-1.5 rounded-full bg-[var(--color-surface-3)] overflow-hidden">
+        <div className="h-full rounded-full bg-gradient-to-r from-[var(--color-accent-cyan)] to-[var(--color-accent-violet)]"
+          style={{ width: `${pct}%`, opacity, transition: 'width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)' }} />
+      </div>
+    </div>
+  );
+}
+
+export default function PatientDetail() {
+  useEffect(() => { document.title = 'Patient Detail | HOSPi'; }, []);
+  const { id } = useParams<{ id: string }>();
+  const [data, setData] = useState<PatientDetailData | null>(null);
+  const [virus, setVirus] = useState('COVID-19');
+  const [risk, setRisk] = useState<PatientRiskResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [riskLoading, setRiskLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [pipelineStep, setPipelineStep] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    getPatient<PatientDetailData>(id)
+      .then(d => setData(d))
+      .catch((e: any) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  useEffect(() => {
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, []);
+
+  const computeRisk = () => {
+    if (!id) return;
+    setRiskLoading(true);
+    setRisk(null);
+    setPipelineStep(0);
+    const steps = ['patient', 'rf', 'gb', 'xgb', 'ensemble', 'score'];
+    let i = 0;
+
+    intervalRef.current = setInterval(() => {
+      i++;
+      if (i >= 5) { clearInterval(intervalRef.current!); }
+      setPipelineStep(Math.min(i, 5));
+    }, 350);
+
+    getPatientRisk<PatientRiskResponse>(id, virus)
+      .then(d => { setRisk(d); setPipelineStep(6); })
+      .catch((e: any) => setError(e.message))
+      .finally(() => { clearInterval(intervalRef.current!); setRiskLoading(false); });
+  };
+
+  if (loading) return (
+    <div className="flex justify-center py-20">
+      <div className="w-6 h-6 border-2 border-[var(--color-accent-cyan)] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+  if (!data) return (
+    <div className="flex items-center justify-center py-20 text-sm text-[var(--color-text-muted)]">
+      <ShieldAlert className="w-6 h-6 mr-2 opacity-50" /> Patient not found
+    </div>
+  );
+
+  const patient = ('patient' in data ? (data as any).patient : data) as Record<string, any>;
+  const vaccine_history: VaccineRecord[] = data.vaccine_history || ('vaccine_history' in data ? (data as any).vaccine_history || [] : []);
+  const travel_history: TravelRecord[] = data.travel_history || ('travel_history' in data ? (data as any).travel_history || [] : []);
+  const family_history: FamilyRecord[] = data.family_history || ('family_history' in data ? (data as any).family_history || [] : []);
+
+  const patientId = patient.id || (data as any).id || 0;
+  const patientName = patient.patient_name || (data as any).patient_name || 'Unknown';
+  const age = patient.age || (data as any).age;
+  const bloodGroup = patient.blood_group || (data as any).blood_group || 'N/A';
+  const gender = patient.gender || (data as any).gender || 'N/A';
+  const state = patient.state || (data as any).state || 'N/A';
+  const district = patient.district || (data as any).district || 'N/A';
+  const dob = patient.dob || (data as any).dob || 'N/A';
+  const contact = patient.contact || (data as any).contact || 'N/A';
+  const preExisting = patient.pre_existing_conditions || (data as any).pre_existing_conditions || '';
+
+  const categoryOrder = ['demographic', 'medical', 'lifestyle', 'genetic'];
+  const categoryLabels: Record<string, string> = { demographic: 'Demographic', medical: 'Medical History', lifestyle: 'Lifestyle', genetic: 'Genetic' };
+  const groupedFeatures: Record<string, any[]> = {};
+
+  if (risk?.features) {
+    for (const f of risk.features) {
+      const cat = f.category || 'other';
+      if (!groupedFeatures[cat]) groupedFeatures[cat] = [];
+      groupedFeatures[cat].push(f);
+    }
+  }
+
+  const pipelineSteps = PIPELINE_STEPS.map((s, i) => ({
+    ...s,
+    status: i < pipelineStep ? 'done' as const : i === pipelineStep && pipelineStep < 6 && riskLoading ? 'running' as const : s.status,
+  }));
+
+  return (
+    <div className="space-y-4">
+      <Link to="/dashboard/patients"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent-cyan)] transition-colors">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to Patients
+      </Link>
+
+      {error && (
+        <div className="flex items-center gap-2 text-sm text-[var(--color-accent-rose)] bg-[var(--color-accent-rose)]/10 rounded-lg px-3 py-2">
+          <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" /> {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-4">
+        {/* Panel 1: Identity */}
+        <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-5">
+          <div className="flex flex-col items-center text-center">
+            <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${getInitialColor(patientId)} flex items-center justify-center text-2xl font-bold text-white mb-3`}>
+              {getInitials(patientName)}
+            </div>
+            <h2 className="text-2xl font-bold text-white">{patientName}</h2>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 w-full mt-4 text-sm">
+              <div><span className="text-[var(--color-text-muted)]">Age</span><p className="text-white font-mono mt-0.5">{age || 'N/A'}</p></div>
+              <div><span className="text-[var(--color-text-muted)]">Gender</span><p className="text-white mt-0.5">{gender}</p></div>
+              <div><span className="text-[var(--color-text-muted)]">Blood</span><p className="text-white font-mono mt-0.5">{bloodGroup}</p></div>
+              <div><span className="text-[var(--color-text-muted)]">DOB</span><p className="text-white font-mono mt-0.5 text-xs">{dob}</p></div>
+              <div className="col-span-2"><span className="text-[var(--color-text-muted)]">State</span><p className="text-white mt-0.5">{state}{district ? ` · ${district}` : ''}</p></div>
+              <div className="col-span-2"><span className="text-[var(--color-text-muted)]">Contact</span><p className="text-white font-mono mt-0.5 text-xs break-all">{contact}</p></div>
+            </div>
+            {preExisting && (
+              <div className="mt-3 w-full">
+                <div className="flex items-start gap-1.5 text-sm p-2.5 rounded-lg bg-[var(--color-accent-amber)]/10 border border-[var(--color-accent-amber)]/20">
+                  <Activity className="w-3.5 h-3.5 text-[var(--color-accent-amber)] mt-0.5 flex-shrink-0" />
+                  <div><span className="text-[var(--color-text-muted)]">Pre-existing:</span><p className="text-[var(--color-accent-amber)]">{preExisting}</p></div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Panel 2: Risk Assessment */}
+        <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-semibold text-white flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-[var(--color-accent-rose)]" />
+              Risk Assessment
+            </h3>
+            <StatusBadge status="ml_model" label="3-Model Ensemble" />
+          </div>
+
+          {/* Virus selector + Assess button */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1">
+              <select value={virus} onChange={e => setVirus(e.target.value)}
+                className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border-subtle)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--color-accent-cyan)]">
+                {VIRUS_NAMES.map(v => <option key={v} value={v} className="bg-[#0B1220] text-white">{v}</option>)}
+              </select>
+            </div>
+            <Button variant="danger" size="sm" icon={ShieldAlert} onClick={computeRisk} isLoading={riskLoading}>
+              {riskLoading ? 'Assessing...' : 'Assess Risk'}
+            </Button>
+          </div>
+
+          {/* Pipeline */}
+          {riskLoading && (
+            <PipelineVisualizer steps={pipelineSteps} title="Model Pipeline" />
+          )}
+
+          {/* Results */}
+          {risk && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-6 flex-wrap">
+                <RiskGauge score={risk.risk_score_pct !== undefined ? risk.risk_score_pct : (risk.risk_score ? risk.risk_score * 100 : 0)} />
+                <div>
+                  <span className="text-xs text-[var(--color-text-muted)] font-mono">Level</span>
+                  <p className={`text-lg font-bold mt-0.5 ${
+                    risk.risk_level === 'Low' ? 'text-emerald-400' :
+                    risk.risk_level === 'Moderate' ? 'text-amber-400' :
+                    risk.risk_level === 'High' ? 'text-rose-400' : 'text-[var(--color-accent-rose)]'
+                  }`}>{risk.risk_level}</p>
+                </div>
+              </div>
+
+              {/* Feature bars grouped by category */}
+              {categoryOrder.filter(c => groupedFeatures[c]?.length).map(cat => (
+                <div key={cat}>
+                  <p className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider mb-2">{categoryLabels[cat] || cat}</p>
+                  <div className="space-y-1.5">
+                    {groupedFeatures[cat].map((f, i) => (
+                      <FeatureBar key={i} name={f.name} value={f.value} weight={f.weight} category={f.category} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {/* Un-categorized features */}
+              {Object.entries(groupedFeatures)
+                .filter(([cat]) => !categoryOrder.includes(cat))
+                .map(([cat, features]) => (
+                  <div key={cat}>
+                    <p className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider mb-2">{categoryLabels[cat] || cat}</p>
+                    <div className="space-y-1.5">
+                      {features.map((f, i) => (
+                        <FeatureBar key={i} name={f.name} value={f.value} weight={f.weight} category={f.category} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+
+          {!risk && !riskLoading && (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <ShieldAlert className="w-8 h-8 text-[var(--color-text-muted)] opacity-30 mb-2" />
+              <p className="text-sm text-[var(--color-text-muted)]">Select a virus and assess risk</p>
+            </div>
+          )}
+        </div>
+
+        {/* Panel 3: Timeline */}
+        <div className="space-y-4">
+          {/* Vaccine History */}
+          <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-4">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
+              <Syringe className="w-3.5 h-3.5 text-emerald-400" />
+              Vaccines <span className="text-[var(--color-text-muted)] font-normal">({vaccine_history.length})</span>
+            </h3>
+            {vaccine_history.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-muted)]">No vaccination records</p>
+            ) : (
+              <div className="space-y-2">
+                {vaccine_history.map((v, i) => (
+                  <div key={i} className="flex items-center gap-3 py-2 border-b border-[var(--color-border-subtle)] last:border-0">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                      <Syringe className="w-3 h-3 text-emerald-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-white truncate">{v.vaccine_name}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] font-mono">{v.virus_name || 'General'} · Dose {v.dose_number}{v.vaccination_date ? ` · ${v.vaccination_date}` : ''}</p>
+                    </div>
+                    {v.effectiveness !== undefined && (
+                      <span className="text-xs font-mono text-emerald-400">{(v.effectiveness * 100).toFixed(0)}%</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Travel History */}
+          <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-4">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
+              <Plane className="w-3.5 h-3.5 text-cyan-400" />
+              Travel <span className="text-[var(--color-text-muted)] font-normal">({travel_history.length})</span>
+            </h3>
+            {travel_history.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-muted)]">No travel records</p>
+            ) : (
+              <div className="space-y-2">
+                {travel_history.map((t, i) => (
+                  <div key={i} className="flex items-center gap-3 py-2 border-b border-[var(--color-border-subtle)] last:border-0">
+                    <div className="w-6 h-6 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                      <Plane className="w-3 h-3 text-cyan-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-white truncate">{t.from_location} → {t.to_location}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] font-mono">{t.travel_date || ''}{t.return_date ? ` to ${t.return_date}` : ''}{t.purpose ? ` · ${t.purpose}` : ''}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Family History */}
+          <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-4">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
+              <Users className="w-3.5 h-3.5 text-violet-400" />
+              Family <span className="text-[var(--color-text-muted)] font-normal">({family_history.length})</span>
+            </h3>
+            {family_history.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-muted)]">No family history records</p>
+            ) : (
+              <div className="space-y-2">
+                {family_history.map((f, i) => (
+                  <div key={i} className="flex items-center gap-3 py-2 border-b border-[var(--color-border-subtle)] last:border-0">
+                    <div className="w-6 h-6 rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
+                      <Users className="w-3 h-3 text-violet-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-white truncate"><span className="text-[var(--color-text-muted)]">{f.relationship}:</span> {f.condition}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] font-mono">Age {f.age_at_diagnosis || '?'}{f.is_deceased ? ' · Deceased' : ''}</p>
+                    </div>
+                    {f.is_deceased && <AlertTriangle className="w-3.5 h-3.5 text-[var(--color-accent-rose)] flex-shrink-0" />}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -127,13 +127,13 @@ def predict_patient_risk(patient_id: int, virus_name: str = Query(...),
     blood_map = {"A+": 0, "A-": 1, "B+": 2, "B-": 3, "AB+": 4, "AB-": 5, "O+": 6, "O-": 7}
     
     features = {
-        "age": (patient.age or 40) / 100.0,
+        "age": patient.age or 40,
         "blood_group": blood_map.get(patient.blood_group, 4),
         "gender_male": 1 if patient.gender and patient.gender.lower() == "male" else 0,
         "num_preexisting": len(p_conds),
         "num_doses": num_doses,
         "has_covid_vaccine": has_covid,
-        "last_vaccine_days": min(last_vaccine_days, 999) / 1000.0,
+        "last_vaccine_days": min(last_vaccine_days, 9999),
         "recent_travel": recent_travel,
         "num_trips": num_trips,
         "fam_high_risk": fam_high_risk,

@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     # MLflow
     mlflow_tracking_uri: str = "http://localhost:5000"
 
+    # Google OAuth
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    google_redirect_uri: str = "http://127.0.0.1:8000/api/v1/auth/google/callback"
+
     # Gemini AI — must be set via .env to enable AI features
     gemini_api_key: str | None = None
 

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 
 const CODE_BLOCK = /```(\w*)\n([\s\S]*?)```/g;
@@ -47,16 +46,18 @@ function parseLine(line, key) {
   return elements.length === 1 ? elements[0] : <React.Fragment key={key}>{elements}</React.Fragment>;
 }
 
-export default function MarkdownRenderer({ text }) {
+export default function MarkdownRenderer({ text }: { text?: string }) {
   if (!text) return null;
 
   const blocks = text.split(/(```[\s\S]*?```)/g);
   const elements = [];
 
-  blocks.forEach((block, bi) => {
+  blocks.forEach((block: string, bi: number) => {
     const codeMatch = block.match(CODE_BLOCK);
     if (codeMatch) {
-      const [, lang, code] = Array.from(block.matchAll(CODE_BLOCK))[0];
+      const match = Array.from(block.matchAll(CODE_BLOCK))[0];
+      const lang = match[1];
+      const code = match[2];
       elements.push(
         <pre key={bi} className="bg-[var(--color-bg-primary)] rounded-lg p-4 my-2 overflow-x-auto text-sm font-mono text-cyan-300 border border-[var(--color-border)]">
           <code>{code.trim()}</code>
@@ -103,12 +104,12 @@ export default function MarkdownRenderer({ text }) {
       if (isHeader) {
         const level = line.startsWith('### ') ? 3 : line.startsWith('## ') ? 2 : 1;
         const content = line.replace(/^#{1,3} /, '');
-        const H = `h${level}`;
         const sizes = { 1: 'text-lg', 2: 'text-base', 3: 'text-sm' };
+        const Tag = level === 1 ? 'h1' : level === 2 ? 'h2' : 'h3';
         elements.push(
-          <H key={`h-${bi}-${li}`} className={`font-bold mt-3 mb-1 text-white ${sizes[level] || 'text-sm'}`}>
+          <Tag key={`h-${bi}-${li}`} className={`font-bold mt-3 mb-1 text-white ${sizes[level] || 'text-sm'}`}>
             {parseLine(content, `${bi}-h-${li}`)}
-          </H>
+          </Tag>
         );
         return;
       }

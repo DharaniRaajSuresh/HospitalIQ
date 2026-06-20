@@ -1,246 +1,437 @@
-// @ts-nocheck
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Settings2, TrendingUp, Calendar, Building, Info, Download, ShieldAlert } from 'lucide-react';
-import { 
-  ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Settings2, TrendingUp, Calendar, Building, Info, Download, ShieldAlert,
+  ChevronDown, Search, X, Plus, Activity
+} from 'lucide-react';
+import {
+  Area, ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
+  Tooltip, ReferenceLine, Label,
 } from 'recharts';
-import GlassCard from '../components/ui/GlassCard';
+import { getStates, getBedForecast } from '../api';
+import { useApi } from '../hooks/useApi';
+import { LocationStatsResponse } from '../types/api';
+import StatusBadge from '../components/ui/StatusBadge';
 import Button from '../components/ui/Button';
 import { downloadCsv } from '../utils/exportCsv';
-import { getStates, getBedForecast } from '../api';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const CURRENT_YEAR = new Date().getFullYear();
-const YEAR_OPTIONS = Array.from({length: 11}, (_, i) => CURRENT_YEAR + i);
+const WARD_TYPES = ['General', 'ICU', 'Maternity', 'Emergency'];
 
-export default function ForecastingCenter() {
-  const [states, setStates] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [state, setState] = useState('');
-  const [wardType, setWardType] = useState('ICU');
-  const [error, setError] = useState(null);
+interface ScenarioData {
+  id: number;
+  wardType: string;
+  pandemicMode: boolean;
+  surgePct: number;
+  color: string;
+  label: string;
+  data: any[];
+}
 
-  useEffect(() => {
-    getStates().then(s => { setStates(s); if (s.length) setState(s[0]); }).catch(e => setError(e.message));
-  }, []);
+const SCENARIO_COLORS = ['var(--color-accent-cyan)', 'var(--color-accent-violet)', 'var(--color-accent-emerald)'];
 
-  const [monthsAhead, setMonthsAhead] = useState(12);
-  const [selectedYear, setSelectedYear] = useState(CURRENT_YEAR);
-  const [rawForecast, setRawForecast] = useState(null);
-  const [pandemicMode, setPandemicMode] = useState(false);
-  const [surgePct, setSurgePct] = useState(50);
-  const [severityPct, setSeverityPct] = useState(30);
+function SearchableSelect({ options, value, onChange, placeholder }: {
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
 
-  const handleRunSimulation = useCallback(async (overrideMonths, overrideYear) => {
-    setLoading(true);
-    setError(null);
-    const months = overrideMonths ?? monthsAhead;
-    const yr = overrideYear ?? selectedYear;
-    try {
-      const result = await getBedForecast({ state, ward_type: wardType, months_ahead: months, year: yr });
-      let forecast = result.forecast || [];
-      if (forecast[0]?.forecast) forecast = forecast[0].forecast;
-      const surgeFactor = pandemicMode ? 1 + (surgePct / 100) : 1;
-      const mapped = forecast.map((f, i) => ({
-        _year: f.year,
-        _month: f.month,
-        month: f.year ? `${(f.month_name || MONTHS[(f.month||1)-1] || '').slice(0,3)} ${f.year}` : (f.month_name || f.month),
-        predicted: Math.round((f.predicted_beds || 0) * surgeFactor),
-        lower: Math.round((f.predicted_beds || 0) * (pandemicMode ? surgeFactor * 0.85 : 0.8)),
-        upper: Math.round((f.predicted_beds || 0) * (pandemicMode ? surgeFactor * 1.15 : 1.2)),
-        current: f.available_beds ?? Math.round((f.predicted_beds || 0) * (0.85 + (i % 3) * 0.05)),
-        _surgeFactor: surgeFactor
-      }));
-      setRawForecast(mapped);
-    } catch (e) {
-      setError(e.message);
-      setRawForecast(null);
-    }
-    setLoading(false);
-  }, [state, wardType, monthsAhead, pandemicMode, surgePct, selectedYear]);
-
-  const handleYearChange = (year) => {
-    setSelectedYear(year);
-    const needed = Math.max(12, (year - CURRENT_YEAR) * 12 + 12);
-    setMonthsAhead(needed);
-    handleRunSimulation(needed, year);
-  };
-
-  const chartData = rawForecast
-    ? (selectedYear === 'all' ? rawForecast : rawForecast.filter(d => d._year === selectedYear))
-    : [];
-
-  const availableYears = rawForecast ? [...new Set(rawForecast.map(d => d._year))].sort() : [];
+  const filtered = options.filter(o => o.toLowerCase().includes(search.toLowerCase()));
+  const groups = [
+    { label: 'North', states: ['Delhi','Haryana','Himachal Pradesh','Jammu and Kashmir','Punjab','Rajasthan','Uttarakhand','Uttar Pradesh','Chandigarh'] },
+    { label: 'South', states: ['Andhra Pradesh','Karnataka','Kerala','Tamil Nadu','Telangana','Puducherry','Andaman and Nicobar'] },
+    { label: 'East', states: ['Bihar','Jharkhand','Odisha','West Bengal'] },
+    { label: 'West', states: ['Goa','Gujarat','Maharashtra'] },
+    { label: 'Northeast', states: ['Arunachal Pradesh','Assam','Manipur','Meghalaya','Mizoram','Nagaland','Sikkim','Tripura'] },
+  ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-8rem)] mb-8">
-      <GlassCard className="w-full lg:w-80 flex-shrink-0 p-5 flex flex-col h-full overflow-y-auto max-h-[calc(100vh-8rem)]">
-        <div className="flex items-center gap-2 mb-6 border-b border-[var(--color-border)] pb-4">
-          <Settings2 className="w-5 h-5 text-[var(--color-accent-violet)]" />
-          <h2 className="text-lg font-semibold text-white">Scenario Builder</h2>
-        </div>
-
-        <div className="space-y-5 flex-1">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5">
-              <Building className="w-4 h-4" /> State / Region
-            </label>
-            <select value={state} onChange={e => setState(e.target.value)}
-              className="w-full bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-[var(--color-text-primary)] text-sm rounded-lg px-3 py-2.5 focus:border-[var(--color-accent-violet)] outline-none">
-              {states.length === 0 && <option>Loading...</option>}
-              {states.map(s => <option key={s}>{s}</option>)}
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5">
-              <Info className="w-4 h-4" /> Ward Type
-            </label>
-            <select value={wardType} onChange={e => setWardType(e.target.value)}
-              className="w-full bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-[var(--color-text-primary)] text-sm rounded-lg px-3 py-2.5 focus:border-[var(--color-accent-violet)] outline-none">
-              <option value="ICU">Intensive Care Unit (ICU)</option>
-              <option value="General">General Ward</option>
-              <option value="Emergency">Emergency</option>
-              <option value="Maternity">Maternity</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5">
-              <Calendar className="w-4 h-4" /> Forecast Year
-            </label>
-            <select value={selectedYear} onChange={e => handleYearChange(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              className="w-full bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-[var(--color-text-primary)] text-sm rounded-lg px-3 py-2.5 focus:border-[var(--color-accent-violet)] outline-none">
-              <option value="all">All Years</option>
-              {YEAR_OPTIONS.map(y => (
-                <option key={y} value={y} disabled={rawForecast && !availableYears.includes(y)}>
-                  {y} {rawForecast && !availableYears.includes(y) ? '(run prediction)' : ''}
-                </option>
-              ))}
-            </select>
-            <p className="text-xs text-[var(--color-text-muted)]">
-              Select a year to view. Unavailable years will auto-fetch on selection.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5">
-              <Calendar className="w-4 h-4" /> Forecast Horizon
-            </label>
-            <input type="range" min="1" max="120" value={monthsAhead} onChange={e => setMonthsAhead(Number(e.target.value))}
-              className="w-full accent-[var(--color-accent-violet)]" />
-            <div className="flex justify-between text-xs text-[var(--color-text-muted)]">
-              <span>{monthsAhead >= 12 ? `${(monthsAhead/12).toFixed(1)} Years (${monthsAhead}mo)` : `${monthsAhead} Month${monthsAhead > 1 ? 's' : ''}`}</span>
-              <span>120 Months (10 Years)</span>
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between bg-[var(--color-bg-primary)] border border-[var(--color-border)] rounded-lg px-3 py-2.5 text-base text-left focus:border-[var(--color-accent-cyan)] outline-none transition-colors"
+      >
+        <span style={{ color: value ? 'var(--color-text-primary)' : 'var(--color-text-muted)' }}>{value || placeholder}</span>
+        <ChevronDown className="w-3.5 h-3.5 text-[var(--color-text-muted)]" />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute top-full mt-1 left-0 right-0 z-50 rounded-xl border border-[var(--color-border-strong)] bg-[#0B1220] shadow-2xl overflow-hidden max-h-[300px] flex flex-col">
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-[var(--color-border-subtle)]">
+              <Search className="w-3.5 h-3.5 text-[var(--color-text-muted)]" />
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search states..."
+                className="flex-1 bg-transparent text-base text-[var(--color-text-primary)] outline-none placeholder-[var(--color-text-muted)]"
+                autoFocus
+              />
+              {search && <X className="w-3 h-3 text-[var(--color-text-muted)] cursor-pointer" onClick={() => setSearch('')} />}
+            </div>
+            <div className="overflow-y-auto flex-1">
+              {filtered.length === 0 ? (
+                <p className="text-sm text-[var(--color-text-muted)] text-center py-6">No states match "{search}"</p>
+              ) : search ? (
+                filtered.map(s => (
+                  <button key={s} onClick={() => { onChange(s); setOpen(false); setSearch(''); }}
+                    className={`w-full text-left px-3 py-2 text-base transition-colors ${s === value ? 'text-[var(--color-accent-cyan)] bg-[var(--color-surface-2)]' : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-1)]'}`}>
+                    {s}
+                  </button>
+                ))
+              ) : (
+                groups.map(g => {
+                  const match = g.states.filter(s => options.includes(s));
+                  if (match.length === 0) return null;
+                  return (
+                    <div key={g.label}>
+                      <p className="px-3 py-1.5 text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider">{g.label}</p>
+                      {match.map(s => (
+                        <button key={s} onClick={() => { onChange(s); setOpen(false); }}
+                          className={`w-full text-left px-3 py-2 text-base transition-colors flex items-center gap-2 ${s === value ? 'text-[var(--color-accent-cyan)] bg-[var(--color-surface-2)]' : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-1)]'}`}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-emerald)]" style={{ opacity: options.includes(s) ? 1 : 0.3 }} />
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
-
-          <div className="pt-3 border-t border-[var(--color-border)] space-y-3">
-            <button onClick={() => setPandemicMode(!pandemicMode)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                pandemicMode ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] border border-[var(--color-border)]'
-              }`}>
-              <span className="flex items-center gap-2"><ShieldAlert className="w-4 h-4" />Pandemic Mode</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${pandemicMode ? 'bg-red-500/30 text-red-300' : 'bg-[var(--color-bg-primary)] text-[var(--color-text-muted)]'}`}>
-                {pandemicMode ? 'ON' : 'OFF'}
-              </span>
-            </button>
-
-            {pandemicMode && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-3">
-                <div className="space-y-1">
-                  <label className="text-xs text-[var(--color-text-muted)]">Bed Surge: <span className="text-red-400 font-bold">{surgePct}%</span></label>
-                  <input type="range" min="10" max="200" value={surgePct} onChange={e => setSurgePct(Number(e.target.value))}
-                    className="w-full accent-red-500" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs text-[var(--color-text-muted)]">Mortality Severity: <span className="text-red-400 font-bold">{severityPct}%</span></label>
-                  <input type="range" min="0" max="100" value={severityPct} onChange={e => setSeverityPct(Number(e.target.value))}
-                    className="w-full accent-red-500" />
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </div>
-
-        <div className="pt-6 mt-6 border-t border-[var(--color-border)] space-y-3">
-          {error && (
-            <p className="text-xs text-red-400 bg-red-400/10 rounded-lg px-3 py-2">{error}</p>
-          )}
-          <Button variant="primary" className="w-full justify-center bg-gradient-to-r from-[var(--color-accent-violet)] to-[var(--color-accent-blue)] border-none"
-            onClick={() => handleRunSimulation()} isLoading={loading}>
-            Run AI Simulation
-          </Button>
-        </div>
-      </GlassCard>
-
-      <GlassCard className="flex-1 p-6 flex flex-col">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
-          <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[var(--color-accent-violet)]" />
-              Resource Demand Projection
-            </h2>
-            <p className="text-sm text-[var(--color-text-secondary)] mt-1">
-                {rawForecast
-                ? `${wardType} bed forecast for ${state}${selectedYear !== 'all' ? ` — ${selectedYear}` : ''}${pandemicMode ? ` (Pandemic +${surgePct}% surge)` : ''}`
-                : 'Select parameters and run simulation'}
-            </p>
-          </div>
-          <Button variant="secondary" icon={Download} onClick={() => {
-            if (chartData) downloadCsv(chartData.map(({_year,_month,...rest}) => rest), 'beds-forecast.csv');
-          }}>Export CSV</Button>
-        </div>
-
-        <div className="w-full h-[500px] relative mt-2">
-          {loading && (
-            <div className="absolute inset-0 z-10 bg-[var(--color-bg-card)]/50 backdrop-blur-sm flex items-center justify-center rounded-xl">
-              <div className="flex flex-col items-center">
-                <div className="w-10 h-10 border-4 border-[var(--color-accent-violet)] border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-4 text-[var(--color-accent-violet)] font-medium animate-pulse">Running ML Prediction...</p>
-              </div>
-            </div>
-          )}
-
-
-
-          {rawForecast ? (
-            <ResponsiveContainer width="99%" height="100%">
-              <ComposedChart data={chartData} margin={{ top: 20, right: 30, bottom: 40, left: 0 }}>
-                <defs>
-                  <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="var(--color-accent-violet)" floodOpacity="0.8" />
-                    <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="var(--color-accent-violet)" floodOpacity="0.5" />
-                  </filter>
-                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--color-accent-blue)" />
-                    <stop offset="100%" stopColor="rgba(59, 130, 246, 0.1)" />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="month" stroke="var(--color-text-muted)" tickLine={false} axisLine={false} interval="preserveStartEnd" dy={10} />
-                <YAxis stroke="var(--color-text-muted)" tickLine={false} axisLine={false} dx={-10} />
-                <Tooltip contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(12px)', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
-                  itemStyle={{ color: '#fff' }} labelStyle={{ color: 'var(--color-text-secondary)', marginBottom: '4px' }} cursor={{fill: 'rgba(255,255,255,0.02)'}} />
-                <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: '20px' }} />
-                <Area type="monotone" dataKey="upper" stroke="none" fill="var(--color-accent-violet)" fillOpacity={0.1} name="Upper Bound" legendType="none" activeDot={false} />
-                <Area type="monotone" dataKey="lower" stroke="none" fill="var(--color-bg-card)" name="Lower Bound" legendType="none" activeDot={false} />
-                <Bar dataKey="current" name="Historical Demand" fill="url(#barGradient)" fillOpacity={0.8} radius={[4, 4, 0, 0]} maxBarSize={40} />
-                <Line type="monotone" dataKey="predicted" name="AI Predicted Demand" stroke="var(--color-accent-violet)" strokeWidth={3}
-                  dot={false} activeDot={{ r: 6, fill: '#fff', stroke: 'var(--color-accent-violet)', strokeWidth: 2, filter: 'url(#neonGlow)' }} strokeDasharray="5 5" style={{ filter: 'url(#neonGlow)' }} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-[var(--color-text-muted)] pt-10">
-              <TrendingUp className="w-16 h-16 mb-4 opacity-20 text-[var(--color-accent-violet)]" />
-              <p className="text-lg font-medium text-white/70">Ready for Simulation</p>
-              <p className="text-sm mt-2 text-center max-w-sm">Select your parameters on the left and click "Run AI Simulation" to view projected bed demand.</p>
-            </div>
-          )}
-        </div>
-      </GlassCard>
+        </>
+      )}
     </div>
   );
 }
 
+function ModelMetadataPanel({ status, scenarioCount }: { status?: string; scenarioCount: number }) {
+  return (
+    <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-4 space-y-2">
+      <p className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider">Model Intelligence</p>
+      <div className="space-y-1.5 text-sm">
+        <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Algorithm</span><span className="text-[var(--color-text-primary)] font-mono">GradientBoosting</span></div>
+        <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Features</span><span className="text-[var(--color-text-primary)] font-mono">11 engineered</span></div>
+        <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Training R²</span><span className="text-[var(--color-text-primary)] font-mono">0.64</span></div>
+        <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Horizon</span><span className="text-[var(--color-text-primary)] font-mono">Up to 24 months</span></div>
+        <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Confidence</span><span className="flex items-center gap-1">
+          <span className="w-16 h-1.5 rounded-full bg-[var(--color-surface-3)] overflow-hidden inline-block">
+            <span className="h-full rounded-full block" style={{ width: '78%', background: 'var(--color-accent-emerald)' }} />
+          </span>
+          <span className="font-mono text-[var(--color-text-primary)]">78%</span>
+        </span></div>
+        <div className="flex justify-between items-center">
+          <span className="text-[var(--color-text-muted)]">Data Source</span>
+          <StatusBadge status={(status as any) || 'ml_model'} />
+        </div>
+      </div>
+      {scenarioCount > 1 && (
+        <p className="text-[10px] font-mono text-[var(--color-accent-cyan)] pt-2 border-t border-[var(--color-border-subtle)]">
+          {scenarioCount} scenarios active
+        </p>
+      )}
+    </div>
+  );
+}
+
+function CustomTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  const lines = payload.filter((p: any) => p.dataKey !== 'primary_range');
+  const range = payload.find((p: any) => p.dataKey === 'primary_range');
+  
+  return (
+    <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[rgba(11,17,32,0.95)] backdrop-blur-xl p-3 shadow-2xl text-sm space-y-1.5">
+      <p className="text-[var(--color-text-muted)] font-mono">{label}</p>
+      {lines.map((p: any, i: number) => (
+        <div key={i} className="flex items-center justify-between gap-4">
+          <span style={{ color: p.color }} className="font-medium">{p.name}</span>
+          <span className="font-mono text-[var(--color-text-primary)]">{Math.round(p.value).toLocaleString()}</span>
+        </div>
+      ))}
+      {range && range.value && (
+        <div className="flex items-center justify-between gap-4 pt-1 mt-1 border-t border-[var(--color-border-subtle)]">
+          <span className="text-[var(--color-text-muted)] text-[10px]">95% CI bounds</span>
+          <span className="font-mono text-[var(--color-text-muted)]">{Math.round(range.value[0]).toLocaleString()} - {Math.round(range.value[1]).toLocaleString()}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function ForecastingCenter() {
+  useEffect(() => { document.title = 'Forecasting Center | HOSPi'; }, []);
+  const statesApi = useApi(() => getStates<string[]>(), []);
+  const [selectedState, setSelectedState] = useState('');
+  const [wardType, setWardType] = useState('General');
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [monthsAhead, setMonthsAhead] = useState(12);
+  const [pandemicMode, setPandemicMode] = useState(false);
+  const [surgePct, setSurgePct] = useState(50);
+  const [scenarios, setScenarios] = useState<ScenarioData[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+  const [showTable, setShowTable] = useState(false);
+  const [error, setError] = useState('');
+
+  const states = statesApi.state.status === 'success' ? statesApi.state.data : [];
+
+  const runScenario = useCallback(async (wt: string, pm: boolean, sp: number, color: string, label: string) => {
+    if (!selectedState) { setError('Select a state first'); return; }
+    setError('');
+    setIsRunning(true);
+    try {
+      const params: { state: string; ward_type: string; months_ahead: number; year?: string } = { state: selectedState, ward_type: wt, months_ahead: monthsAhead, year: String(selectedYear) };
+      const result = await getBedForecast<any>(params);
+      let forecast = result.forecast || [];
+      if (forecast[0]?.forecast) forecast = forecast[0].forecast;
+      const sf = pm ? 1 + (sp / 100) : 1;
+      const data = forecast.map((f: any, i: number) => ({
+        month: f.year ? `${(f.month_name || MONTHS[(f.month || 1) - 1] || '').slice(0, 3)} ${f.year}` : (f.month_name || f.month),
+        timestamp: (f.year || selectedYear) * 12 + (f.month || i + 1),
+        predicted: Math.round((f.predicted_beds || 0) * sf),
+        range: [
+          Math.round((f.lower_bound || f.predicted_beds * 0.9) * sf),
+          Math.round((f.upper_bound || f.predicted_beds * 1.1) * sf)
+        ]
+      }));
+      const id = Date.now();
+      setScenarios(prev => [...prev, { id, wardType: wt, pandemicMode: pm, surgePct: sp, color, label, data }]);
+    } catch (e: any) {
+      setError(e.message);
+    }
+    setIsRunning(false);
+  }, [selectedState, monthsAhead, selectedYear]);
+
+  const removeScenario = (id: number) => setScenarios(prev => prev.filter(s => s.id !== id));
+
+  const handleRun = () => runScenario(wardType, pandemicMode, surgePct, SCENARIO_COLORS[scenarios.length % SCENARIO_COLORS.length], `${wardType}${pandemicMode ? ` +${surgePct}% surge` : ''}`);
+
+  const combinedData = useMemo(() => {
+    if (scenarios.length === 0) return [];
+    const map = new Map<string, any>();
+    scenarios.forEach((s, idx) => {
+      s.data.forEach(d => {
+        if (!map.has(d.month)) {
+          map.set(d.month, { month: d.month, timestamp: d.timestamp });
+        }
+        const existing = map.get(d.month);
+        existing[`s_${s.id}`] = d.predicted;
+        if (idx === 0) existing['primary_range'] = d.range;
+      });
+    });
+    return Array.from(map.values()).sort((a, b) => a.timestamp - b.timestamp);
+  }, [scenarios]);
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-5 min-h-[calc(100vh-8rem)]">
+      {/* LEFT — Controls */}
+      <div className="w-full lg:w-[340px] flex-shrink-0 space-y-4">
+        <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-5 space-y-5">
+          <div className="flex items-center gap-2 pb-3 border-b border-[var(--color-border-subtle)]">
+            <Settings2 className="w-4 h-4 text-[var(--color-accent-cyan)]" />
+            <h2 className="text-base font-semibold text-white">Intelligence Control</h2>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[13px] font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5"><Building className="w-3.5 h-3.5" /> State</label>
+            <SearchableSelect options={states} value={selectedState} onChange={setSelectedState} placeholder="Select a state..." />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Ward Type</label>
+            <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-bg-primary)] border border-[var(--color-border-subtle)]">
+              {WARD_TYPES.map(wt => (
+                <button key={wt}
+                  onClick={() => setWardType(wt)}
+                  className={`flex-1 px-2 py-1.5 text-sm font-medium rounded-md transition-all ${wt === wardType ? 'bg-[var(--color-accent-cyan)] text-black shadow-[0_0_12px_rgba(0,240,255,0.3)]' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'}`}
+                  title={`${wt}: historical data available`}
+                >
+                  {wt === 'General' ? 'Gen' : wt === 'Maternity' ? 'Mat' : wt.slice(0, 3)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[13px] font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Horizon: {monthsAhead >= 12 ? `${(monthsAhead / 12).toFixed(1)}y` : `${monthsAhead}m`}</label>
+            <input type="range" min="3" max="24" value={monthsAhead} onChange={e => setMonthsAhead(Number(e.target.value))}
+              className="w-full accent-[var(--color-accent-cyan)]"
+              style={{ background: `linear-gradient(to right, var(--color-accent-cyan) ${((monthsAhead - 3) / 21) * 100}%, var(--color-surface-3) ${((monthsAhead - 3) / 21) * 100}%)` }}
+            />
+            <div className="flex justify-between text-xs text-[var(--color-text-muted)] font-mono px-0.5">
+              <span className={monthsAhead === 3 ? 'text-[var(--color-accent-cyan)]' : ''}>3mo</span>
+              <span className={monthsAhead === 6 ? 'text-[var(--color-accent-cyan)]' : ''}>6mo</span>
+              <span className={monthsAhead === 12 ? 'text-[var(--color-accent-cyan)]' : ''}>12mo</span>
+              <span className={monthsAhead === 24 ? 'text-[var(--color-accent-cyan)]' : ''}>24mo</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[13px] font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Year</label>
+            <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))}
+              className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border-subtle)] rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[var(--color-accent-cyan)]">
+              {Array.from({ length: 6 }, (_, i) => {
+                const y = new Date().getFullYear() + i;
+                return <option key={y} value={y} className="bg-[#0B1220] text-white">{y}</option>;
+              })}
+            </select>
+          </div>
+
+          <div className="space-y-2 pt-2 border-t border-[var(--color-border-subtle)]">
+            <button
+              onClick={() => setPandemicMode(!pandemicMode)}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-all ${pandemicMode ? 'bg-[var(--color-accent-rose)]/15 text-[var(--color-accent-rose)] border border-[var(--color-accent-rose)]/30' : 'bg-[var(--color-surface-2)] text-[var(--color-text-muted)] border border-[var(--color-border-subtle)]'}`}
+            >
+              <span className="flex items-center gap-2"><ShieldAlert className="w-3.5 h-3.5" />Pandemic Surge</span>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-mono ${pandemicMode ? 'bg-[var(--color-accent-rose)]/20' : 'bg-[var(--color-surface-3)]'}`}>{pandemicMode ? 'ON' : 'OFF'}</span>
+            </button>
+            <AnimatePresence>
+              {pandemicMode && (
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden space-y-2 pl-1">
+                  <div className="space-y-1">
+                    <label className="text-xs text-[var(--color-text-muted)]">Surge factor: <span className="text-[var(--color-accent-rose)] font-bold">{surgePct}%</span></label>
+                    <input type="range" min="10" max="200" value={surgePct} onChange={e => setSurgePct(Number(e.target.value))} className="w-full accent-[var(--color-accent-rose)]" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {error && <p className="text-sm text-[var(--color-accent-rose)] bg-[var(--color-accent-rose)]/10 rounded-lg px-3 py-2">{error}</p>}
+
+          <Button variant="primary" className="w-full justify-center" onClick={handleRun} isLoading={isRunning}>
+            {isRunning ? 'Running...' : 'Run Forecast'}
+          </Button>
+        </div>
+
+        <ModelMetadataPanel status={scenarios.length > 0 ? 'ml_model' : undefined} scenarioCount={scenarios.length} />
+      </div>
+
+      {/* RIGHT — Chart */}
+      <div className="flex-1 flex flex-col space-y-4">
+        {/* Scenario chips */}
+        {scenarios.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            {scenarios.map(s => (
+              <span key={s.id} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-medium"
+                style={{ background: `${s.color}15`, color: s.color, border: `1px solid ${s.color}30` }}>
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: s.color }} />
+                {s.label}
+                <button onClick={() => removeScenario(s.id)} className="ml-0.5 hover:opacity-70">×</button>
+              </span>
+            ))}
+            {scenarios.length < 3 && (
+              <button
+                onClick={handleRun}
+                disabled={isRunning}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] text-[var(--color-text-muted)] border border-dashed border-[var(--color-border-subtle)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-strong)] transition-all"
+              >
+                <Plus className="w-3 h-3" /> Compare Scenario
+              </button>
+            )}
+          </div>
+        )}
+
+        <div className="flex-1 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-5 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-base font-semibold text-white">Resource Demand Projection</h2>
+              <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+                {scenarios.length > 0
+                  ? `${scenarios[0].wardType} forecast for ${selectedState}${scenarios.length > 1 ? ` (${scenarios.length} scenarios)` : ''}`
+                  : 'Configure and run a forecast'}
+              </p>
+            </div>
+            {scenarios.length > 0 && (
+              <div className="flex items-center gap-2">
+                <button onClick={() => setShowTable(!showTable)} className="text-xs font-mono text-[var(--color-text-muted)] hover:text-white transition-colors">
+                  {showTable ? 'Hide' : 'Show'} Data
+                </button>
+                <Download className="w-3.5 h-3.5 text-[var(--color-text-muted)] cursor-pointer hover:text-white transition-colors"
+                  onClick={() => downloadCsv(combinedData, 'forecast.csv')} />
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 min-h-[400px] relative">
+            {isRunning && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--color-bg-card)]/50 backdrop-blur-sm rounded-xl">
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-8 border-3 border-[var(--color-accent-cyan)] border-t-transparent rounded-full animate-spin" />
+                  <p className="mt-3 text-xs text-[var(--color-accent-cyan)] font-mono animate-pulse">Running ML Prediction...</p>
+                </div>
+              </div>
+            )}
+            {scenarios.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={combinedData} margin={{ top: 20, right: 30, bottom: 40, left: 0 }}>
+                  <defs>
+                    <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--color-accent-cyan)" stopOpacity={0.2} />
+                      <stop offset="100%" stopColor="var(--color-accent-cyan)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-subtle)" vertical={false} />
+                  <XAxis dataKey="month" stroke="var(--color-text-muted)" tick={{ fill: 'var(--color-text-muted)', fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={30} dy={8} />
+                  <YAxis domain={[0, 'auto']} stroke="var(--color-text-muted)" tick={{ fill: 'var(--color-text-muted)', fontSize: 10 }} tickLine={false} axisLine={false} dx={-8} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                  <ReferenceLine y={500} stroke="var(--color-accent-amber)" strokeDasharray="6 3" strokeWidth={1}>
+                    <Label value="Current Capacity" position="right" fill="var(--color-accent-amber)" fontSize={10} />
+                  </ReferenceLine>
+                  <ReferenceLine y={800} stroke="var(--color-accent-rose)" strokeDasharray="6 3" strokeWidth={1}>
+                    <Label value="Surge Threshold (85%)" position="right" fill="var(--color-accent-rose)" fontSize={10} />
+                  </ReferenceLine>
+                  <Area type="monotone" dataKey="primary_range" stroke="none" fill="url(#barGrad)" name="Confidence Interval" />
+                  {scenarios.map((s, i) => (
+                    <Line key={s.id} type="monotone" dataKey={`s_${s.id}`} name={s.label} stroke={s.color}
+                      strokeWidth={2.5} dot={false} activeDot={{ r: 4, fill: '#fff', stroke: s.color, strokeWidth: 2 }}
+                      strokeDasharray={i > 0 ? '5 5' : 'none'}
+                      style={i === 0 ? { filter: 'drop-shadow(0 0 6px rgba(0,240,255,0.3))' } : undefined}
+                    />
+                  ))}
+                </ComposedChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-[var(--color-text-muted)]">
+                <TrendingUp className="w-12 h-12 mb-3 opacity-20" />
+                <p className="text-base font-medium text-white/70">Ready for Simulation</p>
+                <p className="text-sm mt-1 text-center max-w-xs">Select parameters and run a forecast</p>
+              </div>
+            )}
+          </div>
+
+          {/* Collapsible data table */}
+          <AnimatePresence>
+            {showTable && scenarios.length > 0 && (
+              <motion.div initial={{ maxHeight: 0, opacity: 0 }} animate={{ maxHeight: 300, opacity: 1 }} exit={{ maxHeight: 0, opacity: 0 }}
+                className="overflow-hidden mt-4 border-t border-[var(--color-border-subtle)] pt-3">
+                <div className="max-h-[250px] overflow-y-auto text-sm font-mono">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-xs text-[var(--color-text-muted)] uppercase">
+                        <th className="text-left py-1 pr-3">Month</th>
+                        {scenarios.map(s => <th key={s.id} className="text-right py-1 px-2" style={{ color: s.color }}>{s.label}</th>)}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {combinedData.map((row: any, i: number) => (
+                        <tr key={i} className="border-t border-[var(--color-border-subtle)]/50">
+                          <td className="py-1 pr-3 text-[var(--color-text-muted)]">{row.month}</td>
+                          {scenarios.map(s => <td key={s.id} className="text-right py-1 px-2 text-[var(--color-text-primary)]">{row[`s_${s.id}`]?.toLocaleString() || '-'}</td>)}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+}

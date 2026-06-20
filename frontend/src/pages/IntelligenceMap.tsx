@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Download, Shield, ArrowUpDown, Filter, MapPin } from 'lucide-react';
@@ -8,7 +7,7 @@ import { getAllDistricts } from '../api';
 import { downloadCsv } from '../utils/exportCsv';
 
 export default function IntelligenceMap() {
-  const [districts, setDistricts] = useState([]);
+  const [districts, setDistricts] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState('deathRate');
   const [sortDir, setSortDir] = useState('desc');
@@ -19,7 +18,7 @@ export default function IntelligenceMap() {
   useEffect(() => {
     (async () => {
       try {
-        const allDistricts = await getAllDistricts();
+        const allDistricts: any[] = await getAllDistricts() as any[];
         const loaded = allDistricts.map(d => {
           const deathRate = d.avg_death_rate || 0;
           return {

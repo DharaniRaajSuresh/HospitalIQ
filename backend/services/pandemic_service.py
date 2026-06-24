@@ -188,6 +188,7 @@ def compute_projections(monthly: list[dict], target_year: int, max_data_year: in
                 try:
                     scenario = scenario_predictor.predict({
                         "disease": disease, "state": state, "target_year": target_year,
+                        "yearly_r0": None,
                     })
                     if scenario.get("is_ml"):
                         target_annual = scenario["total_cases"]
@@ -238,9 +239,47 @@ def compute_risk_score(totals: dict, target_year: int, projected_cfr: float,
     return (score, level, ml_used)
 
 
+def fetch_yearly_r0(disease: str, state: Optional[str], db: Session) -> list[dict]:
+    q = db.query(
+        PandemicOutbreak.year,
+        func.avg(PandemicOutbreak.reproduction_rate),
+        func.avg(PandemicOutbreak.case_fatality_rate),
+        func.sum(PandemicOutbreak.confirmed_cases),
+    ).filter(PandemicOutbreak.disease == disease)
+    if state:
+        q = q.filter(PandemicOutbreak.state == state)
+    rows = q.group_by(PandemicOutbreak.year).order_by(PandemicOutbreak.year).all()
+    return [
+        {"year": r[0], "avg_r0": round(float(r[1] or 0), 2),
+         "avg_cfr": round(float(r[2] or 0), 2), "total_cases": int(r[3] or 0)}
+        for r in rows
+    ]
+
+
+def evaluate_lockdown_ml(totals: dict, disease: str, state: Optional[str]) -> dict:
+    lockdown_predictor = loaded_predictors.get("lockdown")
+    if lockdown_predictor and getattr(lockdown_predictor, "_is_loaded", False) and state:
+        try:
+            return lockdown_predictor.predict({
+                "avg_r0": totals.get("avg_r0", 0),
+                "avg_cfr": totals.get("avg_cfr", 0),
+                "total_cases": totals.get("total_confirmed", 0),
+                "total_deaths": totals.get("total_deaths", 0),
+                "total_bed_demand": totals.get("total_bed_demand", 0),
+                "total_icu_demand": totals.get("total_icu_demand", 0),
+                "disease_enc": 0,
+                "state_enc": 0,
+            })
+        except Exception as e:
+            logger.warning(f"Lockdown ML failed: {e}")
+    r0 = totals.get("avg_r0", 0)
+    return {"lockdown_probability": round(min(1.0, r0 / 5.0), 3), "lockdown_recommended": r0 > 3.5, "model": "deterministic", "is_ml": False}
+
+
 def generate_recommendations(projected_occupancy: float, bed_shortage: int, icu_shortage: int,
                              projected_cfr: float, avg_r0: float, hospitals_at_risk: list,
-                             risk_level: str, state: Optional[str], target_year: int) -> list[str]:
+                             risk_level: str, state: Optional[str], target_year: int,
+                             lockdown_info: Optional[dict] = None) -> list[str]:
     recs = []
     if projected_occupancy > 85:
         recs.append(f"Bed occupancy may hit {projected_occupancy}% in {target_year} — activate surge capacity protocols")
@@ -254,6 +293,12 @@ def generate_recommendations(projected_occupancy: float, bed_shortage: int, icu_
         recs.append(f"High transmissibility (R0={avg_r0}) — strict containment measures recommended")
     if len(hospitals_at_risk) > 3:
         recs.append(f"{len(hospitals_at_risk)} ML-identified hospitals at risk — prioritize resource allocation")
+    if lockdown_info and lockdown_info.get("lockdown_recommended"):
+        prob = lockdown_info.get("lockdown_probability", 0) * 100
+        recs.append(f"MANDATORY: Lockdown recommended ({prob:.0f}% confidence) — initiate immediately")
+    elif lockdown_info and lockdown_info.get("lockdown_probability", 0) > 0.5:
+        prob = lockdown_info.get("lockdown_probability", 0) * 100
+        recs.append(f"ADVISORY: Prepare for potential lockdown ({prob:.0f}% probability)")
     if risk_level in ("high", "critical"):
         msg = "CRITICAL: Emergency protocols must be activated before outbreak peak" if risk_level == "high" else "OVERWHELMING: Mass casualty triage, patient evacuation, and field hospitals required"
         recs.append(msg)
@@ -323,9 +368,18 @@ def build_scenario(disease: str, state: Optional[str], target_year: int, db: Ses
     verdict = verdicts.get(risk_level, "Unknown") if ml_risk else (
         "Tolerable" if risk_score < 30 else "Concerning" if risk_score < 55 else "Critical" if risk_score < 80 else "Overwhelming")
 
+    # Lockdown: use projected-year data — skip ML for obviously safe scenarios
+    if totals.get("total_deaths", 0) < 10 or totals.get("avg_cfr", 0) < 0.1:
+        lockdown_info = {"lockdown_probability": 0, "lockdown_recommended": False, "model": "deterministic", "is_ml": False}
+    else:
+        lockdown_info = evaluate_lockdown_ml(totals, disease, state)
+
     recommendations = generate_recommendations(projected_occupancy, bed_shortage, icu_shortage,
                                                 totals.get("avg_cfr", 0), totals.get("avg_r0", 0),
-                                                hospitals_at_risk, risk_level, state, target_year)
+                                                hospitals_at_risk, risk_level, state, target_year,
+                                                lockdown_info)
+
+    yearly_r0_data = fetch_yearly_r0(disease, state, db)
 
     return {
         "disease": disease, "disease_info": DISEASE_INFO.get(disease, {}),
@@ -382,4 +436,10 @@ def build_scenario(disease: str, state: Optional[str], target_year: int, db: Ses
         "monthly_breakdown": projected_monthly,
         "hospitals_at_risk": hospitals_at_risk,
         "recommendations": recommendations,
+        "recommendations_detailed": [
+            {"priority": i + 1, "message": rec, "category": "lockdown" if "lockdown" in rec.lower() else "capacity" if "bed" in rec.lower() or "icu" in rec.lower() else "containment" if "containment" in rec.lower() else "alert"}
+            for i, rec in enumerate(recommendations)
+        ],
+        "lockdown_recommended": lockdown_info.get("lockdown_recommended", False),
+        "yearly_r0_trend": yearly_r0_data,
     }

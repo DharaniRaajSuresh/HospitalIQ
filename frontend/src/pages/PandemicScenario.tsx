@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { ShieldAlert, Download, ChevronRight, Info } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
+import { ShieldAlert, Download, ChevronRight, Info, Lock } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine, LineChart, Line } from 'recharts';
 import { getStates, getPandemicScenario } from '../api';
 import { useApi } from '../hooks/useApi';
 import { PandemicScenarioResponse, HospitalRiskItem } from '../types/api';
@@ -120,18 +120,20 @@ export default function PandemicScenario() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-white flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 text-[var(--color-accent-rose)]" />
-            Pandemic Scenario Simulator
-          </h1>
-          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">6-ML Model Orchestration · Disease Outbreak Intelligence</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-white flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-[var(--color-accent-rose)]" />
+              Pandemic Scenario Simulator
+            </h1>
+            <p className="text-sm text-[var(--color-text-muted)] mt-0.5">6-ML Model Orchestration · Disease Outbreak Intelligence</p>
+          </div>
+          <div className="flex items-center gap-3">
+            {result && (
+              <Button variant="ghost" icon={Download} onClick={() => downloadCsv(chartData, 'pandemic.csv')}>Export</Button>
+            )}
+          </div>
         </div>
-        {result && (
-          <Button variant="ghost" icon={Download} onClick={() => downloadCsv(chartData, 'pandemic.csv')}>Export</Button>
-        )}
-      </div>
 
       {/* Step 1: Disease + State selector */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -202,6 +204,12 @@ export default function PandemicScenario() {
                   <StatusBadge status="live" />
                   <span className="text-sm text-[var(--color-text-muted)] font-mono">{result.state} · {result.projection_year}</span>
                   <span className="text-sm text-[var(--color-text-muted)] font-mono">R₀={result.outbreak_summary.avg_reproduction_rate} · CFR={result.outbreak_summary.avg_case_fatality_rate}%</span>
+                  {result.lockdown_recommended !== undefined && (
+                    <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold border ${result.lockdown_recommended ? 'bg-[var(--color-accent-rose)]/20 text-[var(--color-accent-rose)] border-[var(--color-accent-rose)]/40 shadow-[0_0_12px_rgba(244,67,54,0.3)]' : 'bg-[var(--color-accent-emerald)]/20 text-[var(--color-accent-emerald)] border-[var(--color-accent-emerald)]/40'}`}>
+                      <Lock className="w-3.5 h-3.5" />
+                      {result.lockdown_recommended ? 'LOCKDOWN RECOMMENDED' : 'Unlock'}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center justify-center gap-8 flex-wrap">
                   <RiskGauge score={result.tolerability.risk_score} level={result.tolerability.risk_level} verdict={result.tolerability.verdict} />
@@ -213,6 +221,26 @@ export default function PandemicScenario() {
                   </div>
                 </div>
               </div>
+
+              {/* Yearly R₀ Trend */}
+              {result.yearly_r0_trend && result.yearly_r0_trend.length > 1 && (
+                <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-5">
+                  <h3 className="text-sm font-semibold text-white mb-3">Yearly R₀ Trend</h3>
+                  <div className="h-[160px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={result.yearly_r0_trend} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-subtle)" vertical={false} />
+                        <XAxis dataKey="year" stroke="var(--color-text-muted)" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                        <YAxis stroke="var(--color-text-muted)" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                        <Tooltip cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                          contentStyle={{ background: 'rgba(11,17,32,0.9)', border: '1px solid var(--color-border-subtle)', borderRadius: '8px', fontSize: '11px' }} />
+                        <ReferenceLine y={3.0} stroke="var(--color-accent-rose)" strokeDasharray="4 4" label={{ value: 'Lockdown Threshold', fill: 'var(--color-accent-rose)', fontSize: 9 }} />
+                        <Line type="monotone" dataKey="avg_r0" stroke="var(--color-accent-cyan)" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Zone 2: Timeline */}

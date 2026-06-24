@@ -56,10 +56,11 @@ async def lifespan(app: FastAPI):
         from backend.app_state import loaded_predictors
         from backend.predictors import BedPredictor, ForecastPredictor, HospitalPredictor, MortalityPredictor, RiskPredictor, ScenarioPredictor
         from backend.predictors.patient_risk_predictor import PatientRiskPredictor
+        from backend.predictors.lockdown_predictor import LockdownPredictor
 
         for name, cls in [("bed", BedPredictor), ("mortality", MortalityPredictor), ("hospital", HospitalPredictor),
                            ("risk", RiskPredictor), ("forecast", ForecastPredictor), ("scenario", ScenarioPredictor),
-                           ("patient_risk", PatientRiskPredictor)]:
+                           ("patient_risk", PatientRiskPredictor), ("lockdown", LockdownPredictor)]:
             try:
                 p = cls()
                 p.load_model()

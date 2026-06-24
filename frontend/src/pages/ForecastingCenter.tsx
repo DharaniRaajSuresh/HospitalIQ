@@ -169,7 +169,6 @@ export default function ForecastingCenter() {
   const [selectedState, setSelectedState] = useState('');
   const [wardType, setWardType] = useState('General');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [monthsAhead, setMonthsAhead] = useState(12);
   const [pandemicMode, setPandemicMode] = useState(false);
   const [surgePct, setSurgePct] = useState(50);
   const [scenarios, setScenarios] = useState<ScenarioData[]>([]);
@@ -184,7 +183,7 @@ export default function ForecastingCenter() {
     setError('');
     setIsRunning(true);
     try {
-      const params: { state: string; ward_type: string; months_ahead: number; year?: string } = { state: selectedState, ward_type: wt, months_ahead: monthsAhead, year: String(selectedYear) };
+      const params: { state: string; ward_type: string; months_ahead: number; year?: string } = { state: selectedState, ward_type: wt, months_ahead: 12, year: String(selectedYear) };
       const result = await getBedForecast<any>(params);
       let forecast = result.forecast || [];
       if (forecast[0]?.forecast) forecast = forecast[0].forecast;
@@ -204,11 +203,11 @@ export default function ForecastingCenter() {
       setError(e.message);
     }
     setIsRunning(false);
-  }, [selectedState, monthsAhead, selectedYear]);
+  }, [selectedState, selectedYear]);
 
   const removeScenario = (id: number) => setScenarios(prev => prev.filter(s => s.id !== id));
 
-  const handleRun = () => runScenario(wardType, pandemicMode, surgePct, SCENARIO_COLORS[scenarios.length % SCENARIO_COLORS.length], `${wardType}${pandemicMode ? ` +${surgePct}% surge` : ''}`);
+  const handleRun = () => runScenario(wardType, pandemicMode, surgePct, SCENARIO_COLORS[scenarios.length % SCENARIO_COLORS.length], `${wardType} ${selectedYear}${pandemicMode ? ` +${surgePct}% surge` : ''}`);
 
   const combinedData = useMemo(() => {
     if (scenarios.length === 0) return [];
@@ -253,20 +252,6 @@ export default function ForecastingCenter() {
                   {wt === 'General' ? 'Gen' : wt === 'Maternity' ? 'Mat' : wt.slice(0, 3)}
                 </button>
               ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[13px] font-medium text-[var(--color-text-secondary)] flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Horizon: {monthsAhead >= 12 ? `${(monthsAhead / 12).toFixed(1)}y` : `${monthsAhead}m`}</label>
-            <input type="range" min="3" max="24" value={monthsAhead} onChange={e => setMonthsAhead(Number(e.target.value))}
-              className="w-full accent-[var(--color-accent-cyan)]"
-              style={{ background: `linear-gradient(to right, var(--color-accent-cyan) ${((monthsAhead - 3) / 21) * 100}%, var(--color-surface-3) ${((monthsAhead - 3) / 21) * 100}%)` }}
-            />
-            <div className="flex justify-between text-xs text-[var(--color-text-muted)] font-mono px-0.5">
-              <span className={monthsAhead === 3 ? 'text-[var(--color-accent-cyan)]' : ''}>3mo</span>
-              <span className={monthsAhead === 6 ? 'text-[var(--color-accent-cyan)]' : ''}>6mo</span>
-              <span className={monthsAhead === 12 ? 'text-[var(--color-accent-cyan)]' : ''}>12mo</span>
-              <span className={monthsAhead === 24 ? 'text-[var(--color-accent-cyan)]' : ''}>24mo</span>
             </div>
           </div>
 

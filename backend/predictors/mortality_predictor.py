@@ -48,9 +48,10 @@ class MortalityPredictor(BasePredictor):
         self._cluster_model = None
         self._state_encoding = {}
         self._district_encoding = {}
-        self._cause_encoding = {c: i for i, c in enumerate(sorted(
-            ["Cardiac", "Respiratory", "Infectious", "Cancer", "Accident", "Maternal", "Neonatal", "Other"]
-        ))}
+        self._cause_encoding = {
+            "Cardiac": 0, "Respiratory": 1, "Infectious": 2, "Cancer": 3,
+            "Accident": 4, "Maternal": 5, "Neonatal": 6, "Other": 7
+        }
         self._age_mapping = {"0-14": 0, "15-44": 1, "45-64": 2, "65+": 3}
         self._district_to_state = {}
         self._last_known_rates = {}  # for computing lag features at prediction time

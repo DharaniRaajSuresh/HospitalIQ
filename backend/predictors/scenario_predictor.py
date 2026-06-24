@@ -42,6 +42,7 @@ class ScenarioPredictor(BasePredictor):
         disease = input_data.get("disease", "")
         state = input_data.get("state", "")
         target_year = int(input_data.get("target_year", 2025))
+        yearly_r0 = input_data.get("yearly_r0", None)
         meta = self._metadata or {}
         d_enc = meta.get("disease_encoding", {}).get(disease, 0)
         s_enc = meta.get("state_encoding", {}).get(state, 0)
@@ -56,6 +57,14 @@ class ScenarioPredictor(BasePredictor):
         dd = disease_defaults.get(disease, {"cfr": 1.0, "r0": 2.0})
         cfr_val = dd.get("cfr", 1.0)
         r0_val = dd.get("r0", 2.0)
+
+        # Use per-target-year R₀ if available
+        if yearly_r0 and isinstance(yearly_r0, list):
+            for entry in yearly_r0:
+                if entry.get("year") == target_year:
+                    r0_val = entry.get("avg_r0", r0_val)
+                    cfr_val = entry.get("avg_cfr", cfr_val)
+                    break
 
         ty_norm = (target_year - 2017) / 15
         feat = np.array([[ty_norm, cfr_val, r0_val, state_beds_val, state_hospitals_val, d_enc, s_enc]])

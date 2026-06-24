@@ -92,6 +92,9 @@ export interface PandemicScenarioResponse {
     bed_demand_risk: number;
   };
   recommendations: string[];
+  recommendations_detailed?: { priority: number; message: string; category: string }[];
+  lockdown_recommended?: boolean;
+  yearly_r0_trend?: { year: number; avg_r0: number; avg_cfr: number; total_cases: number }[];
   hospitals_at_risk: HospitalRiskItem[];
 }
 

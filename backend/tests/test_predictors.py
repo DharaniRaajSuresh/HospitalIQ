@@ -203,7 +203,7 @@ class TestPatientRiskPredictor:
 class TestLockdownPredictor:
     def test_validate_input_valid(self):
         p = LockdownPredictor()
-        assert p.validate_input({"disease": "COVID-19", "state": "Kerala", "target_year": 2026})
+        assert p.validate_input({"total_cases": 1000, "total_deaths": 50, "avg_r0": 1.5})
 
     def test_feature_names(self):
         p = LockdownPredictor()

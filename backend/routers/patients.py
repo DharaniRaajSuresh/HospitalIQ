@@ -1,14 +1,14 @@
 """Patient records and personalized pandemic risk endpoints."""
 import logging
-from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from backend.database import get_db
-from backend.repositories.patient_repository import PatientRepository
-from backend.auth import require_user
-from backend.models import User
 from backend.app_state import loaded_predictors
+from backend.auth import require_user
+from backend.database import get_db
+from backend.models import User
+from backend.repositories.patient_repository import PatientRepository
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/patients", tags=["patients"])
@@ -85,15 +85,15 @@ def predict_patient_risk(patient_id: int, virus_name: str = Query(...),
     patient = repo.get_by_id(patient_id)
     if not patient:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
-    
+
     virus = repo.get_virus_by_name(virus_name)
     if not virus:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Virus '{virus_name}' not found in registry")
-    
+
     vaccines = repo.get_vaccine_history(patient_id)
     travels = repo.get_travel_history(patient_id)
     families = repo.get_family_history(patient_id)
-    
+
     # Build features
     high_risk_conds = {"diabetes", "cardiac", "cancer", "hypertension", "asthma", "renal", "obesity"}
     p_conds = set()
@@ -102,7 +102,7 @@ def predict_patient_risk(patient_id: int, virus_name: str = Query(...),
             c = c.strip()
             if c in high_risk_conds:
                 p_conds.add(c)
-    
+
     num_doses = len(vaccines)
     has_covid = 1 if any(("covid" in (v.virus_name or "").lower()) for v in vaccines) else 0
     last_vaccine_days = 999
@@ -111,7 +111,7 @@ def predict_patient_risk(patient_id: int, virus_name: str = Query(...),
             from datetime import date
             days = (date.today() - v.vaccination_date.date()).days
             last_vaccine_days = min(last_vaccine_days, days)
-    
+
     recent_travel = 0
     num_trips = len(travels)
     from datetime import date
@@ -120,12 +120,12 @@ def predict_patient_risk(patient_id: int, virus_name: str = Query(...),
             recent_travel = 1
         elif t.travel_date and (date.today() - t.travel_date.date()).days <= 60:
             recent_travel = 1
-    
+
     fam_high_risk = sum(1 for f in families if f.condition and f.condition.lower() in ("diabetes", "cardiac", "cancer", "stroke", "renal disease"))
     fam_total = len(families)
-    
+
     blood_map = {"A+": 0, "A-": 1, "B+": 2, "B-": 3, "AB+": 4, "AB-": 5, "O+": 6, "O-": 7}
-    
+
     features = {
         "age": patient.age or 40,
         "blood_group": blood_map.get(patient.blood_group, 4),
@@ -143,11 +143,11 @@ def predict_patient_risk(patient_id: int, virus_name: str = Query(...),
         "vaccine_available": 1 if virus.vaccine_available else 0,
         "vaccine_effectiveness": virus.vaccine_effectiveness or 0,
     }
-    
+
     predictor = loaded_predictors.get("patient_risk")
     if not predictor or not predictor.is_loaded:
         return {"error": "Patient risk predictor not loaded", "features": features}
-    
+
     result = predictor.predict(features)
     result["patient_id"] = patient_id
     result["patient_name"] = patient.patient_name

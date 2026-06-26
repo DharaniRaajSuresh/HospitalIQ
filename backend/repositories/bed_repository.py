@@ -11,12 +11,14 @@ BedRepository - Concrete repository for hospital beds
 Demonstrates: Inheritance, Polymorphism
 """
 
+import logging
+from typing import Any
+
+from sqlalchemy import func
+from sqlalchemy.orm import Session
+
 from backend.core.base_repository import BaseRepository
 from backend.models import HospitalBed
-from sqlalchemy.orm import Session
-from sqlalchemy import func
-from typing import List, Dict, Any
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -33,20 +35,20 @@ class BedRepository(BaseRepository):
     def __init__(self, db: Session):
         super().__init__(db, HospitalBed)
 
-    def get_by_state(self, state: str) -> List[HospitalBed]:
+    def get_by_state(self, state: str) -> list[HospitalBed]:
         """Get all bed records for a specific state."""
         return self._db.query(HospitalBed).filter(
             HospitalBed.state == state
         ).all()
 
-    def get_by_state_and_ward(self, state: str, ward_type: str) -> List[HospitalBed]:
+    def get_by_state_and_ward(self, state: str, ward_type: str) -> list[HospitalBed]:
         """Get bed records filtered by state and ward type."""
         return self._db.query(HospitalBed).filter(
             HospitalBed.state == state,
             HospitalBed.ward_type == ward_type
         ).all()
 
-    def get_summary_stats(self) -> Dict[str, Any]:
+    def get_summary_stats(self) -> dict[str, Any]:
         """Get aggregated bed statistics."""
         result = self._db.query(
             func.sum(HospitalBed.total_beds).label("total"),
@@ -59,7 +61,7 @@ class BedRepository(BaseRepository):
             "avg_occupancy_rate": round(float(result.avg_occupancy or 0), 2) if result.avg_occupancy else 0.0
         }
 
-    def get_monthly_trend(self, state: str, ward_type: str, year: int) -> List[Dict]:
+    def get_monthly_trend(self, state: str, ward_type: str, year: int) -> list[dict]:
         """Get bed trend data for a state/ward/year."""
         records = self._db.query(HospitalBed).filter(
             HospitalBed.state == state,
@@ -73,7 +75,7 @@ class BedRepository(BaseRepository):
             "occupancy": r.occupancy_rate
         } for r in records]
 
-    def get_by_state_and_month(self, state: str, month: int, year: int) -> List[HospitalBed]:
+    def get_by_state_and_month(self, state: str, month: int, year: int) -> list[HospitalBed]:
         """Get records for specific month and year."""
         return self._db.query(HospitalBed).filter(
             HospitalBed.state == state,

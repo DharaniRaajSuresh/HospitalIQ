@@ -4,11 +4,15 @@ Replaces hardcoded 5% annual decay with ML driven by:
   years_since_2020 (temporal decay), vaccination_rate (herd immunity),
   mutation_factor (variant emergence), population_density, disease, state.
 """
-import os, logging, math
-import numpy as np
+import logging
+import math
+import os
+
 import joblib
-from backend.core.base_predictor import BasePredictor
+import numpy as np
+
 from backend.app_state import normalize_state
+from backend.core.base_predictor import BasePredictor
 
 logger = logging.getLogger(__name__)
 

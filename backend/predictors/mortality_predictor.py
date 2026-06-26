@@ -11,12 +11,15 @@ MortalityPredictor - Concrete predictor for mortality risk analysis
 Monthly seasonal forecasting with lag/rolling features
 """
 
+import logging
+import math
+import os
+from typing import Any
+
+import pandas as pd
+
 from backend.core.base_predictor import BasePredictor
 from backend.predictors.risk_utils import assign_risk_level
-from typing import Any, Dict, List
-import pandas as pd
-import os, math
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +97,7 @@ class MortalityPredictor(BasePredictor):
             except Exception as e:
                 logger.warning(f"Could not load encodings from CSV: {e}")
 
-    def validate_input(self, input_data: Dict[str, Any]) -> bool:
+    def validate_input(self, input_data: dict[str, Any]) -> bool:
         """Validate input for mortality prediction."""
         required = ["district", "age_group", "cause", "year"]
         if not all(k in input_data for k in required):
@@ -115,11 +118,11 @@ class MortalityPredictor(BasePredictor):
             return False
         return True
 
-    def get_feature_names(self) -> List[str]:
+    def get_feature_names(self) -> list[str]:
         """Polymorphic: mortality-specific features."""
         return self.FEATURE_NAMES
 
-    def preprocess_input(self, raw_input: Dict[str, Any]) -> Dict[str, Any]:
+    def preprocess_input(self, raw_input: dict[str, Any]) -> dict[str, Any]:
         """Preprocess mortality data with monthly seasonality and lag features."""
         district = raw_input.get("district", "")
         state = raw_input.get("state", self._district_to_state.get(district, ""))
@@ -172,7 +175,7 @@ class MortalityPredictor(BasePredictor):
             "rolling_mean_6": rolling_6
         }
 
-    def predict(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    def predict(self, input_data: dict[str, Any]) -> dict[str, Any]:
         """Polymorphic predict — mortality-specific implementation."""
         if not self.validate_input(input_data):
             raise ValueError(f"Invalid input for MortalityPredictor: {input_data}")
@@ -195,7 +198,6 @@ class MortalityPredictor(BasePredictor):
         cluster_id = None
         if self._cluster_model and self._model:
             try:
-                import numpy as np
                 cluster_id = int(self._cluster_model.predict(features)[0])
             except Exception as e:
                 logger.warning("MortalityPredictor cluster predict failed: %s", e)

@@ -4,26 +4,31 @@ Two models: forecast_cases_model (confirmed_cases) and forecast_deaths_model (de
 Includes: hyperparameter tuning (GridSearchCV), time-based train/test split, MLflow tracking.
 """
 
-import os, sys, logging, warnings, math
+import logging
+import math
+import os
+import sys
+import warnings
+
 logging.disable(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 os.environ["SKIP_DB_INIT"] = "1"
 
+import joblib
 import numpy as np
 import pandas as pd
-import joblib
-from xgboost import XGBRegressor
 from sklearn.model_selection import GridSearchCV
 from sqlalchemy import func
+from xgboost import XGBRegressor
 
 try:
-    from ml_utils import setup_mlflow, cross_validate, save_model_versioned, MLFLOW_AVAILABLE, MODEL_DIR, logger
+    from ml_utils import MLFLOW_AVAILABLE, MODEL_DIR, cross_validate, logger, save_model_versioned, setup_mlflow
 except ImportError:
     sys.path.insert(0, os.path.dirname(__file__))
-    from ml_utils import setup_mlflow, cross_validate, save_model_versioned, MLFLOW_AVAILABLE, MODEL_DIR, logger
+    from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
 
 from backend.database import SessionLocal
-from backend.models import PandemicOutbreak, HospitalBed
+from backend.models import HospitalBed, PandemicOutbreak
 
 MODELS_DIR = MODEL_DIR
 os.makedirs(MODELS_DIR, exist_ok=True)

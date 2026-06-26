@@ -3,9 +3,12 @@ scenario_predictor.py — XGBoost annual scenario model.
 Predicts total annual cases/deaths given (state, disease, target_year).
 Used to scale the monthly forecast trajectory per target year.
 """
-import os, logging
-import numpy as np
+import logging
+import os
+
 import joblib
+import numpy as np
+
 from backend.core.base_predictor import BasePredictor
 
 logger = logging.getLogger("scenario")

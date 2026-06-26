@@ -2,7 +2,6 @@
 import logging
 import random
 import time
-from functools import wraps
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import func
@@ -10,7 +9,7 @@ from sqlalchemy import func
 from backend.app_state import normalize_state
 from backend.auth import get_current_user
 from backend.database import get_db
-from backend.models import HospitalBed, HospitalOutcome, MortalityRecord, StateSummary, DistrictSummary, User
+from backend.models import DistrictSummary, HospitalBed, HospitalOutcome, MortalityRecord, StateSummary, User
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["Locations"], prefix="/api/v1")
@@ -320,12 +319,12 @@ async def get_hospital_distribution(db=Depends(get_db), user: User | None = Depe
     cached = _cache_get("hosp_distribution")
     if cached is not None:
         return cached
-    
+
     rows = db.query(
         HospitalOutcome.hospital_type,
         func.count(HospitalOutcome.id)
     ).group_by(HospitalOutcome.hospital_type).all()
-    
+
     dist = {}
     for r in rows:
         t = r[0] or "Unknown"
@@ -336,6 +335,6 @@ async def get_hospital_distribution(db=Depends(get_db), user: User | None = Depe
             dist["Private"] = dist.get("Private", 0) + r[1]
         else:
             dist["Trust/Other"] = dist.get("Trust/Other", 0) + r[1]
-            
+
     _cache_set("hosp_distribution", dist)
     return dist

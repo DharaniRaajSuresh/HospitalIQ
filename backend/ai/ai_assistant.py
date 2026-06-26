@@ -3,10 +3,17 @@ import logging
 import re
 from typing import Any
 
-from backend.ai.gemini_client import GeminiClient
-from backend.ai.prompt_builder import PromptBuilder
 from backend.ai.context_fetcher import ContextFetcher
-from backend.ai.project_context import KNOWN_DISEASES, KNOWN_DISEASE_ALIASES, KNOWN_STATES, KNOWN_STATE_ALIASES, KNOWN_VIRUSES, KNOWN_VIRUS_ALIASES
+from backend.ai.gemini_client import GeminiClient
+from backend.ai.project_context import (
+    KNOWN_DISEASE_ALIASES,
+    KNOWN_DISEASES,
+    KNOWN_STATE_ALIASES,
+    KNOWN_STATES,
+    KNOWN_VIRUS_ALIASES,
+    KNOWN_VIRUSES,
+)
+from backend.ai.prompt_builder import PromptBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -163,8 +170,8 @@ class HospitalAIAssistant:
             response_text = (
                 "I'm sorry — I can understand your question, but the AI model is "
                 "currently at capacity (free tier quota). Please wait a moment and try again. "
-                f"Alternatively, you can check bed availability, hospital rankings, "
-                f"or mortality data on the dashboard."
+                "Alternatively, you can check bed availability, hospital rankings, "
+                "or mortality data on the dashboard."
             )
         return {
             "response": response_text,

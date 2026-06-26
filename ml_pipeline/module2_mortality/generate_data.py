@@ -1,8 +1,8 @@
-import numpy as np
-import pandas as pd
-import os
 import sys
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "ml_pipeline"))
@@ -208,11 +208,11 @@ def generate_mortality_data():
     df.to_csv(output_path, index=False)
 
     print(f"Generated {len(df):,} mortality records -> {output_path}")
-    print(f"\nMean death_rate by age_group:")
+    print("\nMean death_rate by age_group:")
     print(df.groupby("age_group")["death_rate"].mean().round(2).to_string())
-    print(f"\nMean death_rate by cause:")
+    print("\nMean death_rate by cause:")
     print(df.groupby("cause_of_death")["death_rate"].mean().round(2).to_string())
-    print(f"\nRisk cluster distribution:")
+    print("\nRisk cluster distribution:")
     print(df["risk_cluster"].value_counts().to_string())
     print(f"\nDeath rate range: {df['death_rate'].min():.2f} - {df['death_rate'].max():.2f}")
 

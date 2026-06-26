@@ -25,10 +25,10 @@ from contextlib import asynccontextmanager
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+from starlette.middleware.sessions import SessionMiddleware
 
 from backend.config import settings
 
@@ -70,9 +70,17 @@ async def lifespan(app: FastAPI):
     if not skip:
         logger.info("Loading ML predictors...")
         from backend.app_state import loaded_predictors
-        from backend.predictors import BedPredictor, ForecastPredictor, HospitalPredictor, MortalityPredictor, RiskPredictor, ScenarioPredictor, R0Predictor
-        from backend.predictors.patient_risk_predictor import PatientRiskPredictor
+        from backend.predictors import (
+            BedPredictor,
+            ForecastPredictor,
+            HospitalPredictor,
+            MortalityPredictor,
+            R0Predictor,
+            RiskPredictor,
+            ScenarioPredictor,
+        )
         from backend.predictors.lockdown_predictor import LockdownPredictor
+        from backend.predictors.patient_risk_predictor import PatientRiskPredictor
 
         for name, cls in [("bed", BedPredictor), ("mortality", MortalityPredictor), ("hospital", HospitalPredictor),
                            ("risk", RiskPredictor), ("forecast", ForecastPredictor), ("scenario", ScenarioPredictor),
@@ -111,7 +119,7 @@ async def lifespan(app: FastAPI):
     async def _background_scheduler() -> None:
         """Async background task: eager refresh if summaries are missing, then hourly."""
         from backend.database import SessionLocal
-        from backend.models import StateSummary, DistrictSummary
+        from backend.models import DistrictSummary, StateSummary
 
         try:
             db = SessionLocal()

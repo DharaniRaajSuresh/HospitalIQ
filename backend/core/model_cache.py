@@ -7,10 +7,11 @@ FAANG-grade model serving requires:
 - Graceful degradation when models unavailable
 """
 
-import time
 import logging
+import time
+from collections.abc import Callable
 from threading import Lock
-from typing import Any, Callable, Dict, Optional, Tuple, TypeVar
+from typing import Any, TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ class CircuitBreaker:
         self._last_failure_time = 0.0
         self._lock = Lock()
 
-    def call(self, fn: Callable[..., T], *args, **kwargs) -> Tuple[bool, Optional[T], Optional[str]]:
+    def call(self, fn: Callable[..., T], *args, **kwargs) -> tuple[bool, T | None, str | None]:
         with self._lock:
             if self._state == "open":
                 if time.monotonic() - self._last_failure_time > self._reset_timeout:
@@ -67,10 +68,10 @@ class ModelCache:
     def __init__(self, max_size: int = 10, default_ttl: float = 300.0):
         self._max_size = max_size
         self._default_ttl = default_ttl
-        self._cache: Dict[str, Tuple[Any, float, float]] = {}  # key -> (value, expiry, size)
+        self._cache: dict[str, tuple[Any, float, float]] = {}  # key -> (value, expiry, size)
         self._lock = Lock()
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         with self._lock:
             if key not in self._cache:
                 return None
@@ -81,7 +82,7 @@ class ModelCache:
                 return None
             return value
 
-    def set(self, key: str, value: Any, ttl: Optional[float] = None):
+    def set(self, key: str, value: Any, ttl: float | None = None):
         ttl = ttl or self._default_ttl
         expiry = time.monotonic() + ttl
         with self._lock:
@@ -91,7 +92,7 @@ class ModelCache:
                 logger.info(f"Cache evicted: {oldest} (max_size={self._max_size})")
             self._cache[key] = (value, expiry, 1)
 
-    def get_or_load(self, key: str, loader: Callable[[], Any], ttl: Optional[float] = None) -> Any:
+    def get_or_load(self, key: str, loader: Callable[[], Any], ttl: float | None = None) -> Any:
         cached = self.get(key)
         if cached is not None:
             return cached
@@ -119,8 +120,8 @@ class ModelCache:
 
 
 # Global singleton
-_cache: Optional[ModelCache] = None
-_circuit_breakers: Dict[str, CircuitBreaker] = {}
+_cache: ModelCache | None = None
+_circuit_breakers: dict[str, CircuitBreaker] = {}
 
 
 def get_model_cache() -> ModelCache:

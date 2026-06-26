@@ -4,9 +4,13 @@ monthly pandemic trajectory. Uses lag features, seasonality, and disease params
 to predict confirmed_cases and deaths for N months ahead.
 """
 
-import os, math, logging
-import numpy as np
+import logging
+import math
+import os
+
 import joblib
+import numpy as np
+
 from backend.core.base_predictor import BasePredictor
 
 logger = logging.getLogger("forecast")

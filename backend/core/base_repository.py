@@ -12,10 +12,11 @@ BaseRepository - Abstract Base Class for all database access
 Demonstrates: Abstraction, Encapsulation, Inheritance
 """
 
-from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Type, TypeVar
-from sqlalchemy.orm import Session
 import logging
+from abc import ABC, abstractmethod
+from typing import Any, TypeVar
+
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
@@ -33,18 +34,18 @@ class BaseRepository(ABC):
     - Polymorphism: get_by_state() and get_summary_stats() vary by subclass
     """
 
-    def __init__(self, db: Session, model_class: Type[T]):
+    def __init__(self, db: Session, model_class: type[T]):
         self._db = db                              # Encapsulated
         self._model_class = model_class            # Encapsulated
 
     # Concrete shared CRUD methods (Inheritance benefit)
-    def get_by_id(self, record_id: int) -> Optional[T]:
+    def get_by_id(self, record_id: int) -> T | None:
         """Get single record by ID."""
         return self._db.query(self._model_class).filter(
             self._model_class.id == record_id
         ).first()
 
-    def get_all(self, skip: int = 0, limit: int = 100) -> List[T]:
+    def get_all(self, skip: int = 0, limit: int = 100) -> list[T]:
         """Get all records with pagination."""
         return self._db.query(self._model_class).offset(skip).limit(limit).all()
 
@@ -52,7 +53,7 @@ class BaseRepository(ABC):
         """Count total records in table."""
         return self._db.query(self._model_class).count()
 
-    def create(self, obj_data: Dict[str, Any]) -> T:
+    def create(self, obj_data: dict[str, Any]) -> T:
         """Create single record."""
         db_obj = self._model_class(**obj_data)
         self._db.add(db_obj)
@@ -60,7 +61,7 @@ class BaseRepository(ABC):
         self._db.refresh(db_obj)
         return db_obj
 
-    def bulk_insert(self, records: List[Dict[str, Any]]) -> int:
+    def bulk_insert(self, records: list[dict[str, Any]]) -> int:
         """Insert multiple records efficiently."""
         self._db.bulk_insert_mappings(self._model_class, records)
         self._db.commit()
@@ -75,7 +76,7 @@ class BaseRepository(ABC):
             return True
         return False
 
-    def get_latest(self, limit: int = 10) -> List[T]:
+    def get_latest(self, limit: int = 10) -> list[T]:
         """Get most recently created records."""
         return self._db.query(self._model_class).order_by(
             self._model_class.id.desc()
@@ -83,11 +84,11 @@ class BaseRepository(ABC):
 
     # Abstract: each repository adds domain-specific queries
     @abstractmethod
-    def get_by_state(self, state: str) -> List[T]:
+    def get_by_state(self, state: str) -> list[T]:
         """Filter by state. Implementation varies by domain."""
         pass
 
     @abstractmethod
-    def get_summary_stats(self) -> Dict[str, Any]:
+    def get_summary_stats(self) -> dict[str, Any]:
         """Get aggregated statistics. Implementation varies by domain."""
         pass

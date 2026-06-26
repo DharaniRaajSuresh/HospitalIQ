@@ -4,20 +4,28 @@ Features: population_density, vaccination_rate, mutation_factor,
           years_since_2020, year_norm, disease_enc, state_enc.
 Synthetic data teaches: R0 decays with time/vaccination, spikes with mutation.
 """
-import os, sys, logging, warnings, math, random
+import logging
+import math
+import os
+import random
+import sys
+import warnings
+
 logging.disable(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 os.environ["SKIP_DB_INIT"] = "1"
 
-import numpy as np
-import pandas as pd
-import joblib
-from xgboost import XGBRegressor
-from sqlalchemy import func
 from collections import defaultdict
 
+import joblib
+import numpy as np
+import pandas as pd
+from sqlalchemy import func
+from xgboost import XGBRegressor
+
 sys.path.insert(0, os.path.dirname(__file__))
-from ml_utils import setup_mlflow, save_model_versioned, MODEL_DIR
+from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
+
 from backend.database import SessionLocal
 from backend.models import PandemicOutbreak
 
@@ -208,6 +216,7 @@ X = df[feature_cols].fillna(0).values
 y = df["target_r0"].values
 
 from sklearn.model_selection import train_test_split
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, random_state=42)
 print(f"Train: {len(X_train)}, Test: {len(X_test)}")
 
@@ -250,6 +259,7 @@ save_model_versioned(model, "r0_model", metrics, params)
 joblib.dump(model, os.path.join(MODELS_DIR, "r0_model.pkl"))
 
 from backend.app_state import normalize_state
+
 metadata = {
     "disease_encoding": dict(disease_enc),
     "state_encoding": {normalize_state(s): v for s, v in state_enc.items()},
@@ -267,7 +277,7 @@ for d in disease_enc:
     metadata["disease_defaults"][normalize_state(d)] = round(avg_r0, 3)
 
 joblib.dump(metadata, os.path.join(MODELS_DIR, "r0_metadata.pkl"))
-print(f"\nSaved: r0_model.pkl, r0_metadata.pkl")
+print("\nSaved: r0_model.pkl, r0_metadata.pkl")
 
 if mlflow:
     mlflow.log_metrics(metrics); mlflow.log_params(params); mlflow.end_run()

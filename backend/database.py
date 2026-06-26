@@ -7,12 +7,14 @@ that FastAPI uses to give each request its own database session.
 The database contains all the hospital data — beds, mortality records,
 hospital information, patient admissions — stored in tables defined in models/.
 """
+import logging
+from pathlib import Path
+
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
+
 from backend.config import settings
 from backend.models import Base
-from pathlib import Path
-import logging
 
 logger = logging.getLogger(__name__)
 

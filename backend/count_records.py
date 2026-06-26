@@ -1,5 +1,4 @@
 import sqlite3
-import os
 
 db_path = 'c:/hospi/ml_pipeline/data/hospitaliq.db'
 conn = sqlite3.connect(db_path)

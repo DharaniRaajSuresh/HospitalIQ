@@ -1,6 +1,9 @@
-import os, logging
-import numpy as np
+import logging
+import os
+
 import joblib
+import numpy as np
+
 from backend.core.base_predictor import BasePredictor
 
 logger = logging.getLogger(__name__)

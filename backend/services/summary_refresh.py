@@ -4,14 +4,12 @@ Computes and stores pre-aggregated state-level stats into the state_summaries ta
 Called at startup and every hour via a background thread.
 """
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from backend.models import (
-    HospitalBed, HospitalOutcome, MortalityRecord, StateSummary, DistrictSummary
-)
-from backend.app_state import normalize_state
+from backend.models import DistrictSummary, HospitalBed, HospitalOutcome, MortalityRecord, StateSummary
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +117,7 @@ def refresh_state_summaries(db: Session) -> None:
 
     rows_to_process = [None] + states   # None = All India
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     for state in rows_to_process:
         try:
@@ -159,7 +157,7 @@ def refresh_district_summaries(db: Session) -> None:
     """Recompute all district rows and upsert into district_summaries."""
     logger.info("Starting district_summaries refresh...")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     # We do a single pass computation to be fast
     # 1. Mortality aggregates per district
@@ -178,7 +176,7 @@ def refresh_district_summaries(db: Session) -> None:
         HospitalOutcome.hospital_name,
         func.max(HospitalOutcome.total_beds).label("max_beds")
     ).group_by(HospitalOutcome.state, HospitalOutcome.district, HospitalOutcome.hospital_name).subquery()
-    
+
     bed_rows = db.query(
         bsq.c.state,
         bsq.c.district,
@@ -197,7 +195,7 @@ def refresh_district_summaries(db: Session) -> None:
 
     # Map by (state, district)
     dmap = {}
-    
+
     for r in mort_rows:
         if not r.district: continue
         key = (r.state, r.district)

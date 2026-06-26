@@ -1,11 +1,11 @@
 """
 BasePredictor — loads ML model from disk with caching.
 """
-from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
-import os
-from datetime import datetime, timezone
 import logging
+import os
+from abc import ABC, abstractmethod
+from datetime import UTC, datetime
+from typing import Any
 
 import joblib
 
@@ -27,7 +27,7 @@ class BasePredictor(ABC):
         self._cache_ttl = cache_ttl
         self._model: Any = None
         self._is_loaded = False
-        self._load_timestamp: Optional[datetime] = None
+        self._load_timestamp: datetime | None = None
         self._cache = get_model_cache()
 
     @property
@@ -42,13 +42,13 @@ class BasePredictor(ABC):
     def model_path(self) -> str:
         return os.path.join(self._model_dir, f"{self._model_name}.pkl")
 
-    def load_model(self, version: Optional[str] = None) -> None:
+    def load_model(self, version: str | None = None) -> None:
         cache_key = f"{self._model_name}:{version or 'latest'}"
         cached = self._cache.get(cache_key)
         if cached is not None:
             self._model = cached
             self._is_loaded = True
-            self._load_timestamp = datetime.now(timezone.utc)
+            self._load_timestamp = datetime.now(UTC)
             logger.info(f"Cache hit: {cache_key}")
             return
 
@@ -57,11 +57,11 @@ class BasePredictor(ABC):
             raise FileNotFoundError(f"Model not found: {path}")
         self._model = joblib.load(path)
         self._is_loaded = True
-        self._load_timestamp = datetime.now(timezone.utc)
+        self._load_timestamp = datetime.now(UTC)
         self._cache.set(cache_key, self._model, ttl=self._cache_ttl)
         logger.info(f"Loaded {self._model_name} (cached for {self._cache_ttl}s)")
 
-    def get_model_info(self) -> Dict[str, Any]:
+    def get_model_info(self) -> dict[str, Any]:
         return {
             "model_name": self._model_name,
             "is_loaded": self._is_loaded,
@@ -70,18 +70,18 @@ class BasePredictor(ABC):
         }
 
     @abstractmethod
-    def predict(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    def predict(self, input_data: dict[str, Any]) -> dict[str, Any]:
         pass
 
     @abstractmethod
-    def validate_input(self, input_data: Dict[str, Any]) -> bool:
+    def validate_input(self, input_data: dict[str, Any]) -> bool:
         pass
 
     @abstractmethod
-    def get_feature_names(self) -> List[str]:
+    def get_feature_names(self) -> list[str]:
         pass
 
-    def preprocess_input(self, raw_input: Dict[str, Any]) -> Dict[str, Any]:
+    def preprocess_input(self, raw_input: dict[str, Any]) -> dict[str, Any]:
         return raw_input
 
     def __repr__(self) -> str:

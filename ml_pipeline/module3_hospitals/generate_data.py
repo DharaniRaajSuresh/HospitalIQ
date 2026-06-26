@@ -1,9 +1,9 @@
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import os
-import sys
-from pathlib import Path
-from datetime import datetime, timedelta
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "ml_pipeline"))

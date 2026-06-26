@@ -46,7 +46,7 @@ You are a world-class healthcare data analyst. Your answers must be precise, dat
             if entities.get("patient_id"):
                 detected.append(f"patient_id: {entities['patient_id']}")
             if detected:
-                parts.append(f"\n## Detected Entities\n" + ", ".join(detected))
+                parts.append("\n## Detected Entities\n" + ", ".join(detected))
 
         if context:
             parts.append("\n## Current Context Data — USE THIS TO ANSWER")

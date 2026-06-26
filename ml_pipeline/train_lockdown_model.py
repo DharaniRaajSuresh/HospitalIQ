@@ -1,10 +1,15 @@
-import os, sys, logging, joblib, numpy as np, pandas as pd
+import logging
+import os
 import sqlite3
-from xgboost import XGBClassifier
+import sys
+
+import joblib
+import pandas as pd
+from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, roc_auc_score, classification_report
 from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_sample_weight
+from xgboost import XGBClassifier
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 logging.basicConfig(level=logging.INFO)

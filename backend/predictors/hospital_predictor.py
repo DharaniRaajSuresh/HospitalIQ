@@ -12,11 +12,13 @@ HospitalPredictor - Concrete predictor for hospital success rate ranking
 Demonstrates: Inheritance, Polymorphism
 """
 
-from backend.core.base_predictor import BasePredictor
-from typing import Any, Dict, List
-import pandas as pd
-import os
 import logging
+import os
+from typing import Any
+
+import pandas as pd
+
+from backend.core.base_predictor import BasePredictor
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +81,7 @@ class HospitalPredictor(BasePredictor):
         else:
             self._outcomes_df = pd.DataFrame()
 
-    def validate_input(self, input_data: Dict[str, Any]) -> bool:
+    def validate_input(self, input_data: dict[str, Any]) -> bool:
         """Validate input for hospital ranking."""
         if "disease" not in input_data:
             logger.warning("Missing 'disease' field")
@@ -89,11 +91,11 @@ class HospitalPredictor(BasePredictor):
             return False
         return True
 
-    def get_feature_names(self) -> List[str]:
+    def get_feature_names(self) -> list[str]:
         """Polymorphic: hospital-specific features."""
         return self.FEATURE_NAMES
 
-    def preprocess_input(self, raw_input: Dict[str, Any]) -> Dict[str, Any]:
+    def preprocess_input(self, raw_input: dict[str, Any]) -> dict[str, Any]:
         """Preprocess hospital ranking data."""
         return {
             **raw_input,
@@ -107,7 +109,7 @@ class HospitalPredictor(BasePredictor):
             "accreditation_encoded": self._accred_encoding.get(raw_input.get("accreditation", "None"), 1),
         }
 
-    def predict(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    def predict(self, input_data: dict[str, Any]) -> dict[str, Any]:
         """Polymorphic predict — hospital ranking implementation."""
         if not self.validate_input(input_data):
             raise ValueError(f"Invalid input for HospitalPredictor: {input_data}")

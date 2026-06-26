@@ -1,13 +1,15 @@
 """Prediction endpoints: beds, mortality"""
-from datetime import datetime, timezone
+import logging
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func
-from backend.database import get_db
-from backend.app_state import normalize_state, loaded_predictors
-from backend.predictors.risk_utils import assign_risk_level
-from backend.models import HospitalBed, MortalityRecord, PredictionLog
+
+from backend.app_state import loaded_predictors, normalize_state
 from backend.auth import require_user
-import logging, time
+from backend.database import get_db
+from backend.models import HospitalBed, MortalityRecord, PredictionLog
+from backend.predictors.risk_utils import assign_risk_level
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["Predictions"], prefix="/api/v1/predict")
@@ -16,7 +18,7 @@ router = APIRouter(tags=["Predictions"], prefix="/api/v1/predict")
 def _log_pred(db, module, params, source):
     try:
         db.add(PredictionLog(module=module, input_params=params, prediction_result={"source": source},
-                             model_version=f"{module}_v1", response_time_ms=0, created_at=datetime.now(timezone.utc)))
+                             model_version=f"{module}_v1", response_time_ms=0, created_at=datetime.now(UTC)))
         db.commit()
     except Exception as e:
         logger.warning("Prediction log failed: %s", e)

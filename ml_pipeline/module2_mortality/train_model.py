@@ -4,21 +4,23 @@ Trains XGBoost regressor + KMeans clustering for mortality risk
 Includes: hyperparameter tuning (GridSearchCV), 5-fold CV, MLflow tracking
 """
 
-import os, sys, logging
-import pandas as pd
+import logging
+import os
+import sys
+
 import numpy as np
-from xgboost import XGBRegressor
+import pandas as pd
 from sklearn.cluster import KMeans
-from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, r2_score
-import joblib
+from sklearn.model_selection import GridSearchCV
+from xgboost import XGBRegressor
 
 try:
-    from ml_utils import setup_mlflow, cross_validate, save_model_versioned, MLFLOW_AVAILABLE, MODEL_DIR
+    from ml_utils import MLFLOW_AVAILABLE, MODEL_DIR, cross_validate, save_model_versioned, setup_mlflow
 except ImportError:
     import sys
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-    from ml_utils import setup_mlflow, cross_validate, save_model_versioned, MLFLOW_AVAILABLE, MODEL_DIR
+    from ml_utils import cross_validate, save_model_versioned, setup_mlflow
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

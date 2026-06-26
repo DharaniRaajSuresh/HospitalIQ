@@ -3,21 +3,19 @@ Unit tests for all 6 ML predictors: validate input, feature names, predict struc
 Uses mocking to avoid requiring actual model files on disk.
 """
 import os
+
 os.environ["SKIP_DB_INIT"] = "1"
 
-from unittest.mock import patch, MagicMock
-import numpy as np
-import pytest
 
 from backend.predictors.bed_predictor import BedPredictor
-from backend.predictors.mortality_predictor import MortalityPredictor
-from backend.predictors.hospital_predictor import HospitalPredictor
-from backend.predictors.risk_predictor import RiskPredictor
 from backend.predictors.forecast_predictor import ForecastPredictor
-from backend.predictors.patient_risk_predictor import PatientRiskPredictor
-from backend.predictors.scenario_predictor import ScenarioPredictor
+from backend.predictors.hospital_predictor import HospitalPredictor
 from backend.predictors.lockdown_predictor import LockdownPredictor
+from backend.predictors.mortality_predictor import MortalityPredictor
+from backend.predictors.patient_risk_predictor import PatientRiskPredictor
 from backend.predictors.r0_predictor import R0Predictor
+from backend.predictors.risk_predictor import RiskPredictor
+from backend.predictors.scenario_predictor import ScenarioPredictor
 
 
 class TestBedPredictor:

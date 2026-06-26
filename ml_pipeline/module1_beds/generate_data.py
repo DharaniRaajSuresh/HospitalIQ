@@ -1,8 +1,8 @@
-import numpy as np
-import pandas as pd
-import os
 import sys
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "ml_pipeline"))
@@ -156,9 +156,9 @@ def generate_bed_data():
     print(f"Generated {len(df):,} bed records -> {output_path}")
     print(f"States: {df['state'].nunique()}, Districts: {df['district'].nunique()}")
     print(f"Year range: {df['recorded_year'].min()}-{df['recorded_year'].max()}")
-    print(f"\nOccupancy rate (%) by ward type:")
+    print("\nOccupancy rate (%) by ward type:")
     print(df.groupby("ward_type")["occupancy_rate"].agg(["mean", "std", "min", "max"]).round(2).to_string())
-    print(f"\nCOVID ICU occupancy (2020-2021):")
+    print("\nCOVID ICU occupancy (2020-2021):")
     covid_icu = df[(df["ward_type"] == "ICU") & (df["recorded_year"].isin([2020, 2021]))]
     if len(covid_icu) > 0:
         print(f"  mean={covid_icu['occupancy_rate'].mean():.1f}%, max={covid_icu['occupancy_rate'].max():.1f}%")

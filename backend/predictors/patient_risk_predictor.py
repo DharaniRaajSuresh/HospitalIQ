@@ -1,10 +1,11 @@
 """Personalized patient pandemic risk predictor."""
-import pickle
 import logging
-from datetime import datetime, timezone
-import numpy as np
+import pickle
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ class PatientRiskPredictor:
         with open(meta_path, "rb") as f:
             self._metadata = pickle.load(f)
         self._is_loaded = True
-        self._load_timestamp = datetime.now(timezone.utc).isoformat()
+        self._load_timestamp = datetime.now(UTC).isoformat()
         logger.info("Loaded patient risk predictor")
 
     @property
@@ -47,20 +48,20 @@ class PatientRiskPredictor:
     def predict(self, features: dict[str, Any]) -> dict[str, Any]:
         if not self._is_loaded:
             return {"status": "ml_model", "error": "Model not loaded"}
-        
+
         feature_names = self._metadata["feature_names"]
         row = []
         for fn in feature_names:
             row.append(features.get(fn, 0.0))
-        
+
         X = np.array([row], dtype=np.float32)
-        
+
         result = {}
         for target in self._metadata["target_names"]:
             pred = self._models[target].predict(X)[0]
             result[target] = round(float(pred), 4)
             result[f"{target}_pct"] = round(float(pred) * 100, 1)
-        
+
         # Risk level
         rs = result["risk_score"]
         if rs < 0.2:
@@ -73,6 +74,6 @@ class PatientRiskPredictor:
             result["risk_level"] = "High"
         else:
             result["risk_level"] = "Critical"
-        
+
         result["status"] = "ml_model"
         return result

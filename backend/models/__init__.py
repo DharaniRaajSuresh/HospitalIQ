@@ -14,9 +14,10 @@ and database rows automatically.
 SQLAlchemy ORM Models for HospitalIQ
 """
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, Date, JSON, Text
+from datetime import UTC, datetime, timezone
+
+from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Float, Integer, String, Text
 from sqlalchemy.orm import DeclarativeBase
-from datetime import datetime, timezone
 
 
 class Base(DeclarativeBase):
@@ -54,7 +55,7 @@ class StateSummary(Base):
     # Bed occupancy
     avg_occupancy        = Column(Float, default=0)
 
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class DistrictSummary(Base):
@@ -81,7 +82,7 @@ class DistrictSummary(Base):
     total_deaths         = Column(Integer, default=0)
     population           = Column(Integer, default=0)
 
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class HospitalBed(Base):
@@ -98,7 +99,7 @@ class HospitalBed(Base):
     occupancy_rate = Column(Float, nullable=True)
     recorded_month = Column(Integer, nullable=True)
     recorded_year = Column(Integer, nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class MortalityRecord(Base):
@@ -116,7 +117,7 @@ class MortalityRecord(Base):
     death_rate = Column(Float, nullable=True)
     population = Column(Integer, nullable=True)
     risk_cluster = Column(String(50), index=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class HospitalOutcome(Base):
@@ -141,7 +142,7 @@ class HospitalOutcome(Base):
     accreditation = Column(String(50), nullable=True)
     hospital_score = Column(Float, nullable=True)
     rating = Column(Float, nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class PatientAdmission(Base):
@@ -163,7 +164,7 @@ class PatientAdmission(Base):
     stay_days = Column(Integer, nullable=True)
     treatment_cost = Column(Float, nullable=True)
     insurance_type = Column(String(50), nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class User(Base):
@@ -178,7 +179,7 @@ class User(Base):
     full_name = Column(String(255), nullable=True)
     role = Column(String(50), default="viewer")
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class ChatHistory(Base):
@@ -192,7 +193,7 @@ class ChatHistory(Base):
     content = Column(String(5000), nullable=False)
     intent_detected = Column(String(50), nullable=True)
     context_used = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class PandemicOutbreak(Base):
@@ -214,7 +215,7 @@ class PandemicOutbreak(Base):
     ventilator_demand = Column(Integer, nullable=True, default=0)
     reproduction_rate = Column(Float, nullable=True)
     case_fatality_rate = Column(Float, nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class PredictionLog(Base):
@@ -228,7 +229,7 @@ class PredictionLog(Base):
     prediction_result = Column(JSON, nullable=True)
     model_version = Column(String(50), nullable=True)
     response_time_ms = Column(Integer, nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc), index=True)
+    created_at = Column(DateTime, default=datetime.now(UTC), index=True)
 
 
 class VirusRegistry(Base):
@@ -245,7 +246,7 @@ class VirusRegistry(Base):
     vaccine_effectiveness = Column(Float, nullable=True)
     treatment_available = Column(Boolean, default=False)
     notes = Column(String(2000), nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class Patient(Base):
@@ -263,7 +264,7 @@ class Patient(Base):
     state = Column(String(100), nullable=True, index=True)
     district = Column(String(100), nullable=True)
     pre_existing_conditions = Column(String(1000), nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class VaccineHistory(Base):
@@ -279,7 +280,7 @@ class VaccineHistory(Base):
     batch_number = Column(String(100), nullable=True)
     virus_name = Column(String(100), nullable=True)
     effectiveness = Column(Float, nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class TravelHistory(Base):
@@ -293,7 +294,7 @@ class TravelHistory(Base):
     travel_date = Column(DateTime, nullable=True)
     return_date = Column(DateTime, nullable=True)
     purpose = Column(String(100), nullable=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))
 
 
 class FamilyHistory(Base):
@@ -306,4 +307,4 @@ class FamilyHistory(Base):
     condition = Column(String(255), nullable=True)
     age_at_diagnosis = Column(Integer, nullable=True)
     is_deceased = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(UTC))

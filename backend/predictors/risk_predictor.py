@@ -6,6 +6,7 @@ was learning back its own synthetic training labels (R² 0.99, meaningless).
 """
 
 import numpy as np
+
 from backend.core.base_predictor import BasePredictor
 
 FEATURE_NAMES = [

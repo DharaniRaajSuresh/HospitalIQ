@@ -15,12 +15,13 @@ BedDataProcessor - Concrete processor for bed data
 Demonstrates: Inheritance, Polymorphism, Template Method Pattern
 """
 
-from backend.core.base_processor import BaseDataProcessor
-import pandas as pd
-import numpy as np
-import math
-from sklearn.preprocessing import MinMaxScaler
 import logging
+import math
+
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
+from backend.core.base_processor import BaseDataProcessor
 
 logger = logging.getLogger(__name__)
 

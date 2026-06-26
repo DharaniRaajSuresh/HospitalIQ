@@ -1,6 +1,5 @@
 """Pandemic scenario service — clean business logic extracted from the 303-line router."""
 import logging
-from typing import Any, Optional
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -24,7 +23,7 @@ DISEASE_MAP = {"COVID-19": "Pneumonia", "H1N1": "Pneumonia", "SARS": "Pneumonia"
 MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 
-def fetch_outbreak_totals(disease: str, state: Optional[str], db: Session) -> dict:
+def fetch_outbreak_totals(disease: str, state: str | None, db: Session) -> dict:
     q = db.query(
         func.sum(PandemicOutbreak.confirmed_cases), func.sum(PandemicOutbreak.deaths),
         func.sum(PandemicOutbreak.recovered), func.sum(PandemicOutbreak.active_cases),
@@ -46,7 +45,7 @@ def fetch_outbreak_totals(disease: str, state: Optional[str], db: Session) -> di
     }
 
 
-def fetch_monthly_series(disease: str, state: Optional[str], db: Session) -> list[dict]:
+def fetch_monthly_series(disease: str, state: str | None, db: Session) -> list[dict]:
     q = db.query(
         PandemicOutbreak.year, PandemicOutbreak.month,
         func.sum(PandemicOutbreak.confirmed_cases), func.sum(PandemicOutbreak.deaths),
@@ -65,7 +64,7 @@ def fetch_monthly_series(disease: str, state: Optional[str], db: Session) -> lis
     ]
 
 
-def fetch_capacity(state: Optional[str], db: Session) -> dict:
+def fetch_capacity(state: str | None, db: Session) -> dict:
     bf = [HospitalBed.state == state] if state else []
     subq = db.query(HospitalBed.hospital_name, HospitalBed.ward_type,
                     func.max(HospitalBed.total_beds).label("max_beds"),
@@ -87,7 +86,7 @@ def fetch_capacity(state: Optional[str], db: Session) -> dict:
     }
 
 
-def predict_beds(state: Optional[str], target_year: int, cap: dict,
+def predict_beds(state: str | None, target_year: int, cap: dict,
                  bed_predictor) -> tuple[int, int, int]:
     if not (bed_predictor and getattr(bed_predictor, "_is_loaded", False) and state):
         return cap["total"], cap["icu"], cap["available"]
@@ -110,8 +109,8 @@ def predict_beds(state: Optional[str], target_year: int, cap: dict,
     return int(ml_total * growth), int(ml_icu * growth), max(0, int(ml_total * growth * (1 - cap["occupancy"] / 100)))
 
 
-def predict_mortality(state: Optional[str], disease: str, target_year: int, db: Session,
-                      mortality_predictor) -> Optional[float]:
+def predict_mortality(state: str | None, disease: str, target_year: int, db: Session,
+                      mortality_predictor) -> float | None:
     cause = DISEASE_TO_CAUSE.get(disease, "Other")
     if not (mortality_predictor and getattr(mortality_predictor, "_is_loaded", False) and state and cause != "Other"):
         return None
@@ -129,7 +128,7 @@ def predict_mortality(state: Optional[str], disease: str, target_year: int, db: 
         return None
 
 
-def predict_hospital_risk(disease: str, state: Optional[str], db: Session,
+def predict_hospital_risk(disease: str, state: str | None, db: Session,
                           hospital_predictor) -> list[dict]:
     mapped = DISEASE_MAP.get(disease)
     if hospital_predictor and getattr(hospital_predictor, "_is_loaded", False) and mapped:
@@ -160,7 +159,7 @@ def predict_hospital_risk(disease: str, state: Optional[str], db: Session,
 
 
 def compute_projections(monthly: list[dict], target_year: int, max_data_year: int,
-                        disease: str, state: Optional[str], totals: dict, ml_total: int,
+                        disease: str, state: str | None, totals: dict, ml_total: int,
                         cur_total: int, ml_icu: int, cur_occupancy: float, avg_cfr: float,
                         forecast_predictor, scenario_predictor=None) -> list[dict]:
     projected = list(monthly)
@@ -216,7 +215,7 @@ def compute_projections(monthly: list[dict], target_year: int, max_data_year: in
 def compute_risk_score(totals: dict, target_year: int, projected_cfr: float,
                        peak_bed_demand: int, ml_avail: int, ml_total: int,
                        cur_total: int, cur_occupancy: float, hospital_count: int,
-                       disease: str, state: Optional[str], risk_predictor) -> tuple[float, str, bool]:
+                       disease: str, state: str | None, risk_predictor) -> tuple[float, str, bool]:
     risk_input = {
         "disease": disease, "state": state or "", "total_confirmed": totals.get("total_confirmed", 0),
         "total_deaths": totals.get("total_deaths", 0), "avg_cfr": projected_cfr,
@@ -239,7 +238,7 @@ def compute_risk_score(totals: dict, target_year: int, projected_cfr: float,
     return (score, level, ml_used)
 
 
-def fetch_yearly_r0(disease: str, state: Optional[str], db: Session) -> list[dict]:
+def fetch_yearly_r0(disease: str, state: str | None, db: Session) -> list[dict]:
     q = db.query(
         PandemicOutbreak.year,
         func.avg(PandemicOutbreak.reproduction_rate),
@@ -256,7 +255,7 @@ def fetch_yearly_r0(disease: str, state: Optional[str], db: Session) -> list[dic
     ]
 
 
-def evaluate_lockdown_ml(totals: dict, disease: str, state: Optional[str]) -> dict:
+def evaluate_lockdown_ml(totals: dict, disease: str, state: str | None) -> dict:
     lockdown_predictor = loaded_predictors.get("lockdown")
     if lockdown_predictor and getattr(lockdown_predictor, "_is_loaded", False) and state:
         try:
@@ -276,8 +275,8 @@ def evaluate_lockdown_ml(totals: dict, disease: str, state: Optional[str]) -> di
 
 def generate_recommendations(projected_occupancy: float, bed_shortage: int, icu_shortage: int,
                              projected_cfr: float, avg_r0: float, hospitals_at_risk: list,
-                             risk_level: str, state: Optional[str], target_year: int,
-                             lockdown_info: Optional[dict] = None) -> list[str]:
+                             risk_level: str, state: str | None, target_year: int,
+                             lockdown_info: dict | None = None) -> list[str]:
     recs = []
     if projected_occupancy > 85:
         recs.append(f"Bed occupancy may hit {projected_occupancy}% in {target_year} — activate surge capacity protocols")
@@ -307,7 +306,7 @@ def generate_recommendations(projected_occupancy: float, bed_shortage: int, icu_
     return recs
 
 
-def build_scenario(disease: str, state: Optional[str], target_year: int, db: Session) -> dict:
+def build_scenario(disease: str, state: str | None, target_year: int, db: Session) -> dict:
     if state:
         state = normalize_state(state)
 

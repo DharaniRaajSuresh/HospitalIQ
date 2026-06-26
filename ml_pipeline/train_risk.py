@@ -4,26 +4,29 @@ from disease outbreak features. Uses all disease-state combos as training data.
 Includes: hyperparameter tuning (GridSearchCV), 5-fold CV, MLflow tracking.
 """
 
-import os, sys, logging
+import logging
+import os
+import sys
+
 logging.disable(logging.CRITICAL)
 os.environ["SKIP_DB_INIT"] = "1"
 
+import joblib
 import numpy as np
 import pandas as pd
-import joblib
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sqlalchemy import func, text
+from sqlalchemy import func
 
 try:
-    from ml_utils import setup_mlflow, cross_validate, save_model_versioned, MLFLOW_AVAILABLE, MODEL_DIR, logger
+    from ml_utils import MLFLOW_AVAILABLE, MODEL_DIR, cross_validate, logger, save_model_versioned, setup_mlflow
 except ImportError:
     sys.path.insert(0, os.path.dirname(__file__))
-    from ml_utils import setup_mlflow, cross_validate, save_model_versioned, MLFLOW_AVAILABLE, MODEL_DIR, logger
+    from ml_utils import MODEL_DIR, cross_validate, save_model_versioned, setup_mlflow
 
 from backend.database import SessionLocal
-from backend.models import PandemicOutbreak, HospitalBed
+from backend.models import HospitalBed, PandemicOutbreak
 
 MODELS_DIR = MODEL_DIR
 os.makedirs(MODELS_DIR, exist_ok=True)
@@ -186,7 +189,7 @@ if mlflow:
     mlflow.sklearn.log_model(model, "risk_model")
     mlflow.end_run()
 
-print(f"\nSaved: risk_model.pkl, risk_scaler.pkl, risk_encoding.pkl")
+print("\nSaved: risk_model.pkl, risk_scaler.pkl, risk_encoding.pkl")
 
 # Quick validation
 print("\nSample predictions:")

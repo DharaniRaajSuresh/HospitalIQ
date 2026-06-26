@@ -8,20 +8,22 @@ Target: available_beds
 Includes: hyperparameter tuning (GridSearchCV), 5-fold cross-validation, MLflow tracking
 """
 
-import os, sys, logging
-import pandas as pd
+import logging
+import os
+import sys
+
 import numpy as np
+import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import joblib
+from sklearn.model_selection import GridSearchCV
 
 try:
-    from ml_utils import setup_mlflow, save_model_versioned, MLFLOW_AVAILABLE, MODEL_DIR
+    from ml_utils import MLFLOW_AVAILABLE, MODEL_DIR, save_model_versioned, setup_mlflow
 except ImportError:
     import sys
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-    from ml_utils import setup_mlflow, save_model_versioned, MLFLOW_AVAILABLE, MODEL_DIR
+    from ml_utils import save_model_versioned, setup_mlflow
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

@@ -16,14 +16,16 @@ BedPredictor - Concrete predictor for bed availability forecasting
 Demonstrates: Inheritance, Polymorphism
 """
 
-from backend.core.base_predictor import BasePredictor
-from typing import Any, Dict, List
-import pandas as pd
-import os
-import logging
-from datetime import datetime
 import calendar
+import logging
 import math
+import os
+from datetime import datetime
+from typing import Any
+
+import pandas as pd
+
+from backend.core.base_predictor import BasePredictor
 
 logger = logging.getLogger(__name__)
 
@@ -74,8 +76,9 @@ class BedPredictor(BasePredictor):
     def load_model(self) -> None:
         """Extend parent load_model to also load scaler and historical data."""
         super().load_model()
-        import joblib
         from collections import deque
+
+        import joblib
 
         scaler_path = os.path.join(self._model_dir, "bed_scaler.pkl")
         if os.path.exists(scaler_path):
@@ -109,7 +112,7 @@ class BedPredictor(BasePredictor):
             except Exception as e:
                 logger.warning(f"Could not load historical data: {e}")
 
-    def validate_input(self, input_data: Dict[str, Any]) -> bool:
+    def validate_input(self, input_data: dict[str, Any]) -> bool:
         """Validate input before prediction."""
         required = ["state", "ward_type", "months_ahead"]
         if not all(k in input_data for k in required):
@@ -126,11 +129,11 @@ class BedPredictor(BasePredictor):
             return False
         return True
 
-    def get_feature_names(self) -> List[str]:
+    def get_feature_names(self) -> list[str]:
         """Polymorphic: bed-specific features."""
         return self.FEATURE_NAMES
 
-    def preprocess_input(self, raw_input: Dict[str, Any]) -> Dict[str, Any]:
+    def preprocess_input(self, raw_input: dict[str, Any]) -> dict[str, Any]:
         """Override parent preprocess with bed-specific logic."""
         month = raw_input.get("month", datetime.now().month)
         year = raw_input.get("year", datetime.now().year)
@@ -167,7 +170,7 @@ class BedPredictor(BasePredictor):
             "rolling_mean_6": last.get("rolling_mean_6", current_beds),
         }
 
-    def predict(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    def predict(self, input_data: dict[str, Any]) -> dict[str, Any]:
         """Iterative forecast — each prediction feeds into the next month's lag features."""
         if not self.validate_input(input_data):
             raise ValueError(f"Invalid input for BedPredictor: {input_data}")

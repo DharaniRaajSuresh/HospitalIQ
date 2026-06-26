@@ -8,9 +8,14 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
-from backend.auth import (clear_token_cookie, create_access_token,
-                           get_current_user, get_password_hash,
-                           set_token_cookie, verify_password)
+from backend.auth import (
+    clear_token_cookie,
+    create_access_token,
+    get_current_user,
+    get_password_hash,
+    set_token_cookie,
+    verify_password,
+)
 from backend.config import settings
 from backend.database import get_db
 from backend.models import User
@@ -137,7 +142,7 @@ async def google_callback(request: Request, db=Depends(get_db)):
             if token_resp.status_code != 200:
                 logger.error("Token exchange failed: %s", token_data)
                 return RedirectResponse(url=f"{FRONTEND_URL}/login?error=token_exchange")
-    except Exception as e:
+    except Exception:
         logger.error("Token exchange HTTP error: %s", exc_info=True)
         return RedirectResponse(url=f"{FRONTEND_URL}/login?error=token_exchange")
 
@@ -157,7 +162,7 @@ async def google_callback(request: Request, db=Depends(get_db)):
             if userinfo_resp.status_code != 200:
                 logger.error("Userinfo fetch failed: %s", userinfo)
                 return RedirectResponse(url=f"{FRONTEND_URL}/login?error=userinfo_failed")
-    except Exception as e:
+    except Exception:
         logger.error("Userinfo fetch HTTP error", exc_info=True)
         return RedirectResponse(url=f"{FRONTEND_URL}/login?error=userinfo_failed")
 

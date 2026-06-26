@@ -12,7 +12,6 @@ import sys
 from datetime import UTC, datetime
 from typing import Any
 
-import joblib
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
@@ -207,7 +206,7 @@ def retrain_model(model_cfg: dict) -> dict:
         result["error"] = "Training script failed"
         if os.path.exists(backup):
             shutil.copy2(backup, source_path)
-            logger.info(f"Restored backup after training failure")
+            logger.info("Restored backup after training failure")
         return result
 
     if not os.path.exists(source_path):
@@ -254,7 +253,7 @@ def retrain_model(model_cfg: dict) -> dict:
             logger.info(f"No significant improvement for {name}: {old_primary} -> {new_primary}")
             if os.path.exists(backup):
                 shutil.copy2(backup, source_path)
-                logger.info(f"Restored previous version (no improvement)")
+                logger.info("Restored previous version (no improvement)")
                 result["status"] = "skipped"
                 return result
 

@@ -2,7 +2,6 @@
 import logging
 import time
 from datetime import UTC, datetime
-from typing import Optional
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import func
@@ -19,7 +18,7 @@ _STATS_TTL = 300  # 5 minutes
 
 
 @router.get("/stats")
-async def get_stats(db=Depends(get_db), _: Optional[User] = Depends(get_current_user)):
+async def get_stats(db=Depends(get_db), _: User | None = Depends(get_current_user)):
     if _stats_cache["value"] and (time.time() - _stats_cache["ts"]) < _STATS_TTL:
         return _stats_cache["value"]
     result = {

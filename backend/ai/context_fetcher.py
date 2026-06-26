@@ -4,8 +4,17 @@ from typing import Any
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from backend.ai.project_context import get_project_context, format_project_context, KNOWN_DISEASES, KNOWN_STATES, KNOWN_VIRUSES
-from backend.models import HospitalBed, MortalityRecord, HospitalOutcome, PandemicOutbreak, Patient, VaccineHistory, VirusRegistry
+from backend.ai.project_context import (
+    format_project_context,
+    get_project_context,
+)
+from backend.models import (
+    HospitalBed,
+    HospitalOutcome,
+    MortalityRecord,
+    PandemicOutbreak,
+    VirusRegistry,
+)
 
 logger = logging.getLogger(__name__)
 

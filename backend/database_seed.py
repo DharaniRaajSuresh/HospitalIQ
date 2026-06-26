@@ -1,16 +1,16 @@
-import sys
-import os
 import math
-from pathlib import Path
-import pandas as pd
-import numpy as np
+import sys
 from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from backend.database import SessionLocal, init_db, engine
-from backend.models import Base, User, HospitalBed, MortalityRecord, HospitalOutcome, PatientAdmission
 from backend.auth import get_password_hash
+from backend.database import SessionLocal, init_db
+from backend.models import HospitalBed, HospitalOutcome, MortalityRecord, PatientAdmission, User
+
 
 def seed_db():
     print("=" * 60)
@@ -21,7 +21,7 @@ def seed_db():
     init_db()
 
     session = SessionLocal()
-    
+
     try:
         # 1. Seed Admin User
         admin_email = "admin@hospitaliq.com"
@@ -43,7 +43,7 @@ def seed_db():
 
         # Data path config
         raw_dir = Path(__file__).parent.parent / "ml_pipeline" / "data" / "raw"
-        
+
         # 2. Seed Hospital Beds
         beds_csv = raw_dir / "beds_raw.csv"
         if beds_csv.exists():
@@ -190,7 +190,7 @@ def seed_db():
             print(f"[WARNING] Patient admissions raw data not found at {admissions_csv}, skipping.")
 
         print("Database seeding phase complete!")
-        
+
     except Exception as e:
         session.rollback()
         print(f"[ERROR] Database seeding failed: {e}")

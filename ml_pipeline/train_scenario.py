@@ -4,26 +4,30 @@ Predicts total annual cases/deaths from disease parameters and state capacity.
 Two models: scenario_cases_model, scenario_deaths_model.
 """
 
-import os, sys, logging, warnings
+import logging
+import os
+import sys
+import warnings
+
 logging.disable(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 os.environ["SKIP_DB_INIT"] = "1"
 
+import joblib
 import numpy as np
 import pandas as pd
-import joblib
-from xgboost import XGBRegressor
 from sklearn.model_selection import GridSearchCV
 from sqlalchemy import func
+from xgboost import XGBRegressor
 
 try:
-    from ml_utils import setup_mlflow, save_model_versioned, MODEL_DIR
+    from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
 except ImportError:
     sys.path.insert(0, os.path.dirname(__file__))
-    from ml_utils import setup_mlflow, save_model_versioned, MODEL_DIR
+    from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
 
 from backend.database import SessionLocal
-from backend.models import PandemicOutbreak, HospitalBed
+from backend.models import HospitalBed, PandemicOutbreak
 
 MODELS_DIR = MODEL_DIR
 os.makedirs(MODELS_DIR, exist_ok=True)
@@ -182,7 +186,7 @@ if mlflow:
     mlflow.log_artifact(os.path.join(MODELS_DIR, "scenario_metadata.pkl"))
     mlflow.end_run()
 
-print(f"Saved: scenario_cases_model.pkl, scenario_deaths_model.pkl, scenario_metadata.pkl")
+print("Saved: scenario_cases_model.pkl, scenario_deaths_model.pkl, scenario_metadata.pkl")
 
 # Validation
 print("\n=== Validation: COVID-19 Maharashtra 2025 ===")

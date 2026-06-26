@@ -8,11 +8,13 @@ UserRepository - Concrete repository for user accounts
 Demonstrates: Inheritance, Polymorphism
 """
 
+import logging
+from typing import Any
+
+from sqlalchemy.orm import Session
+
 from backend.core.base_repository import BaseRepository
 from backend.models import User
-from sqlalchemy.orm import Session
-from typing import List, Dict, Any, Optional
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -29,14 +31,14 @@ class UserRepository(BaseRepository):
     def __init__(self, db: Session):
         super().__init__(db, User)
 
-    def get_by_email(self, email: str) -> Optional[User]:
+    def get_by_email(self, email: str) -> User | None:
         """Get user by email address."""
         return self._db.query(User).filter(User.email == email).first()
 
-    def get_by_state(self, state: str) -> List[User]:
+    def get_by_state(self, state: str) -> list[User]:
         raise NotImplementedError("Users do not have a state field")
 
-    def get_summary_stats(self) -> Dict[str, Any]:
+    def get_summary_stats(self) -> dict[str, Any]:
         """Get user statistics."""
         active_count = self._db.query(User).filter(User.is_active == True).count()
         total_count = self.count()
@@ -46,11 +48,11 @@ class UserRepository(BaseRepository):
             "inactive_users": total_count - active_count
         }
 
-    def get_active_users(self) -> List[User]:
+    def get_active_users(self) -> list[User]:
         """Get all active users."""
         return self._db.query(User).filter(User.is_active == True).all()
 
-    def get_by_role(self, role: str) -> List[User]:
+    def get_by_role(self, role: str) -> list[User]:
         """Get users by role."""
         return self._db.query(User).filter(User.role == role).all()
 

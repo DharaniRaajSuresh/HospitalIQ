@@ -7,7 +7,11 @@ Uses 3 separate RandomForestRegressors (one per target), stored as a dict
 for backward compatibility with PatientRiskPredictor.
 """
 
-import os, sys, logging, pickle
+import logging
+import os
+import pickle
+import sys
+
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor

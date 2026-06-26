@@ -10,8 +10,9 @@ Sources real public health datasets for India:
 Output: Processed CSVs for ML training + database seeding
 """
 
-import io, json, logging, os, random, sys, urllib.request, zipfile
-from datetime import datetime
+import logging
+import random
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -534,10 +535,17 @@ def seed_database(bed_df, mortality_df, pandemic_df, hospital_df, patients_df, a
     """Seed the SQLite database with real data."""
     logger.info("\n=== Seeding Database ===")
     sys.path.append(str(PROJECT_ROOT))
-    from backend.database import init_db, SessionLocal
-    from backend.models import (Base, User, HospitalBed, MortalityRecord,
-                                 HospitalOutcome, PatientAdmission, Patient, PandemicOutbreak)
     from backend.auth import get_password_hash
+    from backend.database import SessionLocal, init_db
+    from backend.models import (
+        HospitalBed,
+        HospitalOutcome,
+        MortalityRecord,
+        PandemicOutbreak,
+        Patient,
+        PatientAdmission,
+        User,
+    )
 
     init_db()
     session = SessionLocal()

@@ -11,12 +11,13 @@ MortalityDataProcessor - Concrete processor for mortality data
 Demonstrates: Inheritance, Polymorphism, Template Method Pattern
 """
 
-from backend.core.base_processor import BaseDataProcessor
-import pandas as pd
-import numpy as np
-import math
-from sklearn.preprocessing import StandardScaler
 import logging
+import math
+
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+from backend.core.base_processor import BaseDataProcessor
 
 logger = logging.getLogger(__name__)
 

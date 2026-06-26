@@ -207,7 +207,7 @@ class TestLockdownPredictor:
 
     def test_feature_names(self):
         p = LockdownPredictor()
-        assert "population_density" in p.get_feature_names()
+        assert "avg_r0" in p.get_feature_names()
 
 class TestR0Predictor:
     def test_validate_input_valid(self):

@@ -32,6 +32,8 @@ backend_err.log
 *.db
 *.sqlite
 test_*.db
+*.db-wal
+*.db-shm
 
 # ML Pipeline artifacts
 *.pkl

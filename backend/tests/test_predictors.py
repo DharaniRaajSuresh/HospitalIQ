@@ -16,6 +16,8 @@ from backend.predictors.risk_predictor import RiskPredictor
 from backend.predictors.forecast_predictor import ForecastPredictor
 from backend.predictors.patient_risk_predictor import PatientRiskPredictor
 from backend.predictors.scenario_predictor import ScenarioPredictor
+from backend.predictors.lockdown_predictor import LockdownPredictor
+from backend.predictors.r0_predictor import R0Predictor
 
 
 class TestBedPredictor:
@@ -199,3 +201,21 @@ class TestPatientRiskPredictor:
     def test_is_loaded_false_by_default(self):
         p = PatientRiskPredictor()
         assert not p.is_loaded
+
+class TestLockdownPredictor:
+    def test_validate_input_valid(self):
+        p = LockdownPredictor()
+        assert p.validate_input({"disease": "COVID-19", "state": "Kerala", "target_year": 2026})
+
+    def test_feature_names(self):
+        p = LockdownPredictor()
+        assert "population_density" in p.get_feature_names()
+
+class TestR0Predictor:
+    def test_validate_input_valid(self):
+        p = R0Predictor()
+        assert p.validate_input({"disease": "COVID-19", "state": "Kerala", "target_year": 2026})
+
+    def test_feature_names(self):
+        p = R0Predictor()
+        assert "population_density" in p.get_feature_names()

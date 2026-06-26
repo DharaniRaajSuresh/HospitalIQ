@@ -24,7 +24,7 @@ class TestHealth:
 
 
 class TestBeds:
-    def test_predict_beds(self, client, auth_headers):
+    def test_predict_beds(self, client, auth_headers, seed_beds):
         resp = client.post("/api/v1/predict/beds", params={
             "state": "Tamil Nadu", "ward_type": "ICU", "months_ahead": 3
         }, headers=auth_headers)

@@ -1,6 +1,5 @@
 package com.hospitaliq.patientservice.dto;
 
-import com.hospitaliq.patientservice.entity.PatientEntity;
 
 public class PatientListResponse {
 

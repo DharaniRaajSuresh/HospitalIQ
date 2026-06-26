@@ -45,6 +45,16 @@ class PatientRiskPredictor:
             "model_path": str(MODEL_DIR / f"{MODEL_NAME}.pkl"),
         }
 
+    def _ensemble_predict(self, model, X):
+        """Predict using single model (RF/GB) or 3-model ensemble dict."""
+        if isinstance(model, dict):
+            preds = []
+            for key in ("xgb", "rf", "gb"):
+                if key in model:
+                    preds.append(model[key].predict(X))
+            return np.mean(preds, axis=0) if preds else 0.0
+        return model.predict(X)
+
     def predict(self, features: dict[str, Any]) -> dict[str, Any]:
         if not self._is_loaded:
             return {"status": "ml_model", "error": "Model not loaded"}
@@ -58,7 +68,7 @@ class PatientRiskPredictor:
 
         result = {}
         for target in self._metadata["target_names"]:
-            pred = self._models[target].predict(X)[0]
+            pred = self._ensemble_predict(self._models[target], X)[0]
             result[target] = round(float(pred), 4)
             result[f"{target}_pct"] = round(float(pred) * 100, 1)
 

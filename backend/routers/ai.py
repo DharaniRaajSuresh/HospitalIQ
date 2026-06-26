@@ -7,6 +7,11 @@ from pydantic import BaseModel
 from backend.auth import require_user
 from backend.database import get_db
 from backend.models import ChatHistory, User
+from backend.ai.ai_assistant import HospitalAIAssistant
+from backend.repositories.bed_repository import BedRepository
+from backend.repositories.hospital_repository import HospitalRepository
+from backend.repositories.mortality_repository import MortalityRepository
+from backend.repositories.patient_repository import PatientRepository
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["AI"], prefix="/api/v1/ai")
@@ -19,11 +24,6 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 async def ai_chat(request: ChatRequest, db=Depends(get_db), _: User = Depends(require_user)):
-    from backend.ai.ai_assistant import HospitalAIAssistant
-    from backend.repositories.bed_repository import BedRepository
-    from backend.repositories.hospital_repository import HospitalRepository
-    from backend.repositories.mortality_repository import MortalityRepository
-    from backend.repositories.patient_repository import PatientRepository
 
     bed_repo = BedRepository(db)
     mortality_repo = MortalityRepository(db)
@@ -53,11 +53,6 @@ async def ai_chat(request: ChatRequest, db=Depends(get_db), _: User = Depends(re
 
 @router.get("/suggestions")
 async def ai_suggestions(db=Depends(get_db), _: User = Depends(require_user)):
-    from backend.ai.ai_assistant import HospitalAIAssistant
-    from backend.repositories.bed_repository import BedRepository
-    from backend.repositories.hospital_repository import HospitalRepository
-    from backend.repositories.mortality_repository import MortalityRepository
-    from backend.repositories.patient_repository import PatientRepository
 
     bed_repo = BedRepository(db)
     mortality_repo = MortalityRepository(db)

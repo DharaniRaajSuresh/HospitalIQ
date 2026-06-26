@@ -5,8 +5,7 @@ import re
 import time
 from typing import Any
 
-import google.generativeai as genai
-from google.api_core import exceptions as google_exceptions
+
 
 from backend.config import settings
 
@@ -41,6 +40,7 @@ class GeminiClient:
         if not settings.validate_gemini():
             return
         try:
+            import google.generativeai as genai
             genai.configure(api_key=settings.gemini_api_key)
             self._model_name = MODEL_PRIORITY[self._model_index]
             self._model = genai.GenerativeModel(
@@ -60,6 +60,7 @@ class GeminiClient:
             self._available = False
             return False
         try:
+            import google.generativeai as genai
             self._model_name = MODEL_PRIORITY[self._model_index]
             self._model = genai.GenerativeModel(
                 self._model_name,
@@ -89,19 +90,21 @@ class GeminiClient:
                 return {"response": text, "raw": True}
             except json.JSONDecodeError:
                 return {"response": text, "raw": True}
-            except google_exceptions.ResourceExhausted as e:
-                retry_delay = self._parse_retry_delay(str(e))
-                logger.warning(
-                    f"Gemini quota exceeded on {self._model_name} "
-                    f"(attempt {attempt + 1}): retry_delay={retry_delay}s"
-                )
-                if attempt < max_retries - 1 and retry_delay and retry_delay < 30:
-                    time.sleep(retry_delay)
-                    continue
-                if self._try_next_model():
-                    return self.generate(prompt, max_retries)
-                return {"error": "Gemini API quota exhausted on all models", "response": None}
             except Exception as e:
+                import google.api_core.exceptions as google_exceptions
+                if isinstance(e, google_exceptions.ResourceExhausted):
+                    retry_delay = self._parse_retry_delay(str(e))
+                    logger.warning(
+                        f"Gemini quota exceeded on {self._model_name} "
+                        f"(attempt {attempt + 1}): retry_delay={retry_delay}s"
+                    )
+                    if attempt < max_retries - 1 and retry_delay and retry_delay < 30:
+                        time.sleep(retry_delay)
+                        continue
+                    if self._try_next_model():
+                        return self.generate(prompt, max_retries)
+                    return {"error": "Gemini API quota exhausted on all models", "response": None}
+                
                 logger.warning(f"Gemini API error (attempt {attempt + 1}): {e}")
                 if attempt < max_retries - 1:
                     time.sleep(1)

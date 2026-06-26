@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:C:/hospi/ml_pipeline/data/hospitaliq.db}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.sqlite.JDBC}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_DDL_AUTO:none}
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: ${SPRING_JPA_DIALECT:org.hibernate.community.dialect.SQLiteDialect}
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: non_null
+
+jwt:
+  secret: ${JWT_SECRET_KEY:change-this-to-a-secure-random-string-at-least-32-chars}
+
+

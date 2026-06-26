@@ -1,4 +1,9 @@
-version: "3.9"
+# Docker Compose — HospitalIQ full stack
+# Services: FastAPI ML API, Spring Boot Patient Service, React (Nginx), PostgreSQL
+#
+# IMPORTANT: Replace all 'change-me' values with real secrets before deploying.
+# The JWT_SECRET_KEY MUST match between 'api' and 'patient-service' services —
+# both services validate the same JWT tokens issued by the FastAPI auth module.
 
 services:
   api:
@@ -18,6 +23,22 @@ services:
     volumes:
       - .:/app
 
+  patient-service:
+    build: ./patient-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/hospitaliq_db
+      - SPRING_DATASOURCE_USERNAME=hospitaliq
+      - SPRING_DATASOURCE_PASSWORD=change-me
+      - SPRING_DATASOURCE_DRIVER=org.postgresql.Driver
+      - SPRING_JPA_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_DDL_AUTO=validate
+      - JWT_SECRET_KEY=dev-secret-key-change-in-production
+    depends_on:
+      db:
+        condition: service_healthy
+
   frontend:
     image: nginx:alpine
     ports:
@@ -27,6 +48,7 @@ services:
       - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - api
+      - patient-service
 
   db:
     image: postgres:16-alpine

@@ -70,8 +70,8 @@ export default function MetricCard({ label, value, icon, delta, deltaLabel, spar
       </div>
       {sparklineData && sparklineData.length > 1 && (
         <svg viewBox={`0 0 ${sparklineData.length - 1} 20`} className="w-full h-5 mt-2" preserveAspectRatio="none">
-          <path
-            d={sparklineData.map((v, i) => `${i},${20 - (v / Math.max(...sparklineData)) * 18}`).join(' ')}
+          <polyline
+            points={sparklineData.map((v, i) => `${i},${20 - (v / (Math.max(...sparklineData) || 1)) * 18}`).join(' ')}
             fill="none"
             stroke={color}
             strokeWidth="1.5"

@@ -1,13 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShieldAlert, Syringe, Plane, Users, Activity, AlertTriangle, ChevronRight, Info } from 'lucide-react';
-import { getPatient, getPatientRisk } from '../api';
+import { getPatient, getPatientRisk, getViruses } from '../api';
 import { PatientDetailData, PatientRiskResponse, VaccineRecord, TravelRecord, FamilyRecord } from '../types/api';
 import PipelineVisualizer from '../components/ui/PipelineVisualizer';
 import StatusBadge from '../components/ui/StatusBadge';
 import Button from '../components/ui/Button';
 
-const VIRUS_NAMES = ['COVID-19', 'Ebola', 'H1N1', 'Marburg', 'Nipah', 'SARS'];
+interface VirusRecord {
+  id: number;
+  virusName: string;
+  fatalityRate: number | null;
+  reproductiveRate: number | null;
+  vaccineAvailable: boolean | null;
+  treatmentAvailable: boolean | null;
+  transmissionMode: string | null;
+  incubationPeriodDays: number | null;
+}
 const AVATAR_COLORS = [
   'from-cyan-500 to-blue-600', 'from-violet-500 to-purple-600', 'from-emerald-500 to-teal-600',
   'from-rose-500 to-pink-600', 'from-amber-500 to-orange-600', 'from-indigo-500 to-blue-600',
@@ -96,6 +105,7 @@ export default function PatientDetail() {
   useEffect(() => { document.title = 'Patient Detail | HOSPi'; }, []);
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<PatientDetailData | null>(null);
+  const [viruses, setViruses] = useState<VirusRecord[]>([]);
   const [virus, setVirus] = useState('COVID-19');
   const [risk, setRisk] = useState<PatientRiskResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -103,6 +113,38 @@ export default function PatientDetail() {
   const [error, setError] = useState('');
   const [pipelineStep, setPipelineStep] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Load viruses from Spring Boot VirusRegistryEntity via /patient-api/v1/patients/viruses/list
+  useEffect(() => {
+    getViruses<{ viruses: any[] }>()
+      .then(res => {
+        if (res.viruses?.length) {
+          const mapped = res.viruses.map((v: any) => ({
+            id: v.id,
+            virusName: v.virusName || v.virus_name,
+            fatalityRate: v.fatalityRate !== undefined ? v.fatalityRate : v.fatality_rate,
+            reproductiveRate: v.reproductiveRate !== undefined ? v.reproductiveRate : v.reproductive_rate,
+            vaccineAvailable: v.vaccineAvailable !== undefined ? v.vaccineAvailable : v.vaccine_available,
+            treatmentAvailable: v.treatmentAvailable !== undefined ? v.treatmentAvailable : v.treatment_available,
+            transmissionMode: v.transmissionMode || v.transmission_mode,
+            incubationPeriodDays: v.incubationPeriodDays !== undefined ? v.incubationPeriodDays : v.incubation_period_days,
+          }));
+          setViruses(mapped);
+          setVirus(mapped[0].virusName);
+        }
+      })
+      .catch(() => {
+        // Fallback if Spring Boot is unreachable
+        setViruses([
+          { id: 1, virusName: 'COVID-19', fatalityRate: 0.02, reproductiveRate: 2.5, vaccineAvailable: true, treatmentAvailable: true, transmissionMode: 'Airborne', incubationPeriodDays: 5 },
+          { id: 2, virusName: 'Ebola',    fatalityRate: 0.67, reproductiveRate: 1.8, vaccineAvailable: true, treatmentAvailable: false, transmissionMode: 'Contact', incubationPeriodDays: 8 },
+          { id: 3, virusName: 'H1N1',     fatalityRate: 0.02, reproductiveRate: 1.5, vaccineAvailable: true, treatmentAvailable: true, transmissionMode: 'Airborne', incubationPeriodDays: 4 },
+          { id: 4, virusName: 'Marburg',  fatalityRate: 0.88, reproductiveRate: 1.3, vaccineAvailable: false, treatmentAvailable: false, transmissionMode: 'Contact', incubationPeriodDays: 10 },
+          { id: 5, virusName: 'Nipah',    fatalityRate: 0.75, reproductiveRate: 0.5, vaccineAvailable: false, treatmentAvailable: false, transmissionMode: 'Contact', incubationPeriodDays: 14 },
+          { id: 6, virusName: 'SARS',     fatalityRate: 0.10, reproductiveRate: 3.0, vaccineAvailable: false, treatmentAvailable: true, transmissionMode: 'Airborne', incubationPeriodDays: 5 },
+        ]);
+      });
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -230,13 +272,36 @@ export default function PatientDetail() {
             <StatusBadge status="ml_model" label="3-Model Ensemble" />
           </div>
 
-          {/* Virus selector + Assess button */}
+          {/* Virus selector + Assess button — populated from Spring Boot VirusRegistryEntity */}
           <div className="flex items-center gap-3 mb-4">
             <div className="flex-1">
               <select value={virus} onChange={e => setVirus(e.target.value)}
                 className="w-full bg-[var(--color-surface-2)] border border-[var(--color-border-subtle)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--color-accent-cyan)]">
-                {VIRUS_NAMES.map(v => <option key={v} value={v} className="bg-[#0B1220] text-white">{v}</option>)}
+                {viruses.map(v => <option key={v.virusName} value={v.virusName} className="bg-[#0B1220] text-white">{v.virusName}</option>)}
               </select>
+              {/* Virus metadata from Spring Boot VirusRegistryEntity */}
+              {(() => {
+                const selected = viruses.find(v => v.virusName === virus);
+                if (!selected) return null;
+                return (
+                  <div className="flex gap-3 mt-1.5 flex-wrap">
+                    {selected.fatalityRate != null && (
+                      <span className="text-[10px] font-mono text-[var(--color-accent-rose)]">CFR {(selected.fatalityRate * 100).toFixed(0)}%</span>
+                    )}
+                    {selected.reproductiveRate != null && (
+                      <span className="text-[10px] font-mono text-[var(--color-text-muted)]">R₀ {selected.reproductiveRate}</span>
+                    )}
+                    {selected.vaccineAvailable != null && (
+                      <span className={`text-[10px] font-mono ${selected.vaccineAvailable ? 'text-emerald-400' : 'text-[var(--color-text-muted)]'}`}>
+                        {selected.vaccineAvailable ? '✓ Vaccine' : '✗ No vaccine'}
+                      </span>
+                    )}
+                    {selected.transmissionMode && (
+                      <span className="text-[10px] font-mono text-[var(--color-text-muted)]">{selected.transmissionMode}</span>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
             <Button variant="danger" size="sm" icon={ShieldAlert} onClick={computeRisk} isLoading={riskLoading}>
               {riskLoading ? 'Assessing...' : 'Assess Risk'}

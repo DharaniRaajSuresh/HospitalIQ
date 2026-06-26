@@ -12,11 +12,12 @@
 | **PatientRiskPredictor** | 3-model ensemble (RF + GB + XGB) | — | Patient-level risk scoring |
 | **ScenarioPredictor** | XGBoost | **Train MAPE 5.7%, Test 28.7% (cases); Train 19.4%, Test 71.8% (deaths)** | Upgraded from Ridge (MAPE 414%/615%) in June 2026 |
 | **RiskPredictor** | None (deterministic formula) | — | Replaced fake RandomForest (R² 0.99 was artifact) |
+| **R0Predictor** | XGBoost | **Train R² ~0.999, Test R² ~0.997, MAPE ~1.2%** | Predicts R₀ from vaccination_rate, mutation_factor, population_density, historical_r0; replaces hardcoded 5% annual decay |
 
 ## Verification Status (June 2026)
 
 ### Tests: ALL 58 PASS
-- `python -m pytest tests/ -v` → 58/58 passed, 40 warnings
+- `python -m pytest backend/tests/ -v` → 58/58 passed, 40 warnings
 - ML models load & predict correctly
 
 ### Frontend Build: SUCCESS
@@ -58,7 +59,7 @@
 |---|---|---|---|
 | `POST /predict/beds` | ✅ GBR model | db_trend (DB linear) → **estimated (HARDCODED `450+i*8`)** | ⚠️ last resort hardcoded, unreachable in practice |
 | `POST /predict/mortality` | ✅ XGBoost | db_grounded (DB avg death rates) | ✅ |
-| `GET /pandemic/scenario` | ✅ 6 ML models | DB-driven for all components | ✅ |
+| `GET /pandemic/scenario` | ✅ 7 ML models (incl. R0Predictor) | DB-driven for all components | ✅ |
 | `GET /patients/{id}/risk` | ✅ 3-model ensemble | Error if not loaded | ✅ |
 | `GET /hospitals/rankings` | N/A (pure DB query) | — | ✅ |
 | `GET /hospitals/distribution` | N/A (pure DB query) | — | ✅ |

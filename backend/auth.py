@@ -71,11 +71,15 @@ def decode_token(token: str) -> Optional[dict]:
 
 
 def set_token_cookie(response: Response, token: str):
+    # secure=True in production (HTTPS only) — critical for banking-grade security.
+    # secure=False in development (HTTP localhost). Controlled by ENVIRONMENT env var.
+    is_production = settings.environment == "production"
     response.set_cookie(
         key=TOKEN_COOKIE_NAME, value=token,
-        httponly=True, samesite="lax", secure=False,
+        httponly=True, samesite="lax", secure=is_production,
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60, path="/",
     )
+
 
 
 def clear_token_cookie(response: Response):

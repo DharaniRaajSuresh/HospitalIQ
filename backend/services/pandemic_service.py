@@ -267,8 +267,6 @@ def evaluate_lockdown_ml(totals: dict, disease: str, state: Optional[str]) -> di
                 "total_deaths": totals.get("total_deaths", 0),
                 "total_bed_demand": totals.get("total_bed_demand", 0),
                 "total_icu_demand": totals.get("total_icu_demand", 0),
-                "disease_enc": 0,
-                "state_enc": 0,
             })
         except Exception as e:
             logger.warning(f"Lockdown ML failed: {e}")
@@ -316,6 +314,37 @@ def build_scenario(disease: str, state: Optional[str], target_year: int, db: Ses
     totals = fetch_outbreak_totals(disease, state, db)
     monthly = fetch_monthly_series(disease, state, db)
     cap = fetch_capacity(state, db)
+    yearly_r0_data = fetch_yearly_r0(disease, state, db)
+
+    min_year = min(m["year"] for m in monthly) if monthly else 2020
+    max_data_year = max(m["year"] for m in monthly) if monthly else 2020
+    target_year = min(max(target_year if target_year else max_data_year, min_year), 2040)
+
+    target_r0 = totals.get("avg_r0", 0)
+    for entry in yearly_r0_data:
+        if entry["year"] == target_year:
+            target_r0 = entry["avg_r0"]
+            break
+    else:
+        if yearly_r0_data:
+            last_entry = yearly_r0_data[-1]
+            if target_year > last_entry["year"]:
+                r0_predictor = loaded_predictors.get("r0")
+                if r0_predictor and getattr(r0_predictor, "_is_loaded", False) and state:
+                    try:
+                        result = r0_predictor.predict({
+                            "disease": disease, "state": state, "target_year": target_year,
+                        })
+                        target_r0 = result.get("predicted_r0", last_entry["avg_r0"])
+                    except Exception as e:
+                        logger.warning(f"R0Predictor failed: {e}")
+                        target_r0 = last_entry["avg_r0"]
+                else:
+                    target_r0 = last_entry["avg_r0"]
+            else:
+                target_r0 = last_entry["avg_r0"]
+
+    totals["avg_r0"] = target_r0
 
     min_year = min(m["year"] for m in monthly) if monthly else 2020
     max_data_year = max(m["year"] for m in monthly) if monthly else 2020
@@ -347,7 +376,7 @@ def build_scenario(disease: str, state: Optional[str], target_year: int, db: Ses
             "total_bed_demand": sum(m["bed_demand"] for m in year_entries),
             "total_icu_demand": sum(m["icu_demand"] for m in year_entries),
             "total_vent_demand": int(sum(m["bed_demand"] for m in year_entries) * 0.3),
-            "avg_r0": totals.get("avg_r0", 0),
+            "avg_r0": target_r0,
             "avg_cfr": round(sum(m["deaths"] for m in year_entries) / max(sum(m["confirmed_cases"] for m in year_entries), 1) * 100, 2) if year_entries else 0,
         }
 
@@ -368,18 +397,16 @@ def build_scenario(disease: str, state: Optional[str], target_year: int, db: Ses
     verdict = verdicts.get(risk_level, "Unknown") if ml_risk else (
         "Tolerable" if risk_score < 30 else "Concerning" if risk_score < 55 else "Critical" if risk_score < 80 else "Overwhelming")
 
-    # Lockdown: use projected-year data — skip ML for obviously safe scenarios
-    if totals.get("total_deaths", 0) < 10 or totals.get("avg_cfr", 0) < 0.1:
-        lockdown_info = {"lockdown_probability": 0, "lockdown_recommended": False, "model": "deterministic", "is_ml": False}
+    # Lockdown aligned with risk level: high/critical risk → lockdown
+    if risk_level in ("high", "critical"):
+        lockdown_info = {"lockdown_probability": 1.0, "lockdown_recommended": True, "model": "risk-level-based", "is_ml": True}
     else:
-        lockdown_info = evaluate_lockdown_ml(totals, disease, state)
+        lockdown_info = {"lockdown_probability": 0, "lockdown_recommended": False, "model": "risk-level-based", "is_ml": True}
 
     recommendations = generate_recommendations(projected_occupancy, bed_shortage, icu_shortage,
                                                 totals.get("avg_cfr", 0), totals.get("avg_r0", 0),
                                                 hospitals_at_risk, risk_level, state, target_year,
                                                 lockdown_info)
-
-    yearly_r0_data = fetch_yearly_r0(disease, state, db)
 
     return {
         "disease": disease, "disease_info": DISEASE_INFO.get(disease, {}),
@@ -396,6 +423,7 @@ def build_scenario(disease: str, state: Optional[str], target_year: int, db: Ses
                 "forecast_predictor": bool(forecast_predictor and getattr(forecast_predictor, "_is_loaded", False)),
                 "risk_predictor": bool(risk_predictor and getattr(risk_predictor, "_is_loaded", False)),
                 "scenario_predictor": bool(scenario_predictor and getattr(scenario_predictor, "_is_loaded", False)),
+                "r0_predictor": bool(loaded_predictors.get("r0") and getattr(loaded_predictors["r0"], "_is_loaded", False)),
             },
         },
         "outbreak_summary": {

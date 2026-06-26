@@ -109,16 +109,16 @@ def predict_patient_risk(patient_id: int, virus_name: str = Query(...),
     for v in vaccines:
         if v.vaccination_date:
             from datetime import date
-            days = (date.today() - v.vaccination_date).days
+            days = (date.today() - v.vaccination_date.date()).days
             last_vaccine_days = min(last_vaccine_days, days)
     
     recent_travel = 0
     num_trips = len(travels)
     from datetime import date
     for t in travels:
-        if t.return_date and (date.today() - t.return_date).days <= 30:
+        if t.return_date and (date.today() - t.return_date.date()).days <= 30:
             recent_travel = 1
-        elif t.travel_date and (date.today() - t.travel_date).days <= 60:
+        elif t.travel_date and (date.today() - t.travel_date.date()).days <= 60:
             recent_travel = 1
     
     fam_high_risk = sum(1 for f in families if f.condition and f.condition.lower() in ("diabetes", "cardiac", "cancer", "stroke", "renal disease"))

@@ -10,16 +10,17 @@ import PipelineVisualizer from '../components/ui/PipelineVisualizer';
 import { downloadCsv } from '../utils/exportCsv';
 
 const DISEASES = [
-  { api: 'COVID-19', name: 'COVID-19', type: 'Coronavirus', fatality: '1-5%', r0: '3.2', color: '#f97316' },
-  { api: 'Ebola', name: 'Ebola', type: 'Viral Hemorrhagic Fever', fatality: '50-90%', r0: '2.0', color: '#ef4444' },
-  { api: 'H1N1', name: 'H1N1 Influenza', type: 'Pandemic Influenza', fatality: '0.1-2%', r0: '1.5', color: '#22c55e' },
-  { api: 'SARS', name: 'SARS', type: 'Coronavirus', fatality: '10-15%', r0: '3.0', color: '#eab308' },
-  { api: 'Nipah', name: 'Nipah', type: 'Henipavirus', fatality: '40-75%', r0: '1.2', color: '#a855f7' },
-  { api: 'Marburg', name: 'Marburg', type: 'Viral Hemorrhagic Fever', fatality: '24-88%', r0: '1.8', color: '#ec4899' },
+  { api: 'COVID-19', name: 'COVID-19', type: 'Coronavirus', color: '#f97316' },
+  { api: 'Ebola', name: 'Ebola', type: 'Viral Hemorrhagic Fever', color: '#ef4444' },
+  { api: 'H1N1', name: 'H1N1 Influenza', type: 'Pandemic Influenza', color: '#22c55e' },
+  { api: 'SARS', name: 'SARS', type: 'Coronavirus', color: '#eab308' },
+  { api: 'Nipah', name: 'Nipah', type: 'Henipavirus', color: '#a855f7' },
+  { api: 'Marburg', name: 'Marburg', type: 'Viral Hemorrhagic Fever', color: '#ec4899' },
 ];
 
 const PIPELINE_STEPS = [
   { label: 'Fetching outbreak data...', status: 'pending' as const },
+  { label: 'Running R0Predictor...', status: 'pending' as const },
   { label: 'Running BedPredictor...', status: 'pending' as const },
   { label: 'Running MortalityPredictor...', status: 'pending' as const },
   { label: 'Running ForecastPredictor...', status: 'pending' as const },
@@ -95,7 +96,7 @@ export default function PandemicScenario() {
     // Animate pipeline
     intervalRef.current = setInterval(() => {
       setStep(prev => {
-        if (prev >= 5) { clearInterval(intervalRef.current!); return prev; }
+        if (prev >= 6) { clearInterval(intervalRef.current!); return prev; }
         return prev + 1;
       });
     }, 400);
@@ -103,7 +104,7 @@ export default function PandemicScenario() {
     try {
       const data = await getPandemicScenario<PandemicScenarioResponse>(disease.api, selectedState, String(year));
       setResult(data);
-      setStep(6);
+      setStep(7);
     } catch (e: any) {
       setError(e.message);
     }
@@ -113,7 +114,7 @@ export default function PandemicScenario() {
 
   const pipelineSteps = PIPELINE_STEPS.map((s, i) => ({
     ...s,
-    status: i < step ? 'done' as const : i === step && step < 6 && loading ? 'running' as const : s.status,
+    status: i < step ? 'done' as const : i === step && step < 7 && loading ? 'running' as const : s.status,
   }));
 
   const chartData = (result?.monthly_breakdown || []).filter(m => m.year === year);
@@ -126,7 +127,7 @@ export default function PandemicScenario() {
               <ShieldAlert className="w-5 h-5 text-[var(--color-accent-rose)]" />
               Pandemic Scenario Simulator
             </h1>
-            <p className="text-sm text-[var(--color-text-muted)] mt-0.5">6-ML Model Orchestration · Disease Outbreak Intelligence</p>
+            <p className="text-sm text-[var(--color-text-muted)] mt-0.5">7-ML Model Orchestration · Disease Outbreak Intelligence</p>
           </div>
           <div className="flex items-center gap-3">
             {result && (
@@ -139,14 +140,13 @@ export default function PandemicScenario() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-4 h-full">
             <p className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Step 1: Select Disease</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2.5">
               {DISEASES.map(d => (
                 <button key={d.api} onClick={() => setDisease(d)}
-                  className={`p-3 rounded-xl border text-left transition-all ${d.api === disease.api ? 'border-[var(--color-accent-cyan)] bg-[var(--color-surface-2)]' : 'border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] hover:border-[var(--color-border-strong)]'}`}
+                  className={`px-3.5 py-2.5 rounded-lg border text-left transition-all ${d.api === disease.api ? 'border-[var(--color-accent-cyan)] bg-[var(--color-accent-cyan)]/10 text-[var(--color-accent-cyan)] shadow-[0_0_12px_rgba(0,240,255,0.1)]' : 'border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]'}`}
                   style={{ transform: d.api === disease.api ? 'scale(1.02)' : 'scale(1)', transition: 'transform 200ms cubic-bezier(0.34,1.56,0.64,1)' }}
                 >
-                  <p className="text-sm font-semibold text-white">{d.name}</p>
-                  <p className="text-[11px] text-[var(--color-text-muted)] mt-0.5 font-mono">CFR {d.fatality} · R₀ {d.r0}</p>
+                  <p className="text-[13px] font-medium">{d.name}</p>
                 </button>
               ))}
             </div>
@@ -175,9 +175,7 @@ export default function PandemicScenario() {
             {/* Model metadata */}
             <div className="pt-3 border-t border-[var(--color-border-subtle)] space-y-1.5 text-xs font-mono">
               <div className="flex justify-between text-[var(--color-text-muted)]"><span>Disease</span><span className="text-[var(--color-text-primary)]">{disease.name}</span></div>
-              <div className="flex justify-between text-[var(--color-text-muted)]"><span>CFR</span><span className="text-[var(--color-accent-rose)]">{disease.fatality}</span></div>
-              <div className="flex justify-between text-[var(--color-text-muted)]"><span>R₀</span><span className="text-[var(--color-accent-cyan)]">{disease.r0}</span></div>
-              <div className="flex justify-between text-[var(--color-text-muted)]"><span>Models</span><StatusBadge status="ml_model" label="6 ML Ensemble" /></div>
+              <div className="flex justify-between text-[var(--color-text-muted)]"><span>Models</span><StatusBadge status="ml_model" label="7 ML Ensemble" /></div>
             </div>
           </div>
       </div>
@@ -200,7 +198,7 @@ export default function PandemicScenario() {
               {/* Zone 1: Risk Score */}
               <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-5">
                 <div className="flex items-center gap-4 mb-4">
-                  <span className="text-sm font-semibold text-white">{disease.name}</span>
+                  <span className="text-sm font-semibold text-white">{(DISEASES.find(d => d.api === result.disease) || disease).name}</span>
                   <StatusBadge status="live" />
                   <span className="text-sm text-[var(--color-text-muted)] font-mono">{result.state} · {result.projection_year}</span>
                   <span className="text-sm text-[var(--color-text-muted)] font-mono">R₀={result.outbreak_summary.avg_reproduction_rate} · CFR={result.outbreak_summary.avg_case_fatality_rate}%</span>

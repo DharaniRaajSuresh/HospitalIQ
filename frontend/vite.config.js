@@ -31,6 +31,11 @@ export default defineConfig({
     port: 8510,
     host: '127.0.0.1',
     proxy: {
+      '/patient-api': {
+        target: 'http://127.0.0.1:8081',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/patient-api/, '/api'),
+      },
       '/api': {
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,

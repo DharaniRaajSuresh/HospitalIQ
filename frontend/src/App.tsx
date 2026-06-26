@@ -55,6 +55,17 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Capture token from URL (e.g., /dashboard?token=... from Google OAuth redirect)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem('__auth_token', token);
+      window.__auth_token = token;
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
   // Listen for auth:logout events (dispatched by api.ts on 401)
   useEffect(() => {
     const handleLogout = () => {

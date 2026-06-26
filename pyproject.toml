@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta:__legacy__"
 
 [project]
 name = "hospitaliq"
-version = "0.1.0"
+version = "2.0.0"
 description = "AI-powered hospital capacity & patient risk management system"
 requires-python = ">=3.11"
 dependencies = [
@@ -24,12 +24,18 @@ dependencies = [
     "scikit-learn>=1.5.0",
     "xgboost>=2.0.3",
     "joblib>=1.4.2",
+    # OpenTelemetry — used in backend/core/tracing.py for distributed tracing
+    "opentelemetry-sdk>=1.24.0",
+    "opentelemetry-api>=1.24.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.24.0",
+    "opentelemetry-instrumentation-fastapi>=0.45b0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.2.0",
     "pytest-asyncio>=0.23.7",
+    "pytest-cov>=5.0.0",
     "ruff>=0.4.0",
 ]
 frontend = [
@@ -43,9 +49,14 @@ include = ["backend*", "ml_pipeline*"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py312"
+# Match requires-python: target Python 3.11 (not 3.12) for broadest compat
+target-version = "py311"
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]   # line length handled by formatter
 
 [tool.pytest.ini_options]
 testpaths = ["backend/tests"]
 markers = ["slow: marks tests as slow"]
 filterwarnings = ["ignore::DeprecationWarning", "ignore::PendingDeprecationWarning"]
+addopts = "--cov=backend --cov-report=term-missing --cov-fail-under=70"
+

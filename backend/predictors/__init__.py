@@ -8,6 +8,7 @@ from backend.predictors.hospital_predictor import HospitalPredictor
 from backend.predictors.risk_predictor import RiskPredictor
 from backend.predictors.forecast_predictor import ForecastPredictor
 from backend.predictors.scenario_predictor import ScenarioPredictor
+from backend.predictors.r0_predictor import R0Predictor
 
 __all__ = [
     "BedPredictor",
@@ -16,4 +17,5 @@ __all__ = [
     "RiskPredictor",
     "ForecastPredictor",
     "ScenarioPredictor",
+    "R0Predictor",
 ]

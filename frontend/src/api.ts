@@ -36,6 +36,7 @@ interface PatientListParams {
 }
 
 const API_BASE = '/api/v1';
+const PATIENT_API_BASE = '/patient-api/v1';
 
 function getToken(): string | null {
   if (typeof window === 'undefined') return null;
@@ -74,7 +75,7 @@ function setCache(key: string, data: unknown): void {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-export async function authFetch<T = unknown>(path: string, options: AuthFetchOptions = {}): Promise<T> {
+export async function authFetch<T = unknown>(path: string, options: AuthFetchOptions = {}, baseUrl?: string): Promise<T> {
   const headers: Record<string, string> = { ...options.headers };
   if (!(options.body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
@@ -84,13 +85,15 @@ export async function authFetch<T = unknown>(path: string, options: AuthFetchOpt
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  const resolvedBase = baseUrl ?? API_BASE;
+
   if (options.method === undefined || options.method === 'GET') {
-    const cacheKey = getCachedKey(path, options);
+    const cacheKey = getCachedKey(`${resolvedBase}${path}`, options);
     const cachedData = getFromCache(cacheKey);
     if (cachedData) return cachedData as T;
   }
 
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${resolvedBase}${path}`, {
     ...options,
     headers,
     credentials: 'include',
@@ -108,7 +111,7 @@ export async function authFetch<T = unknown>(path: string, options: AuthFetchOpt
   const data: T = await res.json();
 
   if ((options.method === undefined || options.method === 'GET') && res.ok) {
-    const cacheKey = getCachedKey(path, options);
+    const cacheKey = getCachedKey(`${resolvedBase}${path}`, options);
     setCache(cacheKey, data);
   }
   return data;
@@ -233,11 +236,11 @@ export async function getPandemicScenario<T = unknown>(disease: string, state?: 
 
 export async function getPatients<T>(params: PatientListParams = {}): Promise<PaginatedResponse<T>> {
   const qs = new URLSearchParams(params as Record<string, string>).toString();
-  return authFetch<PaginatedResponse<T>>(`/patients/?${qs}`);
+  return authFetch<PaginatedResponse<T>>(`/patients?${qs}`, {}, PATIENT_API_BASE);
 }
 
 export async function getPatient<T = unknown>(id: number | string): Promise<T> {
-  return authFetch<T>(`/patients/${id}`);
+  return authFetch<T>(`/patients/${id}`, {}, PATIENT_API_BASE);
 }
 
 export async function getPatientRisk<T = unknown>(patientId: number | string, virusName: string): Promise<T> {
@@ -245,7 +248,11 @@ export async function getPatientRisk<T = unknown>(patientId: number | string, vi
 }
 
 export async function getViruses<T = unknown>(): Promise<T> {
-  return authFetch<T>('/patients/viruses/list');
+  return authFetch<T>('/patients/viruses/list', {}, PATIENT_API_BASE);
+}
+
+export async function getPatientStats<T = unknown>(): Promise<T> {
+  return authFetch<T>('/patients/stats', {}, PATIENT_API_BASE);
 }
 
 export async function getSuggestions<T = unknown>(): Promise<T> {

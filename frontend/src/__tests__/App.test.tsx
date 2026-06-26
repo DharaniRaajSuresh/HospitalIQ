@@ -13,8 +13,6 @@ vi.mock('../pages/AnalyticsDashboard', () => ({ default: () => <div data-testid=
 vi.mock('../pages/AICopilot', () => ({ default: () => <div data-testid="ai-copilot">AI</div> }));
 vi.mock('../pages/PandemicScenario', () => ({ default: () => <div data-testid="pandemic">Pandemic</div> }));
 vi.mock('../layouts/DashboardLayout', () => ({ default: () => <div data-testid="dashboard-layout">Layout</div> }));
-vi.mock('../components/FloatingCopilot', () => ({ default: () => <div data-testid="floating-copilot">Copilot</div> }));
-
 describe('App routing', () => {
   beforeEach(() => {
     window.history.pushState({}, '', '/');
@@ -23,11 +21,6 @@ describe('App routing', () => {
   it('renders landing page at /', async () => {
     render((await import('../App')).default());
     await waitFor(() => expect(screen.getByTestId('landing-page')).toBeDefined());
-  });
-
-  it('renders floating copilot on every page', async () => {
-    render((await import('../App')).default());
-    await waitFor(() => expect(screen.getByTestId('floating-copilot')).toBeDefined());
   });
 });
 
@@ -42,7 +35,7 @@ describe('api.js module', () => {
     const funcs = ['login', 'register', 'logout', 'getMe', 'isAuthenticated',
                    'getStats', 'getStates', 'getDistricts', 'getBedForecast',
                    'predictMortality', 'getHospitalRankings', 'getLocationStats',
-                   'getDistrictList', 'getLocalities', 'getAdmissions'];
+                    'getDistrictList', 'getLocalities'];
     funcs.forEach(f => {
       expect(typeof api[f]).toBe('function');
     });

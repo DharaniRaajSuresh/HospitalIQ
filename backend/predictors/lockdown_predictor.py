@@ -10,7 +10,7 @@ MODEL_DIR = os.path.join(
     "ml_pipeline", "data", "models",
 )
 
-FEATURE_NAMES = ["avg_r0", "avg_cfr", "total_cases", "total_deaths", "total_bed_demand", "total_icu_demand", "disease_enc", "state_enc"]
+FEATURE_NAMES = ["avg_r0", "avg_cfr", "total_cases", "total_deaths", "total_bed_demand", "total_icu_demand"]
 
 
 class LockdownPredictor(BasePredictor):

@@ -1,0 +1,5 @@
+com\hospitaliq\patientservice\HealthStatsControllerTest.class
+com\hospitaliq\patientservice\PatientServiceIntegrationTest.class
+com\hospitaliq\patientservice\PatientServiceTest.class
+com\hospitaliq\patientservice\PatientControllerTest.class
+com\hospitaliq\patientservice\PatientRepositoryTest.class

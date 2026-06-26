@@ -1,5 +1,21 @@
 """
-HospitalIQ FastAPI Backend
+HospitalIQ FastAPI Backend (Machine Learning & Analytics Engine)
+
+ARCHITECTURAL OVERVIEW:
+This project uses a Dual-Backend Microservice Architecture:
+1. Spring Boot (Java): Handles high-throughput transactional data (CRUD for Patients, Vaccines).
+2. FastAPI (Python): Handles computationally heavy Machine Learning inference and aggregate analytics.
+
+WHY FASTAPI FOR ML?
+- Native integration with Python's data science ecosystem (scikit-learn, XGBoost, pandas).
+- Asynchronous event loop (`asyncio`) allows non-blocking I/O while waiting for heavy ML computations.
+- The `lifespan` context manager efficiently loads models into memory once at startup, rather than per-request.
+
+HOW PREDICTION WORKS:
+1. On startup, ML models (.joblib files) are loaded into memory via the `loaded_predictors` dictionary.
+2. The frontend sends JSON payloads to endpoints (e.g., /api/predict/beds).
+3. FastAPI routes the request to the correct Predictor class.
+4. The Predictor transforms the JSON into a Pandas DataFrame, runs `.predict()`, and returns the result.
 """
 import asyncio
 import logging
@@ -54,13 +70,14 @@ async def lifespan(app: FastAPI):
     if not skip:
         logger.info("Loading ML predictors...")
         from backend.app_state import loaded_predictors
-        from backend.predictors import BedPredictor, ForecastPredictor, HospitalPredictor, MortalityPredictor, RiskPredictor, ScenarioPredictor
+        from backend.predictors import BedPredictor, ForecastPredictor, HospitalPredictor, MortalityPredictor, RiskPredictor, ScenarioPredictor, R0Predictor
         from backend.predictors.patient_risk_predictor import PatientRiskPredictor
         from backend.predictors.lockdown_predictor import LockdownPredictor
 
         for name, cls in [("bed", BedPredictor), ("mortality", MortalityPredictor), ("hospital", HospitalPredictor),
                            ("risk", RiskPredictor), ("forecast", ForecastPredictor), ("scenario", ScenarioPredictor),
-                           ("patient_risk", PatientRiskPredictor), ("lockdown", LockdownPredictor)]:
+                           ("patient_risk", PatientRiskPredictor), ("lockdown", LockdownPredictor),
+                           ("r0", R0Predictor)]:
             try:
                 p = cls()
                 p.load_model()
@@ -76,28 +93,26 @@ async def lifespan(app: FastAPI):
     # Summary table refresh logic:
     # - Only runs heavy refresh at startup if the table is EMPTY (first ever boot).
     # - On all subsequent restarts, the 31 rows already exist → instant serving.
-    # - Hourly refresh runs after 1h of uptime (server is idle by then).
-    import threading
+    # - Hourly refresh runs as an asyncio task (not a threading.Thread) — idiomatic FastAPI.
 
-    def _run_refresh():
+    async def _run_refresh() -> None:
         """Populate state_summaries and district_summaries tables."""
         try:
             from backend.database import SessionLocal
             from backend.services.summary_refresh import refresh_all_summaries
             db = SessionLocal()
             try:
-                refresh_all_summaries(db)
+                await asyncio.to_thread(refresh_all_summaries, db)
             finally:
                 db.close()
         except Exception as e:
             logger.warning(f"Summary refresh failed (non-fatal): {e}")
 
-    def _background_scheduler():
-        import time as _time
+    async def _background_scheduler() -> None:
+        """Async background task: eager refresh if summaries are missing, then hourly."""
         from backend.database import SessionLocal
         from backend.models import StateSummary, DistrictSummary
 
-        # Check if table already has data
         try:
             db = SessionLocal()
             scount = db.query(StateSummary).count()
@@ -109,25 +124,24 @@ async def lifespan(app: FastAPI):
             dcount = 0
 
         if scount == 0 or dcount == 0:
-            # First-ever boot or incomplete build: build the table now
             logger.info(f"Summaries missing (States: {scount}, Districts: {dcount}) — running initial refresh...")
-            _run_refresh()
+            await _run_refresh()
         else:
-            # Data already exists from a previous run — skip refresh at startup
             logger.info(f"Summaries ready (States: {scount}, Districts: {dcount}) — skipping startup refresh.")
 
-        # Hourly refresh (runs after server has been up 1 hour)
+        # Hourly refresh — runs in the asyncio event loop, no OS thread required
         while True:
-            _time.sleep(3600)
+            await asyncio.sleep(3600)
             logger.info("Running hourly state_summaries refresh...")
-            _run_refresh()
+            await _run_refresh()
 
-    threading.Thread(target=_background_scheduler, daemon=True).start()
-    logger.info("Summary refresh scheduler started.")
+    asyncio.create_task(_background_scheduler())
+    logger.info("Summary refresh scheduler started (asyncio task).")
 
     logger.info("Backend startup complete!")
     yield
     logger.info("Shutting down HospitalIQ Backend")
+
 
 
 app = FastAPI(title="HospitalIQ API v2.0", description="AI-powered hospital intelligence system", version="2.0.0", lifespan=lifespan)

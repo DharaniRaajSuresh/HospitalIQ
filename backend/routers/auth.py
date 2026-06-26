@@ -184,6 +184,6 @@ async def google_callback(request: Request, db=Depends(get_db)):
     db.refresh(user)
 
     jwt_token = create_access_token({"sub": user.email, "role": user.role})
-    resp = RedirectResponse(url=f"{FRONTEND_URL}/dashboard?token={jwt_token}")
+    resp = RedirectResponse(url=f"{FRONTEND_URL}/login?token={jwt_token}")
     set_token_cookie(resp, jwt_token)
     return resp

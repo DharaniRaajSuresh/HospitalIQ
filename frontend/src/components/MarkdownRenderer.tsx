@@ -4,8 +4,8 @@ const CODE_BLOCK = /```(\w*)\n([\s\S]*?)```/g;
 const BOLD = /\*\*(.+?)\*\*/g;
 const ITALIC = /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g;
 const INLINE_CODE = /`(.+?)`/g;
-const BULLET = /^[\s]*[-*+]\s+(.*)$/gm;
-const NUMBERED = /^[\s]*\d+[.)]\s+(.*)$/gm;
+const BULLET = /^[\s]*[-*+]\s+(.*)$/m;
+const NUMBERED = /^[\s]*\d+[.)]\s+(.*)$/m;
 const NEWLINE = /\n/g;
 
 function parseLine(line, key) {
@@ -14,9 +14,9 @@ function parseLine(line, key) {
   let lastIdx = 0;
 
   const patterns = [
-    { re: BOLD, wrap: (s) => <strong key={key + 'b' + parts.length} className="font-semibold text-white">{s}</strong> },
-    { re: ITALIC, wrap: (s) => <em key={key + 'i' + parts.length} className="italic text-[var(--color-text-secondary)]">{s}</em> },
-    { re: INLINE_CODE, wrap: (s) => <code key={key + 'c' + parts.length} className="bg-[var(--color-bg-primary)] px-1.5 py-0.5 rounded text-xs font-mono text-cyan-300">{s}</code> },
+    { re: BOLD, wrap: (s, i) => <strong key={key + 'b' + i} className="font-semibold text-white">{s}</strong> },
+    { re: ITALIC, wrap: (s, i) => <em key={key + 'i' + i} className="italic text-[var(--color-text-secondary)]">{s}</em> },
+    { re: INLINE_CODE, wrap: (s, i) => <code key={key + 'c' + i} className="bg-[var(--color-bg-primary)] px-1.5 py-0.5 rounded text-xs font-mono text-cyan-300">{s}</code> },
   ];
 
   const matches = [];
@@ -37,7 +37,7 @@ function parseLine(line, key) {
     if (m.idx > cursor) {
       elements.push(<span key={key + 't' + cursor}>{line.slice(cursor, m.idx)}</span>);
     }
-    elements.push(m.wrap(m.text));
+    elements.push(m.wrap(m.text, elements.length));
     cursor = m.end;
   }
   if (cursor < line.length) {

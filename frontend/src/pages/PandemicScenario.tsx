@@ -73,6 +73,7 @@ export default function PandemicScenario() {
   const [disease, setDisease] = useState(DISEASES[0]);
   const [selectedState, setSelectedState] = useState('');
   const [year, setYear] = useState(2025);
+  const [manualR0, setManualR0] = useState<number | null>(null);
   const [result, setResult] = useState<PandemicScenarioResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -102,7 +103,7 @@ export default function PandemicScenario() {
     }, 400);
 
     try {
-      const data = await getPandemicScenario<PandemicScenarioResponse>(disease.api, selectedState, String(year));
+      const data = await getPandemicScenario<PandemicScenarioResponse>(disease.api, selectedState, String(year), manualR0 ?? undefined);
       setResult(data);
       setStep(7);
     } catch (e: any) {
@@ -162,20 +163,46 @@ export default function PandemicScenario() {
                 {states.map(s => <option key={s}>{s}</option>)}
               </select>
             </div>
+{manualR0 === null && (
             <div className="space-y-1">
               <label className="text-[13px] text-[var(--color-text-secondary)]">Year: <span className="text-[var(--color-accent-cyan)] font-mono">{year}</span></label>
               <input type="range" min="2020" max="2040" value={year} onChange={e => setYear(Number(e.target.value))} className="w-full accent-[var(--color-accent-cyan)]" />
               <div className="flex justify-between text-xs text-[var(--color-text-muted)] font-mono"><span>2020</span><span>2040</span></div>
             </div>
+)}
+            <div className="space-y-2">
+              <label className="text-[13px] text-[var(--color-text-secondary)]">R₀ Mode</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button onClick={() => setManualR0(null)}
+                  className={`px-3 py-2 rounded-lg border text-center text-xs font-mono transition-all ${manualR0 === null ? 'border-[var(--color-accent-cyan)] bg-[var(--color-accent-cyan)]/10 text-[var(--color-accent-cyan)] shadow-[0_0_8px_rgba(0,240,255,0.1)]' : 'border-[var(--color-border-subtle)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)]'}`}>
+                  Auto (ML)
+                </button>
+                <button onClick={() => setManualR0(manualR0 ?? 2.5)}
+                  className={`px-3 py-2 rounded-lg border text-center text-xs font-mono transition-all ${manualR0 !== null ? 'border-[var(--color-accent-violet)] bg-[var(--color-accent-violet)]/10 text-[var(--color-accent-violet)] shadow-[0_0_8px_rgba(168,85,247,0.1)]' : 'border-[var(--color-border-subtle)] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)]'}`}>
+                  Manual
+                </button>
+              </div>
+              {manualR0 !== null && (
+                <div className="pt-1 space-y-1">
+                  <label className="text-[13px] text-[var(--color-text-secondary)]">R₀ Value: <span className="text-[var(--color-accent-violet)] font-mono">{manualR0.toFixed(1)}</span></label>
+                  <input type="range" min="0.1" max="10" step="0.1" value={manualR0} onChange={e => setManualR0(Number(e.target.value))} className="w-full accent-[var(--color-accent-violet)]" />
+                  <div className="flex justify-between text-xs text-[var(--color-text-muted)] font-mono">
+                    <span>0.1</span>
+                    <span>{manualR0 < 3 ? 'Low' : manualR0 < 6 ? 'Moderate' : 'High'}</span>
+                    <span>10.0</span>
+                  </div>
+                </div>
+              )}
+            </div>
             {error && <p className="text-sm text-[var(--color-accent-rose)] bg-[var(--color-accent-rose)]/10 rounded-lg px-3 py-2">{error}</p>}
             <Button variant="primary" className="w-full justify-center" onClick={handleRun} isLoading={loading}>
-              {loading ? 'Simulating...' : `Run ${year} Scenario`}
+              {loading ? 'Simulating...' : manualR0 !== null ? 'Run Manual Scenario' : `Run ${year} Scenario`}
             </Button>
 
             {/* Model metadata */}
             <div className="pt-3 border-t border-[var(--color-border-subtle)] space-y-1.5 text-xs font-mono">
               <div className="flex justify-between text-[var(--color-text-muted)]"><span>Disease</span><span className="text-[var(--color-text-primary)]">{disease.name}</span></div>
-              <div className="flex justify-between text-[var(--color-text-muted)]"><span>Models</span><StatusBadge status="ml_model" label="7 ML Ensemble" /></div>
+              <div className="flex justify-between text-[var(--color-text-muted)]"><span>Models</span><StatusBadge status={manualR0 !== null ? 'estimated' : 'ml_model'} label={manualR0 !== null ? 'Manual R₀' : '7 ML Ensemble'} /></div>
             </div>
           </div>
       </div>
@@ -220,6 +247,18 @@ export default function PandemicScenario() {
                 </div>
               </div>
 
+{result.r0_source === 'manual' ? (
+                <div className="rounded-xl border border-[var(--color-accent-violet)]/30 bg-[var(--color-accent-violet)]/5 p-5 text-center">
+                  <p className="text-sm font-semibold text-[var(--color-accent-violet)] mb-2">
+                    Manual R₀ Mode — ML Forecasts Bypassed
+                  </p>
+                  <p className="text-xs text-[var(--color-text-muted)]">
+                    Using R₀ = {result.outbreak_summary.avg_reproduction_rate}. Scaled figures reflect your manual override.
+                    Enable <strong>Auto (ML)</strong> mode for full ML-driven projections.
+                  </p>
+                </div>
+              ) : (
+                <>
               {/* Yearly R₀ Trend */}
               {result.yearly_r0_trend && result.yearly_r0_trend.length > 1 && (
                 <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-1)] p-5">
@@ -316,9 +355,11 @@ export default function PandemicScenario() {
                   )}
                 </div>
               </div>
+              </>
+            )}
             </>
           )}
-        </div>
+          </div>
     </div>
   );
 }

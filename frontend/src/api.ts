@@ -31,6 +31,7 @@ interface BedForecastParams {
 
 interface PatientListParams {
   limit?: string;
+  skip?: string;
   search?: string;
   state?: string;
 }
@@ -226,10 +227,11 @@ export async function getLocalities<T = unknown>(district: string): Promise<T> {
   return authFetch<T>(`/locations/localities?district=${encodeURIComponent(district)}`);
 }
 
-export async function getPandemicScenario<T = unknown>(disease: string, state?: string, year?: string): Promise<T> {
+export async function getPandemicScenario<T = unknown>(disease: string, state?: string, year?: string, manualR0?: number): Promise<T> {
   const params: Record<string, string> = { disease };
   if (state) params.state = state;
   if (year) params.year = year;
+  if (manualR0 !== undefined) params.manual_r0 = String(manualR0);
   const qs = new URLSearchParams(params).toString();
   return authFetch<T>(`/pandemic/scenario?${qs}`);
 }
@@ -265,6 +267,13 @@ export async function chatAI<T = unknown>(message: string, sessionId?: string, s
     body: JSON.stringify({ message, session_id: sessionId }),
     signal,
   });
+}
+
+export async function globalSearch<T = unknown>(q: string, limit?: number): Promise<T> {
+  const params: Record<string, string> = { q };
+  if (limit) params.limit = String(limit);
+  const qs = new URLSearchParams(params).toString();
+  return authFetch<T>(`/search?${qs}`);
 }
 
 export function clearCache(): void {

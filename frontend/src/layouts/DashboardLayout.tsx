@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -17,9 +17,17 @@ import {
   Bell,
   LogOut,
   Settings,
-  Lock
+  Lock,
+  Hospital,
+  User,
+  ExternalLink,
+  Code2,
+  Phone,
+  Mail,
+  MessageCircle
 } from 'lucide-react';
-import { getMe, logout, setPassword } from '../api';
+import { getMe, globalSearch, logout, setPassword } from '../api';
+import { useDebounce } from '../hooks/useDebounce';
 import PageTransition from '../components/ui/PageTransition';
 import FloatingParticles from '../components/ui/FloatingParticles';
 
@@ -43,9 +51,53 @@ export default function DashboardLayout() {
   const [newPw, setNewPw] = useState('');
   const [pwMsg, setPwMsg] = useState('');
   const [userInfo, setUserInfo] = useState<{ name: string; role: string; initials: string } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<{ patients: { id: number; name: string; state: string; district: string }[]; hospitals: { id: string; name: string; state: string; district: string }[] } | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const debouncedSearch = useDebounce(searchQuery, 300);
   const settingsRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!debouncedSearch.trim()) { setSearchResults(null); setSearchOpen(false); return; }
+    let cancelled = false;
+    setSearching(true);
+    globalSearch<{ patients: { id: number; name: string; state: string; district: string }[]; hospitals: { id: string; name: string; state: string; district: string }[] }>(debouncedSearch.trim())
+      .then(data => { if (!cancelled) { setSearchResults(data); setSearchOpen(true); } })
+      .catch(() => { if (!cancelled) { setSearchResults(null); setSearchOpen(false); } })
+      .finally(() => { if (!cancelled) setSearching(false); });
+    return () => { cancelled = true; };
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      setSearchOpen(false);
+      navigate(`/dashboard/patients?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+    if (e.key === 'Escape') {
+      setSearchOpen(false);
+      (e.target as HTMLInputElement).blur();
+    }
+  };
+
+  const handleSearchFocus = () => {
+    if (searchResults && (searchResults.patients.length > 0 || searchResults.hospitals.length > 0)) {
+      setSearchOpen(true);
+    }
+  };
 
   useEffect(() => {
     getMe().then((data: Record<string, unknown>) => {
@@ -166,13 +218,86 @@ export default function DashboardLayout() {
           </div>
 
           <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="relative hidden md:block w-72 group">
+            {/* Premium Developer Badge */}
+            <div className="hidden lg:flex flex-col justify-center text-right mr-5 pr-5 border-r border-[rgba(255,255,255,0.15)]">
+              <div className="flex items-end justify-end space-x-2 mb-1">
+                <span className="text-[10px] uppercase tracking-widest text-[var(--color-accent-cyan)] font-bold">Developed by</span>
+                <span className="text-sm text-white font-bold tracking-wide leading-none">Dharani Raaj Suresh</span>
+              </div>
+              <div className="flex items-center justify-end space-x-4 text-xs font-mono">
+                <a href="tel:9042503337" className="flex items-center text-gray-400 hover:text-[var(--color-accent-cyan)] transition-colors group">
+                  <Phone className="w-3 h-3 mr-1.5 group-hover:scale-110 transition-transform" />
+                  9042503337
+                </a>
+                <a href="mailto:dharanisuresh307@gmail.com" className="flex items-center text-gray-400 hover:text-[var(--color-accent-rose)] transition-colors group">
+                  <Mail className="w-3 h-3 mr-1.5 group-hover:scale-110 transition-transform" />
+                  dharanisuresh307@gmail.com
+                </a>
+              </div>
+            </div>
+            <div ref={searchRef} className="relative hidden md:block w-72 group">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-accent-cyan)] transition-colors" />
               <input 
                 type="text" 
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                onFocus={handleSearchFocus}
                 placeholder="Search resources, records..." 
                 className="bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] text-[var(--color-text-primary)] text-sm rounded-full pl-10 pr-4 py-2 focus:outline-none focus:border-[var(--color-accent-cyan)] focus:bg-[rgba(255,255,255,0.05)] focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all w-full placeholder-[var(--color-text-muted)]"
               />
+              <AnimatePresence>
+                {searchOpen && searchResults && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -4, scale: 0.96 }}
+                    transition={{ duration: 0.12 }}
+                    className="absolute top-full mt-2 left-0 right-0 bg-[#0B1220] border border-gray-800 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50"
+                  >
+                    {searching && (
+                      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-800/50">
+                        <div className="w-3 h-3 border-2 border-[var(--color-accent-cyan)] border-t-transparent rounded-full animate-spin" />
+                        <span className="text-xs text-gray-400">Searching...</span>
+                      </div>
+                    )}
+                    {searchResults.patients.length > 0 && (
+                      <div>
+                        <div className="px-4 py-1.5 text-[10px] font-mono text-gray-500 uppercase tracking-wider bg-gray-900/30">Patients</div>
+                        {searchResults.patients.slice(0, 5).map(p => (
+                          <button key={p.id} onClick={() => { setSearchOpen(false); setSearchQuery(''); navigate(`/dashboard/patients/${p.id}`); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-[rgba(255,255,255,0.04)] transition-all text-left">
+                            <User className="w-4 h-4 text-[var(--color-accent-cyan)] flex-shrink-0" />
+                            <span className="flex-1 truncate">{p.name}</span>
+                            <span className="text-[10px] text-gray-500 font-mono truncate max-w-[100px]">{p.state}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {searchResults.hospitals.length > 0 && (
+                      <div>
+                        <div className="px-4 py-1.5 text-[10px] font-mono text-gray-500 uppercase tracking-wider bg-gray-900/30">Hospitals</div>
+                        {searchResults.hospitals.slice(0, 5).map(h => (
+                          <button key={h.id} onClick={() => { setSearchOpen(false); setSearchQuery(''); navigate(`/dashboard/hospitals`); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-[rgba(255,255,255,0.04)] transition-all text-left">
+                            <Hospital className="w-4 h-4 text-[var(--color-accent-violet)] flex-shrink-0" />
+                            <span className="flex-1 truncate">{h.name}</span>
+                            <span className="text-[10px] text-gray-500 font-mono truncate max-w-[100px]">{h.state}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {!searching && searchResults.patients.length === 0 && searchResults.hospitals.length === 0 && (
+                      <div className="px-4 py-3 text-xs text-gray-500 text-center">No results found</div>
+                    )}
+                    <button onClick={() => { setSearchOpen(false); navigate(`/dashboard/patients?search=${encodeURIComponent(searchQuery.trim())}`); }}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs text-[var(--color-accent-cyan)] border-t border-gray-800/50 hover:bg-[rgba(255,255,255,0.04)] transition-all">
+                      <ExternalLink className="w-3 h-3" />
+                      View all matching patients
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <button className="p-2 rounded-full text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-bg-elevated)] relative">

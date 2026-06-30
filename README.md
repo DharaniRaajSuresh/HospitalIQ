@@ -1,5 +1,7 @@
 # 🏥 HospitalIQ — Enterprise Healthcare Intelligence Platform
 
+**Developed by Dharani Raaj Suresh** · 📞 9042503337 · ✉️ dharanisuresh307@gmail.com
+
 HospitalIQ is an AI-powered hospital capacity and patient risk management system built on a **Dual-Backend Microservice Architecture**. It predicts bed shortages, forecasts pandemic spread scenarios, and analyzes patient health data in real-time.
 
 ---

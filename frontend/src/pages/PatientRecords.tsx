@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, User, ChevronRight, Columns, List, ArrowUpDown, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import { getPatients } from '../api';
 import { useDebounce } from '../hooks/useDebounce';
@@ -43,10 +43,11 @@ function getRiskLevel(age: number, conditions: string): { label: string; color: 
 export default function PatientRecords() {
   useEffect(() => { document.title = 'Patient Records | HOSPi'; }, []);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('search') || '');
   const [apiError, setApiError] = useState('');
   const [page, setPage] = useState(1);
   const [viewMode, setViewMode] = useState<'card' | 'table'>(
@@ -74,9 +75,9 @@ export default function PatientRecords() {
     setLoading(true);
     setApiError('');
     try {
-      const params: Record<string, string> = { limit: String(perPage), offset: String((page - 1) * perPage) };
+      const params: Record<string, string> = { limit: String(perPage), skip: String((page - 1) * perPage) };
       if (debouncedSearch) params.search = debouncedSearch;
-      const data = await getPatients<Patient>(params as any);
+      const data = await getPatients<Patient>(params);
       setPatients(data.patients || []);
       setTotal(data.total || 0);
     } catch (e: any) {

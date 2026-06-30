@@ -18,7 +18,14 @@ class PatientRepository:
         if state:
             q = q.filter(Patient.state == state)
         if search:
-            q = q.filter(Patient.patient_name.ilike(f"%{search}%"))
+            term = f"%{search}%"
+            q = q.filter(
+                Patient.patient_name.ilike(term)
+                | Patient.state.ilike(term)
+                | Patient.district.ilike(term)
+                | Patient.blood_group.ilike(term)
+                | Patient.gender.ilike(term)
+            )
         return q.order_by(Patient.id.desc()).offset(skip).limit(limit).all()
 
     def get_by_id(self, patient_id: int) -> Patient | None:

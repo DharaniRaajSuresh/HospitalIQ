@@ -165,7 +165,7 @@ from backend.core.tracing import setup_tracing
 setup_tracing(app, service_name=settings.service_name)
 logger.info("OpenTelemetry tracing initialized", environment=settings.environment)
 
-from backend.routers import ai, auth, health, locations, map, pandemic, patients, predictions, stats
+from backend.routers import ai, auth, health, locations, map, pandemic, patients, predictions, search, stats
 
 app.include_router(health.router)
 app.include_router(predictions.router)
@@ -176,6 +176,7 @@ app.include_router(patients.router)
 app.include_router(ai.router)
 app.include_router(auth.router)
 app.include_router(map.router)
+app.include_router(search.router)
 
 if __name__ == "__main__":
     import uvicorn

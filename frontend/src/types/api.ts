@@ -96,6 +96,7 @@ export interface PandemicScenarioResponse {
   lockdown_recommended?: boolean;
   yearly_r0_trend?: { year: number; avg_r0: number; avg_cfr: number; total_cases: number }[];
   hospitals_at_risk: HospitalRiskItem[];
+  r0_source?: string;
 }
 
 export interface PandemicMonthlyPoint {

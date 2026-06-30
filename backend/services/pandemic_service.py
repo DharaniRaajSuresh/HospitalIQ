@@ -17,6 +17,9 @@ DISEASE_INFO = {
     "Nipah": {"type": "Henipavirus", "cfr": "40-75%", "r0": "1.2-1.7"},
     "Marburg": {"type": "Viral Hemorrhagic Fever", "cfr": "24-88%", "r0": "1.5-2.0"},
 }
+DISEASE_DEFAULT_R0 = {
+    "COVID-19": 3.25, "Ebola": 1.75, "H1N1": 1.6, "SARS": 2.75, "Nipah": 1.45, "Marburg": 1.75,
+}
 DISEASE_TO_CAUSE = {"COVID-19": "Respiratory", "Ebola": "Infectious", "H1N1": "Respiratory",
                      "SARS": "Respiratory", "Nipah": "Infectious", "Marburg": "Infectious"}
 DISEASE_MAP = {"COVID-19": "Pneumonia", "H1N1": "Pneumonia", "SARS": "Pneumonia"}
@@ -306,7 +309,8 @@ def generate_recommendations(projected_occupancy: float, bed_shortage: int, icu_
     return recs
 
 
-def build_scenario(disease: str, state: str | None, target_year: int, db: Session) -> dict:
+def build_scenario(disease: str, state: str | None, target_year: int, db: Session,
+                  manual_r0: float | None = None) -> dict:
     if state:
         state = normalize_state(state)
 
@@ -319,29 +323,81 @@ def build_scenario(disease: str, state: str | None, target_year: int, db: Sessio
     max_data_year = max(m["year"] for m in monthly) if monthly else 2020
     target_year = min(max(target_year if target_year else max_data_year, min_year), 2040)
 
-    target_r0 = totals.get("avg_r0", 0)
-    for entry in yearly_r0_data:
-        if entry["year"] == target_year:
-            target_r0 = entry["avg_r0"]
-            break
+    if manual_r0 is not None:
+        manual_r0 = max(0.1, min(10.0, round(float(manual_r0), 2)))
+        default_r0 = DISEASE_DEFAULT_R0.get(disease, 2.0)
+        scale = manual_r0 / default_r0
+        scaled = lambda v: int((v or 0) * scale)
+        sc = scaled(totals.get("total_confirmed") or 0)
+        sd = scaled(totals.get("total_deaths") or 0)
+        cfr = round(sd / max(sc, 1) * 100, 2) if sc else 0
+        risk_score = min(100, int(manual_r0 / default_r0 * 50))
+        risk_level = "low" if risk_score < 30 else "moderate" if risk_score < 55 else "high" if risk_score < 80 else "critical"
+        verdict = "Tolerable" if risk_score < 30 else "Concerning" if risk_score < 55 else "Critical" if risk_score < 80 else "Overwhelming"
+        lockdown = risk_score > 75
+        recs = []
+        if manual_r0 > 2:
+            recs.append(f"High transmissibility (R0={manual_r0}) — strict containment measures recommended")
+        if lockdown:
+            recs.append("MANDATORY: Lockdown recommended — initiate immediately")
+        if risk_level in ("high", "critical"):
+            recs.append("CRITICAL: Emergency protocols must be activated")
+        elif risk_level == "moderate":
+            recs.append("Partial capacity strain expected — pre-position medical supplies")
+        else:
+            recs.append(f"Scenario is tolerable for {state or 'India'} — continue monitoring")
+        return {
+            "disease": disease, "disease_info": DISEASE_INFO.get(disease, {}),
+            "state": state or "All India", "projection_year": target_year,
+            "scenario": {"predicted_peak_demand": 0, "predicted_cfr": cfr, "forecast_months": 0, "data_source": "manual_r0",
+                "ml_models_used": {k: False for k in ["bed_predictor","mortality_predictor","hospital_predictor","forecast_predictor","risk_predictor","scenario_predictor","r0_predictor"]}},
+            "outbreak_summary": {
+                "total_confirmed_cases": sc, "total_deaths": sd, "total_recovered": scaled(totals.get("total_recovered") or 0),
+                "total_active_cases": scaled(totals.get("total_active") or 0),
+                "total_bed_demand": scaled(totals.get("total_bed_demand") or 0),
+                "total_icu_demand": scaled(totals.get("total_icu_demand") or 0),
+                "total_ventilator_demand": scaled(totals.get("total_vent_demand") or 0),
+                "avg_reproduction_rate": manual_r0, "avg_case_fatality_rate": cfr,
+            },
+            "current_capacity": {"bed_occupancy": round(cap["occupancy"], 1), "available_beds": cap["available"],
+                "total_beds": cap["total"], "icu_capacity": cap["icu"], "hospitals": cap["hospitals"]},
+            "ml_predicted_capacity": {"predicted_total_beds": 0, "predicted_icu_beds": 0, "predicted_available_beds": 0,
+                "model": "manual_r0", "ml_death_rate_per_100k": None, "ml_model": "manual_r0"},
+            "projected_impact": {"bed_occupancy": round(cap["occupancy"], 1), "available_beds": cap["available"],
+                "bed_shortage": 0, "icu_shortage": 0, "projected_deaths": sd, "projected_cfr": cfr,
+                "projected_bed_demand": scaled(totals.get("total_bed_demand") or 0),
+                "projected_icu_demand": scaled(totals.get("total_icu_demand") or 0)},
+            "tolerability": {"risk_score": risk_score, "risk_level": risk_level, "verdict": verdict,
+                "bed_occupancy_risk": 0, "fatality_risk": 0, "icu_capacity_risk": 0, "bed_demand_risk": 0},
+            "monthly_breakdown": [], "hospitals_at_risk": [],
+            "recommendations": recs,
+            "recommendations_detailed": [{"priority": i+1, "message": r, "category": "containment" if "containment" in r.lower() else "lockdown" if "lockdown" in r.lower() else "alert"} for i, r in enumerate(recs)],
+            "lockdown_recommended": lockdown, "yearly_r0_trend": [], "r0_source": "manual",
+        }
     else:
-        if yearly_r0_data:
-            last_entry = yearly_r0_data[-1]
-            if target_year > last_entry["year"]:
-                r0_predictor = loaded_predictors.get("r0")
-                if r0_predictor and getattr(r0_predictor, "_is_loaded", False) and state:
-                    try:
-                        result = r0_predictor.predict({
-                            "disease": disease, "state": state, "target_year": target_year,
-                        })
-                        target_r0 = result.get("predicted_r0", last_entry["avg_r0"])
-                    except Exception as e:
-                        logger.warning(f"R0Predictor failed: {e}")
+        target_r0 = totals.get("avg_r0", 0)
+        for entry in yearly_r0_data:
+            if entry["year"] == target_year:
+                target_r0 = entry["avg_r0"]
+                break
+        else:
+            if yearly_r0_data:
+                last_entry = yearly_r0_data[-1]
+                if target_year > last_entry["year"]:
+                    r0_predictor = loaded_predictors.get("r0")
+                    if r0_predictor and getattr(r0_predictor, "_is_loaded", False) and state:
+                        try:
+                            result = r0_predictor.predict({
+                                "disease": disease, "state": state, "target_year": target_year,
+                            })
+                            target_r0 = result.get("predicted_r0", last_entry["avg_r0"])
+                        except Exception as e:
+                            logger.warning(f"R0Predictor failed: {e}")
+                            target_r0 = last_entry["avg_r0"]
+                    else:
                         target_r0 = last_entry["avg_r0"]
                 else:
                     target_r0 = last_entry["avg_r0"]
-            else:
-                target_r0 = last_entry["avg_r0"]
 
     totals["avg_r0"] = target_r0
 

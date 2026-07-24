@@ -321,7 +321,7 @@ def build_pandemic_outbreak(districts_df):
 
         active = confirmed - recovered - deceased
         cfr = round(deceased / max(confirmed, 1) * 100, 2)
-        r0 = round(np.random.uniform(1.0, 4.0), 2)
+        r0 = round(3.2 + np.random.normal(0, 0.3), 2)  # COVID-19 R₀ ≈ 3.2 (literature)
         bed_demand = int(confirmed * np.random.uniform(0.05, 0.15))
         icu_demand = int(bed_demand * np.random.uniform(0.1, 0.3))
         vent_demand = int(icu_demand * np.random.uniform(0.3, 0.6))
@@ -490,8 +490,13 @@ def prepare_ml_datasets(bed_df, mortality_df, hospital_df):
         bed_df["season_flag"] = bed_df["recorded_month"].apply(
             lambda m: 1 if m in [12, 1, 2] else 2 if m in [3, 4, 5] else 3 if m in [6, 7, 8] else 4)
         bed_df = bed_df.sort_values(["state", "ward_type", "recorded_year", "recorded_month"])
-        for col in ["lag_1_month", "lag_3_month", "lag_6_month", "rolling_mean_3", "rolling_mean_6"]:
-            bed_df[col] = 0.0
+        bed_df["lag_1_month"] = bed_df.groupby(["state", "ward_type"])["available_beds"].shift(1).fillna(0)
+        bed_df["lag_3_month"] = bed_df.groupby(["state", "ward_type"])["available_beds"].shift(3).fillna(0)
+        bed_df["lag_6_month"] = bed_df.groupby(["state", "ward_type"])["available_beds"].shift(6).fillna(0)
+        bed_df["rolling_mean_3"] = bed_df.groupby(["state", "ward_type"])["available_beds"].transform(
+            lambda x: x.rolling(3, min_periods=1).mean())
+        bed_df["rolling_mean_6"] = bed_df.groupby(["state", "ward_type"])["available_beds"].transform(
+            lambda x: x.rolling(6, min_periods=1).mean())
         bed_df["total_beds_scaled"] = (bed_df["total_beds"] - bed_df["total_beds"].min()) / max(
             bed_df["total_beds"].max() - bed_df["total_beds"].min(), 1)
 
@@ -511,8 +516,13 @@ def prepare_ml_datasets(bed_df, mortality_df, hospital_df):
         mortality_df["season_flag"] = mortality_df["month"].apply(
             lambda m: 1 if m in [12, 1, 2] else 2 if m in [3, 4, 5] else 3 if m in [6, 7, 8] else 4)
         mortality_df = mortality_df.sort_values(["state", "district", "year", "month"])
-        for col in ["lag_1_month", "lag_3_month", "lag_6_month", "rolling_mean_3", "rolling_mean_6"]:
-            mortality_df[col] = 0.0
+        mortality_df["lag_1_month"] = mortality_df.groupby(["state", "district"])["death_rate"].shift(1).fillna(0)
+        mortality_df["lag_3_month"] = mortality_df.groupby(["state", "district"])["death_rate"].shift(3).fillna(0)
+        mortality_df["lag_6_month"] = mortality_df.groupby(["state", "district"])["death_rate"].shift(6).fillna(0)
+        mortality_df["rolling_mean_3"] = mortality_df.groupby(["state", "district"])["death_rate"].transform(
+            lambda x: x.rolling(3, min_periods=1).mean())
+        mortality_df["rolling_mean_6"] = mortality_df.groupby(["state", "district"])["death_rate"].transform(
+            lambda x: x.rolling(6, min_periods=1).mean())
         mortality_df["population_scaled"] = (mortality_df["population"] - mortality_df["population"].min()) / max(
             mortality_df["population"].max() - mortality_df["population"].min(), 1)
 

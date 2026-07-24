@@ -104,7 +104,7 @@ class GeminiClient:
                     if self._try_next_model():
                         return self.generate(prompt, max_retries)
                     return {"error": "Gemini API quota exhausted on all models", "response": None}
-                
+
                 logger.warning(f"Gemini API error (attempt {attempt + 1}): {e}")
                 if attempt < max_retries - 1:
                     time.sleep(1)

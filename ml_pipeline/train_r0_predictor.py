@@ -117,6 +117,10 @@ for (disease, state), yearly_records in grouped.items():
         })
 
 # ---- STEP 2: Synthetic data ----
+# NOTE: Target R0 is computed from features via a formula (baseline*decay*vacc*...).
+# The model learns to reverse-engineer this formula rather than predict real R0 dynamics.
+# R² ~0.99 reflects formula-reconstruction accuracy, not real-world predictive skill.
+# Vaccination_rate is a deterministic sigmoid of years_since_2020 (no real vaccination data).
 # R0 = baseline * 0.96^yrs * (1 - 0.4*vacc) * (1 + 0.3*(mut-1)) * density_mod
 print("Generating synthetic data...")
 aug_records = []

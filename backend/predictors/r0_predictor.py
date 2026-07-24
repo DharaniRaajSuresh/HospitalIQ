@@ -62,7 +62,9 @@ class R0Predictor(BasePredictor):
         population_density = meta.get("state_population_density", {}).get(state, 100_000)
 
         yrs_since = max(0, target_year - 2020)
-        vacc = 1.0 / (1.0 + math.exp(-0.45 * (yrs_since - 4)))
+        vacc = meta.get("disease_defaults", {}).get(disease, {}).get("vaccination_rate",
+                  1.0 / (1.0 + math.exp(-0.45 * (yrs_since - 4)))) if isinstance(meta.get("disease_defaults"), dict) else (
+                  1.0 / (1.0 + math.exp(-0.45 * (yrs_since - 4))))
         year_norm = (target_year - 2017) / 20.0
 
         feat = np.array([[
@@ -71,12 +73,13 @@ class R0Predictor(BasePredictor):
         ]])
 
         try:
+            if not self._model:
+                raise RuntimeError("R0Predictor model not loaded")
             predicted_r0 = float(self._model.predict(feat)[0])
             predicted_r0 = max(0.3, min(6.0, round(predicted_r0, 3)))
         except Exception as e:
             logger.warning(f"R0Predictor predict failed: {e}")
-            disease_defaults = meta.get("disease_defaults", {})
-            predicted_r0 = round(disease_defaults.get(disease, 2.0) * 0.95, 2)
+            raise
 
         return {
             "predicted_r0": predicted_r0,

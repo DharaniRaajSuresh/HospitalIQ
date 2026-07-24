@@ -1,0 +1,22 @@
+{
+  "version": "scenario_cases_20260722_202958",
+  "timestamp": "20260722_202958",
+  "model_name": "scenario_cases",
+  "metrics": {
+    "train_r2": 0.9983158232216902,
+    "test_r2": 0.9899598885676975,
+    "train_mape": 8.335762174793755,
+    "test_mape": 20.123888484964308
+  },
+  "params": {
+    "best_params": {
+      "colsample_bytree": 0.8,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_child_weight": 3,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0,
+      "subsample": 0.7
+    }
+  }
+}

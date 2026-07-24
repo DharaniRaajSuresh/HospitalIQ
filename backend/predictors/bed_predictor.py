@@ -7,8 +7,8 @@ that answers. It:
 1. Loads the trained XGBoost model from bed_model.pkl
 2. Builds 11 mathematical features (month sine/cosine, lag values, rolling averages)
 3. Runs the model for each requested month (up to 120 months / 10 years)
-4. Calculates confidence intervals that widen for farther predictions
-5. Returns the forecast with lower/upper bounds
+4. Returns monthly predicted bed counts
+5. No confidence intervals — model outputs are raw point estimates
 
 Different states and ward types produce different predictions (proves it's not hardcoded).
 
@@ -155,6 +155,12 @@ class BedPredictor(BasePredictor):
         last = self._last_known.get(key, {})
         current_beds = last.get("available_beds", 150)
 
+        hist = last.get("history", [])
+        lag_1 = hist[-1] if len(hist) >= 1 else current_beds
+        lag_3 = hist[-3] if len(hist) >= 3 else current_beds
+        lag_6 = hist[-6] if len(hist) >= 6 else current_beds
+        roll_3 = sum(hist[-3:]) / 3 if len(hist) >= 3 else current_beds
+        roll_6 = sum(hist[-6:]) / 6 if len(hist) >= 6 else current_beds
         return {
             **raw_input,
             "month_sin": math.sin(2 * math.pi * month / 12),
@@ -163,11 +169,11 @@ class BedPredictor(BasePredictor):
             "season_flag": season,
             "state_encoded": self._state_encoding.get(state, 0),
             "ward_type_encoded": self._ward_encoding.get(ward, 0),
-            "lag_1_month": last.get("lag_1_month", current_beds),
-            "lag_3_month": last.get("lag_3_month", current_beds),
-            "lag_6_month": last.get("lag_6_month", current_beds),
-            "rolling_mean_3": last.get("rolling_mean_3", current_beds),
-            "rolling_mean_6": last.get("rolling_mean_6", current_beds),
+            "lag_1_month": lag_1,
+            "lag_3_month": lag_3,
+            "lag_6_month": lag_6,
+            "rolling_mean_3": roll_3,
+            "rolling_mean_6": roll_6,
         }
 
     def predict(self, input_data: dict[str, Any]) -> dict[str, Any]:
@@ -181,12 +187,11 @@ class BedPredictor(BasePredictor):
         raw = self._last_known.get(key, {})
         history = list(raw.get("history", []))
         if len(history) < 6:
-            history = [100] * 6
+            state_avg = self._last_known.get("_state_avg", {}).get(input_data["state"], 150)
+            history = [state_avg] * 6
 
         state_enc = self._state_encoding.get(input_data["state"], 0)
         ward_enc = self._ward_encoding.get(input_data["ward_type"], 0)
-
-        growth_factor = 1.0
 
         forecasts = []
         base_month = input_data.get("start_month", 1)
@@ -228,7 +233,6 @@ class BedPredictor(BasePredictor):
                 logger.warning("BedPredictor predict failed: %s", e)
                 raise
 
-            prediction = prediction * growth_factor
             prediction = max(1, round(prediction))
             history.append(prediction)
             # Keep only last 12 values to prevent long-term drift
@@ -245,5 +249,5 @@ class BedPredictor(BasePredictor):
             "state": input_data["state"],
             "ward_type": input_data["ward_type"],
             "forecast": forecasts,
-            "model_info": {**self.get_model_info(), "note": "Raw ML output, no post-hoc scaling"}
+            "model_info": {**self.get_model_info(), "note": "Raw ML output"}
         }

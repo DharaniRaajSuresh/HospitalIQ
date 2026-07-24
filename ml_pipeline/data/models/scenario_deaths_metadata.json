@@ -1,0 +1,22 @@
+{
+  "version": "scenario_deaths_20260722_203015",
+  "timestamp": "20260722_203015",
+  "model_name": "scenario_deaths",
+  "metrics": {
+    "train_r2": 0.9981418644805586,
+    "test_r2": 0.9797996825694377,
+    "train_mape": 11.31052455634736,
+    "test_mape": 39.4326036404516
+  },
+  "params": {
+    "best_params": {
+      "colsample_bytree": 0.7,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_child_weight": 3,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0,
+      "subsample": 0.8
+    }
+  }
+}

@@ -57,7 +57,7 @@ class PatientRiskPredictor:
 
     def predict(self, features: dict[str, Any]) -> dict[str, Any]:
         if not self._is_loaded:
-            return {"status": "ml_model", "error": "Model not loaded"}
+            raise RuntimeError("Patient risk model not loaded")
 
         feature_names = self._metadata["feature_names"]
         row = []

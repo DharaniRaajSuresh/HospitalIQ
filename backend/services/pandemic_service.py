@@ -318,8 +318,10 @@ def build_scenario(disease: str, state: str | None, target_year: int, db: Sessio
     cap = fetch_capacity(state, db)
     yearly_r0_data = fetch_yearly_r0(disease, state, db)
 
-    min_year = min(m["year"] for m in monthly) if monthly else 2020
-    max_data_year = max(m["year"] for m in monthly) if monthly else 2020
+    if not monthly:
+        raise ValueError(f"No monthly outbreak data for {disease}/{state}")
+    min_year = min(m["year"] for m in monthly)
+    max_data_year = max(m["year"] for m in monthly)
     target_year = min(max(target_year if target_year else max_data_year, min_year), 2040)
 
     if manual_r0 is not None:
@@ -400,8 +402,8 @@ def build_scenario(disease: str, state: str | None, target_year: int, db: Sessio
 
     totals["avg_r0"] = target_r0
 
-    min_year = min(m["year"] for m in monthly) if monthly else 2020
-    max_data_year = max(m["year"] for m in monthly) if monthly else 2020
+    min_year = min(m["year"] for m in monthly)
+    max_data_year = max(m["year"] for m in monthly)
     target_year = min(max(target_year if target_year else max_data_year, min_year), 2040)
 
     bed_predictor = loaded_predictors.get("bed")

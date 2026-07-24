@@ -52,7 +52,9 @@ class PatientRiskPredictor:
             for key in ("xgb", "rf", "gb"):
                 if key in model:
                     preds.append(model[key].predict(X))
-            return np.mean(preds, axis=0) if preds else 0.0
+            if not preds:
+                raise RuntimeError("No models found in ensemble dict")
+            return np.mean(preds, axis=0)
         return model.predict(X)
 
     def predict(self, features: dict[str, Any]) -> dict[str, Any]:

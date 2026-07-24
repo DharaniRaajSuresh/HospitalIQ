@@ -106,7 +106,7 @@ class BedPredictor(BasePredictor):
                             vals = group["available_beds"].tolist()
                             self._last_known[(state, ward)] = {
                                 "history": deque(vals, maxlen=120),
-                                "available_beds": vals[-1] if vals else 100,
+                                "available_beds": vals[-1],
                             }
                     logger.info(f"✅ Loaded historical data for {len(self._last_known)} state/ward combinations")
             except Exception as e:
@@ -152,8 +152,10 @@ class BedPredictor(BasePredictor):
 
         # Get last known values for lag features
         key = (state, ward)
-        last = self._last_known.get(key, {})
-        current_beds = last.get("available_beds", 150)
+        if key not in self._last_known:
+            raise ValueError(f"No historical data for {state}/{ward}")
+        last = self._last_known[key]
+        current_beds = last["available_beds"]
 
         hist = last.get("history", [])
         lag_1 = hist[-1] if len(hist) >= 1 else current_beds
@@ -184,11 +186,12 @@ class BedPredictor(BasePredictor):
             self.load_model()
 
         key = (input_data["state"], input_data["ward_type"])
-        raw = self._last_known.get(key, {})
+        if key not in self._last_known:
+            raise ValueError(f"No historical data available for {input_data['state']}/{input_data['ward_type']}")
+        raw = self._last_known[key]
         history = list(raw.get("history", []))
         if len(history) < 6:
-            state_avg = self._last_known.get("_state_avg", {}).get(input_data["state"], 150)
-            history = [state_avg] * 6
+            raise ValueError(f"Insufficient historical data for lag features ({len(history)} months, need 6)")
 
         state_enc = self._state_encoding.get(input_data["state"], 0)
         ward_enc = self._ward_encoding.get(input_data["ward_type"], 0)

@@ -49,7 +49,9 @@ class TestBedPredictor:
         assert len(names) == 11
 
     def test_preprocess_input(self):
+        from collections import deque
         p = BedPredictor()
+        p._last_known[("Tamil Nadu", "ICU")] = {"history": [150]*12, "available_beds": 150}
         processed = p.preprocess_input({"state": "Tamil Nadu", "ward_type": "ICU", "month": 6, "year": 2025})
         assert "month_sin" in processed
         assert "state_encoded" in processed

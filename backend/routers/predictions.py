@@ -52,11 +52,15 @@ async def predict_beds(state: str, ward_type: str, months_ahead: int = 3, year: 
         logger.error(f"Bed prediction error: {e}")
 
     if db_data:
-        base_available = db_data[-1][2] or 100
-        base_total = db_data[-1][3] or 200
+        if db_data[-1][2] is None or db_data[-1][3] is None:
+            raise HTTPException(status_code=503, detail="Incomplete historical data for this state/ward")
+        base_available = db_data[-1][2]
+        base_total = db_data[-1][3]
         trend = 0
         if len(db_data) >= 3:
-            recent = [r[2] or 100 for r in db_data[-3:]]
+            if any(r[2] is None for r in db_data[-3:]):
+                raise HTTPException(status_code=503, detail="Incomplete historical data for trend calculation")
+            recent = [r[2] for r in db_data[-3:]]
             trend = (recent[-1] - recent[0]) / max(len(recent) - 1, 1)
         month_map = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         forecasts = []
@@ -88,7 +92,9 @@ async def predict_mortality(district: str, age_group: str, cause: str, year: int
     db_avg = db.query(func.avg(MortalityRecord.death_rate)).filter(
         MortalityRecord.district == district, MortalityRecord.age_group == age_group,
         MortalityRecord.cause_of_death == cause).scalar()
-    death_rate = float(db_avg) if db_avg else 75.0
+    if db_avg is None:
+        raise HTTPException(status_code=503, detail="Mortality predictor unavailable and no historical data for this district/age/cause")
+    death_rate = float(db_avg)
     risk = assign_risk_level(death_rate)
     MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     resp = {"district": district, "age_group": age_group, "cause": cause,

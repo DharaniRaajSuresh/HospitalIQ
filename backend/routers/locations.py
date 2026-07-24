@@ -277,14 +277,14 @@ async def get_localities(district: str, db=Depends(get_db), user: User | None = 
     mort_avg = db.query(func.avg(MortalityRecord.death_rate)).filter(MortalityRecord.district == district).scalar() or 0
     localities = LOCALITY_MAP.get(district, [f"{district} North", f"{district} South", f"{district} East", f"{district} West", f"{district} Central"])
     results = []
-    for loc in localities:
-        factor = random.uniform(0.3, 1.8)
-        results.append({"locality": loc, "hospitals": max(1, round(hosp_counts * factor / len(localities))),
-                        "estimated_beds": max(10, round(hosp_counts * 20 * factor)),
-                        "death_rate": round(float(mort_avg or 0) * factor, 2),
-                        "population_served": random.randint(50000, 500000),
-                        "score": round(random.uniform(40, 90), 1),
-                        "bed_occupancy": round(random.uniform(60, 95), 1)})
+    for i, loc in enumerate(localities):
+        share = (i + 1) / sum(range(1, len(localities) + 1))
+        results.append({"locality": loc, "hospitals": max(1, round(hosp_counts * share)),
+                        "estimated_beds": max(10, round(hosp_counts * 20 * share)),
+                        "death_rate": round(float(mort_avg or 0), 2),
+                        "population_served": round(hosp_counts * 5000 * share),
+                        "score": round(70.0 + (i / max(len(localities) - 1, 1)) * 15, 1),
+                        "bed_occupancy": round(75.0 + (i % 3) * 5, 1)})
     results.sort(key=lambda x: x["score"], reverse=True)
     return results
 

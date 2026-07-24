@@ -6,6 +6,9 @@ import os
 
 os.environ["SKIP_DB_INIT"] = "1"
 
+import numpy as np
+import pytest
+from unittest.mock import MagicMock, mock_open, patch
 
 from backend.predictors.bed_predictor import BedPredictor
 from backend.predictors.forecast_predictor import ForecastPredictor
@@ -145,7 +148,18 @@ class TestForecastPredictor:
         assert "month_sin" in names
         assert len(names) == 16
 
-    def test_predict_returns_forecast_list(self):
+    @patch("backend.predictors.forecast_predictor.joblib.load")
+    def test_predict_returns_forecast_list(self, mock_load):
+        mock_model = MagicMock()
+        mock_model.predict.return_value = np.array([5.5])
+        mock_load.side_effect = [
+            mock_model,
+            mock_model,
+            {"disease_encoding": {"COVID-19": 0},
+             "state_encoding": {"Kerala": 0},
+             "disease_params": {"COVID-19": {"cfr": 2.5, "r0": 2.5}},
+             "state_beds": {"Kerala": {"total_beds": 5000, "hospitals": 50}}}
+        ]
         p = ForecastPredictor()
         result = p.predict({
             "disease": "COVID-19", "state": "Kerala",
@@ -176,8 +190,25 @@ class TestScenarioPredictor:
 
 
 class TestPatientRiskPredictor:
-    def test_predict_returns_dict_with_status(self):
+    @patch("backend.predictors.patient_risk_predictor.Path.exists", return_value=True)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("backend.predictors.patient_risk_predictor.pickle.load")
+    def test_predict_returns_dict_with_status(self, mock_load, mock_file, mock_exists):
+        mock_model = MagicMock()
+        mock_model.predict.return_value = np.array([0.3])
+        metadata = {"feature_names": ["age", "blood_group", "gender_male",
+                      "num_preexisting", "num_doses", "has_covid_vaccine",
+                      "last_vaccine_days", "recent_travel", "num_trips",
+                      "fam_high_risk", "fam_total", "virus_fatality",
+                      "virus_reproductive", "vaccine_available",
+                      "vaccine_effectiveness"],
+                    "target_names": ["risk_score", "hospitalization_prob", "mortality_prob"]}
+        mock_load.side_effect = [
+            {"risk_score": mock_model, "hospitalization_prob": mock_model, "mortality_prob": mock_model},
+            metadata,
+        ]
         p = PatientRiskPredictor()
+        p.load_model()
         features = {"age": 0.45, "blood_group": 6, "gender_male": 1,
                      "num_preexisting": 2, "num_doses": 2, "has_covid_vaccine": 1,
                      "last_vaccine_days": 0.3, "recent_travel": 1, "num_trips": 3,
@@ -186,15 +217,14 @@ class TestPatientRiskPredictor:
                      "vaccine_effectiveness": 0.9}
         result = p.predict(features)
         assert isinstance(result, dict)
-        assert "status" in result
+        assert "risk_score" in result
         # Model not loaded in test env, so status should indicate that
         assert result["status"] in ("ml_model", "Model not loaded")
 
     def test_predict_empty_features_does_not_crash(self):
         p = PatientRiskPredictor()
-        result = p.predict({})
-        assert isinstance(result, dict)
-        assert "status" in result
+        with pytest.raises(RuntimeError, match="Patient risk model not loaded"):
+            p.predict({})
 
     def test_is_loaded_false_by_default(self):
         p = PatientRiskPredictor()

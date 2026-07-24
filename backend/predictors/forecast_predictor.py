@@ -82,9 +82,9 @@ class ForecastPredictor(BasePredictor):
             except Exception as e:
                 logger.warning("ForecastPredictor load_model failed: %s", e)
         if not self.validate_input(input_data):
-            return {"forecast": [], "model": "forecast", "is_ml": False}
+            raise ValueError(f"Invalid input for ForecastPredictor: {input_data}")
         if not self._is_loaded:
-            return {"forecast": [], "model": "forecast", "is_ml": False}
+            raise RuntimeError("ForecastPredictor model not loaded")
 
         disease = input_data["disease"]
         state = input_data["state"]
@@ -109,7 +109,7 @@ class ForecastPredictor(BasePredictor):
             hist_cases = [max(1, h[0]) for h in history[-3:]]
             hist_deaths = [max(0, h[1]) for h in history[-3:]]
         except (IndexError, TypeError):
-            return {"forecast": [], "model": "forecast", "is_ml": False}
+            raise ValueError("ForecastPredictor: history must be list of (cases, deaths) tuples")
 
         # Determine start year/month from history's last entry
         if len(input_data.get("start_year_month", [])) == 2:
@@ -146,7 +146,7 @@ class ForecastPredictor(BasePredictor):
                                    "Jul","Aug","Sep","Oct","Nov","Dec"][cm-1],
                     "confirmed_cases": pred_cases,
                     "deaths": pred_deaths,
-                    "recovered": pred_cases - pred_deaths,
+                    "recovered": pred_cases - pred_deaths,  # simplified: assumes no active cases carry over
                     "bed_demand": int(pred_cases * 0.15),
                     "icu_demand": int(pred_cases * 0.075),
                     "projected": True,

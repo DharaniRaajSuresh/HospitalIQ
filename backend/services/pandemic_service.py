@@ -108,8 +108,7 @@ def predict_beds(state: str | None, target_year: int, cap: dict,
                     ml_icu = beds
         except Exception as e:
             logger.warning(f"BedPredictor {ward}: {e}")
-    growth = (1 + 0.015) ** max(0, target_year - 2026)
-    return int(ml_total * growth), int(ml_icu * growth), max(0, int(ml_total * growth * (1 - cap["occupancy"] / 100)))
+    return int(ml_total), int(ml_icu), max(0, int(ml_total * (1 - cap["occupancy"] / 100)))
 
 
 def predict_mortality(state: str | None, disease: str, target_year: int, db: Session,
@@ -454,9 +453,9 @@ def build_scenario(disease: str, state: str | None, target_year: int, db: Sessio
 
     # Lockdown aligned with risk level: high/critical risk → lockdown
     if risk_level in ("high", "critical"):
-        lockdown_info = {"lockdown_probability": 1.0, "lockdown_recommended": True, "model": "risk-level-based", "is_ml": True}
+        lockdown_info = {"lockdown_probability": 1.0, "lockdown_recommended": True, "model": "risk-level-based", "is_ml": False}
     else:
-        lockdown_info = {"lockdown_probability": 0, "lockdown_recommended": False, "model": "risk-level-based", "is_ml": True}
+        lockdown_info = {"lockdown_probability": 0, "lockdown_recommended": False, "model": "risk-level-based", "is_ml": False}
 
     recommendations = generate_recommendations(projected_occupancy, bed_shortage, icu_shortage,
                                                 totals.get("avg_cfr", 0), totals.get("avg_r0", 0),

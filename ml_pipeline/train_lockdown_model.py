@@ -44,6 +44,11 @@ conn.close()
 logger.info(f"Loaded {len(df)} samples across {df['disease'].nunique()} diseases, "
             f"{df['state'].nunique()} states, years {df['year'].min()}-{df['year'].max()}")
 
+# NOTE: Lockdown labels are NOT real policy data. They're computed from a
+# severity formula (deaths*0.35 + CFR*0.25 + cases*0.10 + ...). The model
+# learns to predict this artificial threshold. This is a synthetic proxy
+# for demonstration purposes only — not real lockdown prediction.
+
 # Severity score within each disease so high-CFR diseases get fair representation
 df["severity_idx"] = (
     df.groupby("disease")["total_deaths"].rank(pct=True) * 0.35 +

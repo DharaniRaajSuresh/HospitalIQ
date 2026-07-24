@@ -5,7 +5,10 @@ and CFR — no ML model needed. This replaces the previous RandomForest that
 was learning back its own synthetic training labels (R² 0.99, meaningless).
 """
 
+import logging
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 from backend.core.base_predictor import BasePredictor
 
@@ -37,8 +40,7 @@ class RiskPredictor(BasePredictor):
 
     def predict(self, input_data):
         if not self.validate_input(input_data):
-            return {"risk_score": None, "risk_level": None,
-                    "error": "Invalid input", "model": "risk_formula", "is_ml": False}
+            raise ValueError(f"Invalid input for RiskPredictor: {input_data}")
 
         try:
             total_deaths = int(input_data.get("total_deaths", 0))
@@ -79,5 +81,5 @@ class RiskPredictor(BasePredictor):
                 },
             }
         except Exception as e:
-            return {"risk_score": None, "risk_level": None,
-                    "error": str(e), "model": "risk_formula", "is_ml": False}
+            logger.exception("RiskPredictor failed")
+            raise RuntimeError(f"RiskPredictor calculation failed: {e}")

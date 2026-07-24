@@ -73,11 +73,13 @@ class ScenarioPredictor(BasePredictor):
         feat = np.array([[ty_norm, cfr_val, r0_val, state_beds_val, state_hospitals_val, d_enc, s_enc]])
 
         try:
+            if not self._model or not self._deaths_model:
+                raise RuntimeError("ScenarioPredictor models not loaded")
             pred_cases = int(np.expm1(self._model.predict(feat)[0]))
             pred_deaths = int(np.expm1(self._deaths_model.predict(feat)[0]))
         except Exception as e:
             logger.warning(f"ScenarioPredictor failed: {e}")
-            return {"total_cases": 0, "total_deaths": 0, "model": "scenario", "is_ml": False}
+            raise
         return {
             "total_cases": max(0, pred_cases),
             "total_deaths": max(0, pred_deaths),

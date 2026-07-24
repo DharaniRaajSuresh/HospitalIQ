@@ -433,7 +433,7 @@ class ContextFetcher:
         except Exception as e:
             logger.warning(f"Pandemic summary failed: {e}")
             return "Pandemic data unavailable"
-            
+
     def _get_pandemic_by_disease(self, state: str = None, disease: str = None) -> list[dict]:
         try:
             q = self._db.query(

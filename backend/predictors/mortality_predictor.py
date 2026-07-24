@@ -48,7 +48,6 @@ class MortalityPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__(model_name="mortality_xgb_model", model_dir=MODEL_DIR)
-        self._cluster_model = None
         self._state_encoding = {}
         self._district_encoding = {}
         self._cause_encoding = {
@@ -60,14 +59,8 @@ class MortalityPredictor(BasePredictor):
         self._last_known_rates = {}  # for computing lag features at prediction time
 
     def load_model(self) -> None:
-        """Extend parent load_model to also load cluster model and encodings."""
+        """Extend parent load_model to also load encodings."""
         super().load_model()
-        import joblib
-
-        cluster_path = os.path.join(self._model_dir, "mortality_kmeans_model.pkl")
-        if os.path.exists(cluster_path):
-            self._cluster_model = joblib.load(cluster_path)
-            logger.info("✅ Loaded mortality K-Means cluster model")
 
         # Load encoding mappings from processed data
         csv_path = "ml_pipeline/data/processed/mortality_data_processed.csv"
@@ -187,20 +180,14 @@ class MortalityPredictor(BasePredictor):
         features = [[processed.get(f, 0) for f in self.get_feature_names()]]
 
         try:
-            death_rate = float(self._model.predict(features)[0]) if self._model else 75.0
+            if not self._model:
+                raise RuntimeError("MortalityPredictor model not loaded")
+            death_rate = float(self._model.predict(features)[0])
         except Exception as e:
             logger.warning("MortalityPredictor predict failed: %s", e)
-            death_rate = 75.0
+            raise
 
         risk_level = assign_risk_level(death_rate)
-
-        # Cluster info available for supplementary display
-        cluster_id = None
-        if self._cluster_model and self._model:
-            try:
-                cluster_id = int(self._cluster_model.predict(features)[0])
-            except Exception as e:
-                logger.warning("MortalityPredictor cluster predict failed: %s", e)
 
         MONTH_NAMES = ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 

@@ -121,11 +121,13 @@ class HospitalPredictor(BasePredictor):
         features = [[processed.get(f, 0) for f in self.get_feature_names()]]
 
         try:
-            predicted_success = float(self._model.predict(features)[0]) if self._model else 0.75
+            if not self._model:
+                raise RuntimeError("HospitalPredictor model not loaded")
+            predicted_success = float(self._model.predict(features)[0])
             predicted_success = max(0.1, min(1.0, predicted_success))
         except Exception as e:
             logger.warning("HospitalPredictor predict failed: %s", e)
-            predicted_success = 0.75
+            raise
 
         # Also return rankings from actual data
         df = self._outcomes_df.copy()

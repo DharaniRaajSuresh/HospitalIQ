@@ -30,15 +30,17 @@ class LockdownPredictor(BasePredictor):
         logger.info("Loaded LockdownPredictor")
 
     def validate_input(self, input_data):
-        return all(k in input_data for k in ["total_cases", "total_deaths", "avg_r0"])
+        return all(k in input_data for k in FEATURE_NAMES)
 
     def get_feature_names(self):
         return FEATURE_NAMES
 
     def predict(self, input_data):
+        if not self.validate_input(input_data):
+            raise ValueError(f"Invalid input for LockdownPredictor: {input_data}")
         if not self._is_loaded:
             self.load_model()
-        feat = np.array([[input_data.get(k, 0) for k in FEATURE_NAMES]])
+        feat = np.array([[input_data[k] for k in FEATURE_NAMES]])
         if self._scaler:
             feat = self._scaler.transform(feat)
         proba = float(self._model.predict_proba(feat)[0, 1])

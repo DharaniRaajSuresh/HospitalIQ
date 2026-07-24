@@ -43,10 +43,10 @@ class RiskPredictor(BasePredictor):
             raise ValueError(f"Invalid input for RiskPredictor: {input_data}")
 
         try:
-            total_deaths = int(input_data.get("total_deaths", 0))
-            total_bed_demand = int(input_data.get("total_bed_demand", 0))
-            total_beds = int(input_data.get("total_beds", 1))
-            avg_cfr = float(input_data.get("avg_cfr", 0))
+            total_deaths = int(input_data["total_deaths"])
+            total_bed_demand = int(input_data["total_bed_demand"])
+            total_beds = int(input_data["total_beds"])
+            avg_cfr = float(input_data["avg_cfr"])
 
             # Death severity component (0-60)
             death_sev = min(60, int(np.log10(max(total_deaths, 1)) * 15 - 5)) if total_deaths > 0 else 0

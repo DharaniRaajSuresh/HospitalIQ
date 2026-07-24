@@ -235,7 +235,7 @@ class TestPatientRiskPredictor:
 class TestLockdownPredictor:
     def test_validate_input_valid(self):
         p = LockdownPredictor()
-        assert p.validate_input({"total_cases": 1000, "total_deaths": 50, "avg_r0": 1.5})
+        assert p.validate_input({"total_cases": 1000, "total_deaths": 50, "avg_r0": 1.5, "avg_cfr": 2.0, "total_bed_demand": 500, "total_icu_demand": 100})
 
     def test_feature_names(self):
         p = LockdownPredictor()

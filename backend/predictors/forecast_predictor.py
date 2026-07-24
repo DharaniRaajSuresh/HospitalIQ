@@ -147,8 +147,8 @@ class ForecastPredictor(BasePredictor):
                     "confirmed_cases": pred_cases,
                     "deaths": pred_deaths,
                     "recovered": pred_cases - pred_deaths,  # simplified: assumes no active cases carry over
-                    "bed_demand": int(pred_cases * 0.15),
-                    "icu_demand": int(pred_cases * 0.075),
+                    "bed_demand": int(pred_cases * 0.15),  # heuristic: ~15% of cases need beds
+                    "icu_demand": int(pred_cases * 0.075),  # heuristic: ~50% of bed cases need ICU
                     "projected": True,
                 })
 

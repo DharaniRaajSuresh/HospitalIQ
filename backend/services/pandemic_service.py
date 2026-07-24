@@ -184,7 +184,8 @@ def compute_projections(monthly: list[dict], target_year: int, max_data_year: in
             projected.extend(ml_forecast.get("forecast", []))
             projected.sort(key=lambda x: (x["year"], x["month_num"]))
 
-            # Scale forecast by scenario model so magnitude differs per target_year
+            # Scale forecast monthly distribution to scenario model's annual magnitude
+            # (uses scenario model's year total, keeps forecast model's monthly pattern)
             if scenario_predictor and getattr(scenario_predictor, "_is_loaded", False):
                 try:
                     scenario = scenario_predictor.predict({
@@ -431,7 +432,7 @@ def build_scenario(disease: str, state: str | None, target_year: int, db: Sessio
             "total_active": sum(m["confirmed_cases"] for m in year_entries) - sum(m["deaths"] for m in year_entries) - sum(m["recovered"] for m in year_entries),
             "total_bed_demand": sum(m["bed_demand"] for m in year_entries),
             "total_icu_demand": sum(m["icu_demand"] for m in year_entries),
-            "total_vent_demand": int(sum(m["bed_demand"] for m in year_entries) * 0.3),
+            "total_vent_demand": int(sum(m["bed_demand"] for m in year_entries) * 0.3),  # heuristic: ~30% of bed cases need ventilation
             "avg_r0": target_r0,
             "avg_cfr": round(sum(m["deaths"] for m in year_entries) / max(sum(m["confirmed_cases"] for m in year_entries), 1) * 100, 2) if year_entries else 0,
         }

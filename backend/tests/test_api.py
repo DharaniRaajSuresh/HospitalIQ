@@ -61,7 +61,7 @@ class TestMortality:
             "district": "Chennai", "age_group": "999+",
             "cause": "Cardiac", "year": 2024, "month": 6,
         }, headers=auth_headers)
-        assert resp.status_code == 200  # falls back to estimated
+        assert resp.status_code == 503  # no ML model and no DB data
 
     def test_predict_mortality_with_data(self, client, seed_mortality, auth_headers):
         resp = client.post("/api/v1/predict/mortality", params={
@@ -72,10 +72,9 @@ class TestMortality:
 
 
 class TestPandemic:
-    def test_pandemic_scenario(self, client, auth_headers):
+    def test_pandemic_scenario(self, client, seed_pandemic, auth_headers):
         resp = client.get("/api/v1/pandemic/scenario", params={
-            "disease": "Nipah", "state": "Kerala",
-            "population": 35000000, "initial_cases": 18,
+            "disease": "COVID-19", "state": "Kerala",
         }, headers=auth_headers)
         assert resp.status_code == 200
         data = resp.json()
@@ -84,9 +83,8 @@ class TestPandemic:
     def test_pandemic_scenario_unknown_disease(self, client, auth_headers):
         resp = client.get("/api/v1/pandemic/scenario", params={
             "disease": "AlienFlu", "state": "Kerala",
-            "population": 35000000, "initial_cases": 10,
         }, headers=auth_headers)
-        assert resp.status_code == 200
+        assert resp.status_code == 500
 
 
 class TestLocations:

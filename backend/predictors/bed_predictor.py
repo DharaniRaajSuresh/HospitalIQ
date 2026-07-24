@@ -186,15 +186,7 @@ class BedPredictor(BasePredictor):
         state_enc = self._state_encoding.get(input_data["state"], 0)
         ward_enc = self._ward_encoding.get(input_data["ward_type"], 0)
 
-        # Year-based growth factor: model ignores year_normalized (0.05% importance),
-        # so we apply post-prediction scaling so different years produce different forecasts
-        last_train_year = self._year_min + self._year_range - 1  # typically 2024
-        start_year = input_data.get("start_year", datetime.now().year)
-        years_from_end = start_year - last_train_year
         growth_factor = 1.0
-        if years_from_end > 0:
-            # 2.5% annual growth (population + infrastructure expansion)
-            growth_factor = 1.025 ** years_from_end
 
         forecasts = []
         base_month = input_data.get("start_month", 1)
@@ -229,10 +221,12 @@ class BedPredictor(BasePredictor):
             ]]
 
             try:
-                prediction = float(self._model.predict(features)[0]) if self._model else 150.0
+                if not self._model:
+                    raise RuntimeError("BedPredictor model not loaded")
+                prediction = float(self._model.predict(features)[0])
             except Exception as e:
                 logger.warning("BedPredictor predict failed: %s", e)
-                prediction = 150.0
+                raise
 
             prediction = prediction * growth_factor
             prediction = max(1, round(prediction))
@@ -240,19 +234,16 @@ class BedPredictor(BasePredictor):
             # Keep only last 12 values to prevent long-term drift
             history = history[-12:]
 
-            std = max(5, prediction * (0.08 + i * 0.015))
             forecasts.append({
                 "month": month,
                 "year": year,
                 "month_name": calendar.month_name[month],
                 "predicted_beds": prediction,
-                "lower_bound": max(0, round(prediction - 1.96 * std)),
-                "upper_bound": round(prediction + 1.96 * std)
             })
 
         return {
             "state": input_data["state"],
             "ward_type": input_data["ward_type"],
             "forecast": forecasts,
-            "model_info": self.get_model_info()
+            "model_info": {**self.get_model_info(), "note": "Raw ML output, no post-hoc scaling"}
         }

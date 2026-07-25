@@ -53,13 +53,13 @@ async def predict_beds(state: str, ward_type: str, months_ahead: int = 3, year: 
 
     if db_data:
         if db_data[-1][2] is None or db_data[-1][3] is None:
-            raise HTTPException(status_code=503, detail="Incomplete historical data for this state/ward")
+            raise HTTPException(status_code=404, detail="Incomplete historical data for this state/ward")
         base_available = db_data[-1][2]
         base_total = db_data[-1][3]
         trend = 0
         if len(db_data) >= 3:
             if any(r[2] is None for r in db_data[-3:]):
-                raise HTTPException(status_code=503, detail="Incomplete historical data for trend calculation")
+                raise HTTPException(status_code=404, detail="Incomplete historical data for trend calculation")
             recent = [r[2] for r in db_data[-3:]]
             trend = (recent[-1] - recent[0]) / max(len(recent) - 1, 1)
         month_map = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -74,7 +74,7 @@ async def predict_beds(state: str, ward_type: str, months_ahead: int = 3, year: 
         resp = {"state": state, "ward_type": ward_type, "forecast": forecasts, "status": "db_trend"}
         _log_pred(db, "beds", {"state": state, "ward_type": ward_type, "months_ahead": months_ahead, "year": start_year}, "db_trend")
         return resp
-    raise HTTPException(status_code=503, detail="Bed predictor unavailable and no historical data for this state/ward")
+    raise HTTPException(status_code=404, detail="Bed predictor unavailable and no historical data for this state/ward")
 
 
 @router.post("/mortality")
@@ -93,7 +93,7 @@ async def predict_mortality(district: str, age_group: str, cause: str, year: int
         MortalityRecord.district == district, MortalityRecord.age_group == age_group,
         MortalityRecord.cause_of_death == cause).scalar()
     if db_avg is None:
-        raise HTTPException(status_code=503, detail="Mortality predictor unavailable and no historical data for this district/age/cause")
+        raise HTTPException(status_code=404, detail="Mortality predictor unavailable and no historical data for this district/age/cause")
     death_rate = float(db_avg)
     risk = assign_risk_level(death_rate)
     MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]

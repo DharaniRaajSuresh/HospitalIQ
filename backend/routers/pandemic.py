@@ -22,5 +22,7 @@ async def pandemic_scenario(
 ):
     try:
         return build_scenario(disease, state, year, db, manual_r0=manual_r0)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Scenario generation failed: {str(e)}")

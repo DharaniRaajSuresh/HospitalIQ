@@ -1,6 +1,7 @@
 """Pandemic scenario service — clean business logic extracted from the 303-line router."""
 import logging
 
+from fastapi import HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -320,7 +321,7 @@ def build_scenario(disease: str, state: str | None, target_year: int, db: Sessio
     yearly_r0_data = fetch_yearly_r0(disease, state, db)
 
     if not monthly:
-        raise ValueError(f"No monthly outbreak data for {disease}/{state}")
+        raise HTTPException(status_code=404, detail=f"No monthly outbreak data for {disease}/{state}")
     min_year = min(m["year"] for m in monthly)
     max_data_year = max(m["year"] for m in monthly)
     target_year = min(max(target_year if target_year else max_data_year, min_year), 2040)

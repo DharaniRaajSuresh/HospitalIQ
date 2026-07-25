@@ -143,8 +143,11 @@ async def lifespan(app: FastAPI):
             logger.info("Running hourly state_summaries refresh...")
             await _run_refresh()
 
-    asyncio.create_task(_background_scheduler())
-    logger.info("Summary refresh scheduler started (asyncio task).")
+    if not skip:
+        asyncio.create_task(_background_scheduler())
+        logger.info("Summary refresh scheduler started (asyncio task).")
+    else:
+        logger.info("SKIP_DB_INIT set — skipping summary refresh scheduler")
 
     logger.info("Backend startup complete!")
     yield

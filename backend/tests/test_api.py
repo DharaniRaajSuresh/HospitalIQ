@@ -37,7 +37,7 @@ class TestBeds:
         resp = client.post("/api/v1/predict/beds", params={
             "state": "Atlantis", "ward_type": "ICU", "months_ahead": 3
         }, headers=auth_headers)
-        assert resp.status_code == 503
+        assert resp.status_code == 404
 
     def test_predict_beds_with_data(self, client, seed_beds, auth_headers):
         resp = client.post("/api/v1/predict/beds", params={
@@ -61,7 +61,7 @@ class TestMortality:
             "district": "Chennai", "age_group": "999+",
             "cause": "Cardiac", "year": 2024, "month": 6,
         }, headers=auth_headers)
-        assert resp.status_code == 503
+        assert resp.status_code == 404
         data = resp.json()
         assert "detail" in data
 
@@ -86,9 +86,7 @@ class TestPandemic:
         resp = client.get("/api/v1/pandemic/scenario", params={
             "disease": "AlienFlu", "state": "Kerala",
         }, headers=auth_headers)
-        assert resp.status_code == 200
-        data = resp.json()
-        assert data["outbreak_summary"]["total_confirmed_cases"] == 0
+        assert resp.status_code == 404
 
 
 class TestLocations:

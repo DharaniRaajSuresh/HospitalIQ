@@ -47,7 +47,7 @@ class TestBeds:
 
 
 class TestMortality:
-    def test_predict_mortality(self, client, auth_headers):
+    def test_predict_mortality(self, client, auth_headers, seed_mortality):
         resp = client.post("/api/v1/predict/mortality", params={
             "district": "Chennai", "age_group": "45-64",
             "cause": "Cardiac", "year": 2024, "month": 6,

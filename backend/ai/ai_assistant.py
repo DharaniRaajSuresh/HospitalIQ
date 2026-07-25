@@ -196,7 +196,6 @@ class HospitalAIAssistant:
                 if keyword in msg:
                     score += 2
                     continue
-                kw_words = keyword.split()
                 for word in words:
                     ratio = difflib.SequenceMatcher(None, word, keyword).ratio()
                     if ratio > 0.65:

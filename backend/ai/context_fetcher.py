@@ -9,15 +9,15 @@ from backend.ai.project_context import (
     get_project_context,
 )
 from backend.models import (
+    DistrictSummary,
     HospitalBed,
     HospitalOutcome,
     MortalityRecord,
     PandemicOutbreak,
-    VirusRegistry,
-    PatientAdmission,
     Patient,
+    PatientAdmission,
     StateSummary,
-    DistrictSummary,
+    VirusRegistry,
 )
 
 logger = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ class ContextFetcher:
                 if virus_context:
                     context["virus"] = virus_context
             context["virus_list"] = self._get_virus_list()
-            
+
         if intent == "general" or not intent:
             if state:
                 context["state_summary"] = self._get_state_summary(state)
@@ -347,7 +347,7 @@ class ContextFetcher:
             vax = self._patient_repo.get_vaccine_history(patient_id)
             travel = self._patient_repo.get_travel_history(patient_id)
             fam = self._patient_repo.get_family_history(patient_id)
-            
+
             return {
                 "patient_name": p.patient_name,
                 "age": p.age,
@@ -370,7 +370,7 @@ class ContextFetcher:
             if state:
                 q_age = q_age.filter(Patient.state == state)
                 q_count = q_count.filter(Patient.state == state)
-            
+
             return {
                 "total_patients": q_count.scalar() or 0,
                 "avg_age": round(float(q_age.scalar() or 0), 1)
@@ -433,7 +433,7 @@ class ContextFetcher:
         except Exception as e:
             logger.warning(f"Pandemic summary failed: {e}")
             return "Pandemic data unavailable"
-            
+
     def _get_pandemic_by_disease(self, state: str = None, disease: str = None) -> list[dict]:
         try:
             q = self._db.query(
@@ -449,8 +449,8 @@ class ContextFetcher:
                 q = q.filter(PandemicOutbreak.disease == disease)
             rows = q.group_by(PandemicOutbreak.disease).order_by(func.sum(PandemicOutbreak.confirmed_cases).desc()).all()
             return [{
-                "disease": r[0], 
-                "total_cases": int(r[1] or 0), 
+                "disease": r[0],
+                "total_cases": int(r[1] or 0),
                 "total_deaths": int(r[2] or 0),
                 "avg_r0": round(float(r[3] or 0), 2),
                 "avg_cfr": round(float(r[4] or 0), 2)

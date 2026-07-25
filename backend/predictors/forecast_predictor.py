@@ -37,7 +37,7 @@ class ForecastPredictor(BasePredictor):
         self._metadata = None
 
     def load_model(self):
-        self._model = joblib.load(os.path.join(self._model_dir, "forecast_cases_model.pkl"))
+        self._model = joblib.load(os.path.join(self._model_dir, "forecast_cases.pkl"))
         self._deaths_model = joblib.load(os.path.join(self._model_dir, "forecast_deaths_model.pkl"))
         self._metadata = joblib.load(os.path.join(self._model_dir, "forecast_metadata.pkl"))
         self._is_loaded = True

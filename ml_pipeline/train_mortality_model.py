@@ -1,20 +1,23 @@
 """train_mortality_model.py — Trains XGBoost for death rate prediction.
 Loads processed mortality data, trains with chronological split, saves model + metadata."""
 
-import logging, os, sys, warnings
+import logging
+import os
+import sys
+import warnings
+
 logging.disable(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 os.environ["SKIP_DB_INIT"] = "1"
 
-import joblib, numpy as np, pandas as pd
-from sklearn.model_selection import GridSearchCV
+import pandas as pd
 from xgboost import XGBRegressor
 
 try:
     from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
 except ImportError:
     sys.path.insert(0, os.path.dirname(__file__))
-    from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
+    from ml_utils import save_model_versioned
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), "data", "processed", "mortality_data_processed.csv")
 FEATURES = ["state_encoded", "district_encoded", "age_group_encoded",

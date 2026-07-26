@@ -1,12 +1,16 @@
 """train_bed_model.py — Trains GradientBoostingRegressor for bed availability forecasting.
 Loads processed bed data, trains with 5-fold TimeSeriesSplit, saves model + metadata."""
 
-import logging, os, sys, warnings
+import logging
+import os
+import sys
+import warnings
+
 logging.disable(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 os.environ["SKIP_DB_INIT"] = "1"
 
-import joblib, numpy as np, pandas as pd
+import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import TimeSeriesSplit
 
@@ -14,7 +18,7 @@ try:
     from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
 except ImportError:
     sys.path.insert(0, os.path.dirname(__file__))
-    from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
+    from ml_utils import save_model_versioned
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), "data", "processed", "bed_data_processed.csv")
 FEATURES = ["month_sin", "month_cos", "year_normalized", "season_flag",

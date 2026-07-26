@@ -9,16 +9,15 @@ import logging
 import os
 import sys
 import warnings
+
 logging.disable(logging.CRITICAL)
 warnings.filterwarnings("ignore")
 os.environ["SKIP_DB_INIT"] = "1"
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
 from scipy.integrate import odeint
-
-from sklearn.metrics import mean_absolute_percentage_error
+from scipy.optimize import minimize
 
 try:
     from baseline_models import mape
@@ -203,7 +202,7 @@ def evaluate_seir():
         test_deaths = deaths[split:]
 
         if len(test_cases) < 2 or np.sum(train_cases) == 0:
-            print(f"  Skipped: insufficient training data")
+            print("  Skipped: insufficient training data")
             continue
 
         params = DISEASE_PARAMS.get(disease, DISEASE_PARAMS["COVID-19"])
@@ -271,7 +270,7 @@ def evaluate_seir():
 
     # Summary
     print(f"\n{'='*60}")
-    print(f"\nSEIR Baseline Summary")
+    print("\nSEIR Baseline Summary")
     print(f"{'Disease':<12} {'Cases MAPE':>12} {'Deaths MAPE':>12}")
     print("-" * 36)
     for r in results:

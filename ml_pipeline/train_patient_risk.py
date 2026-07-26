@@ -15,7 +15,7 @@ import sys
 import numpy as np
 import pandas as pd
 import xgboost as xgb
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
 logging.basicConfig(level=logging.INFO)
@@ -25,7 +25,6 @@ try:
     from ml_utils import MODEL_DIR
 except ImportError:
     sys.path.insert(0, os.path.dirname(__file__))
-    from ml_utils import MODEL_DIR
 
 # Resolve to absolute path — MODEL_DIR is relative, running from ml_pipeline/
 # creates double-nesting. Use a fixed absolute path.

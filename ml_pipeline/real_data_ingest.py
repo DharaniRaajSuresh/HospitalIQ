@@ -151,7 +151,7 @@ def _build_state_beds(beds_df):
         name = str(row.get("State/UT", "")).strip()
         try:
             beds = int(str(row.get("NumPublicBeds_HMIS", 0)).replace(",", ""))
-        except:
+        except (ValueError, TypeError):
             beds = 5000
         normalized = _covid_state(name)
         state_beds[normalized] = max(beds, 100)
@@ -361,11 +361,11 @@ def build_hospital_outcomes(beds_df):
 
         try:
             pub_beds = int(str(row.get("NumPublicBeds_HMIS", 0)).replace(",", ""))
-        except:
+        except (ValueError, TypeError):
             pub_beds = 5000
         try:
             urban_beds = int(str(row.get("NumUrbanBeds_NHP18", 0)).replace(",", ""))
-        except:
+        except (ValueError, TypeError):
             urban_beds = 3000
 
         total_beds = pub_beds + urban_beds

@@ -27,7 +27,7 @@ def setup_mlflow(experiment_name, tracking_uri=None):
     mlflow.set_tracking_uri(uri)
     try:
         mlflow.set_experiment(experiment_name)
-    except:
+    except Exception:
         mlflow.create_experiment(experiment_name)
         mlflow.set_experiment(experiment_name)
     return mlflow

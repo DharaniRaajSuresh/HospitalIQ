@@ -284,7 +284,9 @@ joblib.dump(metadata, os.path.join(MODELS_DIR, "r0_metadata.pkl"))
 print("\nSaved: r0_model.pkl, r0_metadata.pkl")
 
 if mlflow:
-    mlflow.log_metrics(metrics); mlflow.log_params(params); mlflow.end_run()
+    mlflow.log_metrics(metrics)
+    mlflow.log_params(params)
+    mlflow.end_run()
 
 # Validation
 print("\n=== Yearly decay: COVID-19 Maharashtra (2025-2035) ===")

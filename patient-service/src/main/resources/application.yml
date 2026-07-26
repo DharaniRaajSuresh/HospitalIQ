@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:C:/hospi/ml_pipeline/data/hospitaliq.db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:../hospitaliq.db}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.sqlite.JDBC}
     username: ${SPRING_DATASOURCE_USERNAME:}
     password: ${SPRING_DATASOURCE_PASSWORD:}

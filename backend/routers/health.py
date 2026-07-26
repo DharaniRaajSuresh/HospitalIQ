@@ -9,7 +9,7 @@ from backend.config import settings
 from backend.database import check_db_connection
 
 logger = logging.getLogger(__name__)
-router = APIRouter(tags=["System"])
+router = APIRouter(tags=["System"], prefix="/api/v1")
 
 
 @router.get("/health")

@@ -5,7 +5,6 @@ performance data — success rates, bed counts, accreditation status, patient
 admissions — into features for the Random Forest ranking model.
 
 HospitalDataProcessor - Concrete processor for hospital data
-Demonstrates: Inheritance, Polymorphism, Template Method Pattern
 """
 
 import logging
@@ -20,12 +19,7 @@ logger = logging.getLogger(__name__)
 
 class HospitalDataProcessor(BaseDataProcessor):
     """
-    Concrete processor for hospital outcomes and patient admission data.
-
-    OOP Principles:
-    - Inheritance: extends BaseDataProcessor
-    - Polymorphism: hospital-specific data processing
-    """
+    Concrete processor for hospital outcomes and patient admission data.    """
 
     def __init__(self):
         super().__init__(

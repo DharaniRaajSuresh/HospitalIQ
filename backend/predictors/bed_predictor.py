@@ -13,7 +13,6 @@ that answers. It:
 Different states and ward types produce different predictions (proves it's not hardcoded).
 
 BedPredictor - Concrete predictor for bed availability forecasting
-Demonstrates: Inheritance, Polymorphism
 """
 
 import calendar
@@ -37,13 +36,7 @@ MODEL_DIR = os.path.join(
 
 class BedPredictor(BasePredictor):
     """
-    Concrete predictor for bed availability forecasting.
-
-    OOP Principles:
-    - Inheritance: extends BasePredictor
-    - Polymorphism: predict(), validate_input() implement base contract
-    - Encapsulation: ward types and states as private class attributes
-    """
+    Concrete predictor for bed availability forecasting.    """
 
     FEATURE_NAMES = [
         "month_sin", "month_cos", "year_normalized",
@@ -104,9 +97,12 @@ class BedPredictor(BasePredictor):
                     for (state, ward), group in monthly.groupby(["state", "ward_type"]):
                         if not group.empty:
                             vals = group["available_beds"].tolist()
+                            last_row = group.iloc[-1]
                             self._last_known[(state, ward)] = {
                                 "history": deque(vals, maxlen=120),
                                 "available_beds": vals[-1],
+                                "last_year": int(last_row["recorded_year"]),
+                                "last_month": int(last_row["recorded_month"])
                             }
                     logger.info(f"✅ Loaded historical data for {len(self._last_known)} state/ward combinations")
             except Exception as e:
@@ -201,15 +197,33 @@ class BedPredictor(BasePredictor):
         base_month = input_data.get("start_month", 1)
         base_year = input_data.get("start_year", datetime.now().year)
 
+        target_months = []
         for i in range(input_data["months_ahead"]):
-            month = ((base_month + i - 1) % 12) + 1
-            year = base_year + (base_month + i - 1) // 12
+            m = ((base_month + i - 1) % 12) + 1
+            y = base_year + (base_month + i - 1) // 12
+            target_months.append((y, m))
 
-            if month in [12, 1, 2]:
+        last_year = raw.get("last_year", 2024)
+        last_month = raw.get("last_month", 12)
+
+        curr_y = last_year
+        curr_m = last_month
+
+        total_steps = (target_months[-1][0] - last_year) * 12 + (target_months[-1][1] - last_month)
+        if total_steps <= 0:
+            total_steps = input_data["months_ahead"]
+
+        for step in range(total_steps):
+            curr_m += 1
+            if curr_m > 12:
+                curr_m = 1
+                curr_y += 1
+
+            if curr_m in [12, 1, 2]:
                 season = 1
-            elif month in [3, 4, 5]:
+            elif curr_m in [3, 4, 5]:
                 season = 2
-            elif month in [6, 7]:
+            elif curr_m in [6, 7]:
                 season = 3
             else:
                 season = 4
@@ -222,9 +236,9 @@ class BedPredictor(BasePredictor):
             roll_6 = sum(h[-6:]) / 6 if len(h) >= 6 else h[-1]
 
             features = [[
-                math.sin(2 * math.pi * month / 12),
-                math.cos(2 * math.pi * month / 12),
-                (year - self._year_min) / self._year_range,
+                math.sin(2 * math.pi * curr_m / 12),
+                math.cos(2 * math.pi * curr_m / 12),
+                (curr_y - self._year_min) / self._year_range,
                 season, state_enc, ward_enc,
                 lag_1, lag_3, lag_6, roll_3, roll_6,
             ]]
@@ -241,12 +255,13 @@ class BedPredictor(BasePredictor):
             history.append(prediction)
             history = history[-12:]
 
-            forecasts.append({
-                "month": month,
-                "year": year,
-                "month_name": calendar.month_name[month],
-                "predicted_beds": prediction,
-            })
+            if (curr_y, curr_m) in target_months:
+                forecasts.append({
+                    "month": curr_m,
+                    "year": curr_y,
+                    "month_name": calendar.month_name[curr_m],
+                    "predicted_beds": prediction,
+                })
 
         return {
             "state": input_data["state"],

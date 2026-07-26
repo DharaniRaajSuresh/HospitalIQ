@@ -1,15 +1,11 @@
 """
-WHAT THIS FILE DOES:
-Defines the BLUEPRINT for all database access classes (Abstraction).
+Defines the base interface for database access classes.
 Provides shared CRUD operations (count(), get_all(), get_by_id()) that
 all repositories inherit. Specific repositories (Bed, Hospital, Mortality)
 add their own query methods on top.
 
-This implements the "Repository Pattern" — instead of writing SQL everywhere,
+This implements the Repository Pattern — instead of writing SQL everywhere,
 each table has a dedicated class that owns all its queries.
-
-BaseRepository - Abstract Base Class for all database access
-Demonstrates: Abstraction, Encapsulation, Inheritance
 """
 
 import logging
@@ -25,20 +21,13 @@ T = TypeVar('T')
 
 class BaseRepository(ABC):
     """
-    Abstract base class for all database access.
-    
-    OOP Principles:
-    - Abstraction: defines interface via abstract methods
-    - Encapsulation: DB session kept private (_db)
-    - Inheritance: all repositories extend this class
-    - Polymorphism: get_by_state() and get_summary_stats() vary by subclass
+    Abstract base class for database repositories.
     """
 
     def __init__(self, db: Session, model_class: type[T]):
-        self._db = db                              # Encapsulated
-        self._model_class = model_class            # Encapsulated
+        self._db = db
+        self._model_class = model_class
 
-    # Concrete shared CRUD methods (Inheritance benefit)
     def get_by_id(self, record_id: int) -> T | None:
         """Get single record by ID."""
         return self._db.query(self._model_class).filter(

@@ -6,14 +6,56 @@ import Button from '../components/ui/Button';
 import { getStats, getHospitalDistribution, getAllDistricts, getLocationStats } from '../api';
 import { downloadCsv } from '../utils/exportCsv';
 
+import type { StatsResponse, LocationStatsResponse } from '../types/api';
+
 const PIE_COLORS = ['#00f0ff', '#b026ff', '#ffd700', '#ff00ea'];
 
+interface DistrictResult {
+  state: string;
+  district: string;
+  total_beds?: number;
+  hospitals?: number;
+  avg_score?: number;
+  success_rate?: number;
+  fatality_rate?: number;
+  avg_death_rate?: number;
+  total_deaths?: number;
+  population?: number;
+}
+
+interface DistrictRow {
+  state: string;
+  district: string;
+  beds: number;
+  hospitals: number;
+  score: number;
+  successRate: number;
+  fatalityRate: number;
+  deathRate: number;
+  deaths: number;
+  population: number;
+}
+
+interface StateAggEntry {
+  name: string;
+  beds: number;
+  hospitals: number;
+  deaths: number;
+  districts: Set<string>;
+  scores: number[];
+}
+
+interface HospitalTypeCount {
+  hospital_type: string;
+  count: number;
+}
+
 export default function AnalyticsDashboard() {
-  const [stats, setStats] = useState<any>(null);
-  const [hospitals, setHospitals] = useState<any[]>([]);
-  const [byState, setByState] = useState<any[]>([]);
-  const [allLoc, setAllLoc] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
+  const [stats, setStats] = useState<StatsResponse | null>(null);
+  const [hospitals, setHospitals] = useState<HospitalTypeCount[]>([]);
+  const [byState, setByState] = useState<DistrictRow[]>([]);
+  const [allLoc, setAllLoc] = useState<LocationStatsResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getStats().then(setStats).catch(e => setError(e.message));
@@ -26,7 +68,7 @@ export default function AnalyticsDashboard() {
       setHospitals([{hospital_type: "Govt", count: g}, {hospital_type: "Private", count: p}, {hospital_type: "Trust", count: o}]);
     }).catch(e => setError(e.message));
 
-    getAllDistricts<any[]>().then((results: any[]) => {
+    getAllDistricts<DistrictResult[]>().then((results: DistrictResult[]) => {
       const rows = results.map(d => ({
         state: d.state,
         district: d.district,
@@ -50,7 +92,7 @@ export default function AnalyticsDashboard() {
     { name: 'Trust', value: otherHospitals || Math.round(totalFacilities * 0.2) },
   ];
 
-  const stateAgg: Record<string, any> = {};
+  const stateAgg: Record<string, StateAggEntry> = {};
   for (const r of byState) {
     if (!stateAgg[r.state]) stateAgg[r.state] = { name: r.state, beds: 0, hospitals: 0, deaths: 0, districts: new Set(), scores: [] };
     stateAgg[r.state].beds += r.beds;

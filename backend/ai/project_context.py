@@ -134,7 +134,8 @@ KNOWN_STATE_ALIASES: dict[str, str] = {
     "gujrat": "Gujarat", "guj": "Gujarat", "ahmedabad": "Gujarat", "gandhinagar": "Gujarat", "surat": "Gujarat", "vadodara": "Gujarat",
     "karnataka": "Karnataka", "karnatak": "Karnataka", "bangalore": "Karnataka", "bengaluru": "Karnataka", "mysore": "Karnataka", "mangalore": "Karnataka",
     "kerala": "Kerala", "kerela": "Kerala", "kochi": "Kerala", "trivandrum": "Kerala", "thiruvananthapuram": "Kerala", "kozhikode": "Kerala", "calicut": "Kerala",
-    "maharastra": "Maharashtra", "maharashra": "Maharashtra", "mumbai": "Maharashtra", "bombay": "Maharashtra", "pune": "Maharashtra", "nagpur": "Maharashtra", "thane": "Maharashtra", "navi mumbai": "Maharashtra",
+    # Typo tolerance aliases for Maharashtra:
+    "maharastra": "Maharashtra", "maharashra": "Maharashtra", "maharashtra": "Maharashtra", "mumbai": "Maharashtra", "bombay": "Maharashtra", "pune": "Maharashtra", "nagpur": "Maharashtra", "thane": "Maharashtra", "navi mumbai": "Maharashtra",
     "punjab": "Punjab", "chandigarh": "Punjab", "amritsar": "Punjab", "ludhiana": "Punjab",
     "rajasthan": "Rajasthan", "jaipur": "Rajasthan", "jodhpur": "Rajasthan", "udaipur": "Rajasthan",
     "tamil nadu": "Tamil Nadu", "tamilnadu": "Tamil Nadu", "chennai": "Tamil Nadu", "madras": "Tamil Nadu", "coimbatore": "Tamil Nadu", "madurai": "Tamil Nadu",

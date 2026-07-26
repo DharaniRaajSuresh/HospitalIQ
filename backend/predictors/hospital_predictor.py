@@ -9,7 +9,6 @@ and scores existing hospitals based on features like: bed count, doctor
 count, accreditation, stay duration, and historical success rates.
 
 HospitalPredictor - Concrete predictor for hospital success rate ranking
-Demonstrates: Inheritance, Polymorphism
 """
 
 import logging
@@ -30,12 +29,7 @@ MODEL_DIR = os.path.join(
 
 class HospitalPredictor(BasePredictor):
     """
-    Concrete predictor for hospital success rate ranking.
-
-    OOP Principles:
-    - Inheritance: extends BasePredictor
-    - Polymorphism: predict(), validate_input() specific to hospitals
-    """
+    Concrete predictor for hospital success rate ranking.    """
 
     DISEASES = ["Cardiac", "Diabetes", "Dengue", "Tuberculosis",
                 "Pneumonia", "Cancer", "Stroke", "Hepatitis", "Malaria", "Typhoid"]

@@ -8,7 +8,6 @@ Key methods: get_top_hospitals() for disease-specific rankings,
 get_by_state() for location filtering, get_summary_stats() for aggregates.
 
 HospitalRepository - Concrete repository for hospital outcomes
-Demonstrates: Inheritance, Polymorphism
 """
 
 import logging
@@ -25,12 +24,7 @@ logger = logging.getLogger(__name__)
 
 class HospitalRepository(BaseRepository):
     """
-    Concrete repository for HospitalOutcome table.
-    
-    OOP Principles:
-    - Inheritance: extends BaseRepository
-    - Polymorphism: hospital-specific queries
-    """
+    Concrete repository for HospitalOutcome table.    """
 
     def __init__(self, db: Session):
         super().__init__(db, HospitalOutcome)

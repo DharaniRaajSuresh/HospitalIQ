@@ -7,6 +7,7 @@ Replaces hardcoded 5% annual decay with ML driven by:
 import logging
 import math
 import os
+from datetime import datetime
 
 import joblib
 import numpy as np
@@ -53,7 +54,7 @@ class R0Predictor(BasePredictor):
 
         disease = normalize_state(input_data.get("disease", ""))
         state = normalize_state(input_data.get("state", ""))
-        target_year = int(input_data.get("target_year", 2026))
+        target_year = int(input_data.get("target_year", datetime.now().year))
         mutation_factor = float(input_data.get("mutation_factor", 1.0))
 
         meta = self._metadata or {}

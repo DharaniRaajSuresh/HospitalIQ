@@ -13,6 +13,7 @@ export default function IntelligenceMap() {
   const [sortDir, setSortDir] = useState('desc');
   const [filterRisk, setFilterRisk] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(null);
 
   useEffect(() => {
@@ -32,7 +33,9 @@ export default function IntelligenceMap() {
           };
         });
         setDistricts(loaded.sort((a, b) => b.deathRate - a.deathRate));
-      } catch { /* ignore */ }
+      } catch (e) {
+        setError((e as Error).message || 'Failed to load district data');
+      }
       setLoading(false);
     })();
   }, []);

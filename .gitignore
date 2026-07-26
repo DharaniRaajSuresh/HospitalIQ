@@ -7,6 +7,11 @@ build/
 *.egg
 .venv/
 venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
 # Environment
 .env
@@ -52,3 +57,5 @@ frontend/dist/
 # Output
 .vite/
 test_bed_output.json
+target/
+*.class

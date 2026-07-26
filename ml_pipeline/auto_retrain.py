@@ -1,5 +1,5 @@
 """
-Auto-Retrain Pipeline — FAANG-grade automated ML model retraining with
+Auto-Retrain Pipeline — Production-grade automated ML model retraining with
 performance comparison, staging promotion/rollback, and full history tracking.
 """
 import argparse

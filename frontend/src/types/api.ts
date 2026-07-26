@@ -40,6 +40,12 @@ export interface MortalityRiskCluster {
   risk_cluster: string;
 }
 
+export interface DistrictItem {
+  district: string;
+  state?: string;
+  count?: number;
+}
+
 export interface HospitalRankingItem {
   rank: number;
   hospital_name: string;

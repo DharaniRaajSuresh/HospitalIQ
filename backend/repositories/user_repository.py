@@ -5,7 +5,6 @@ Currently provides basic user lookup by email. Used for authentication
 features (not yet the main focus — the dashboard is open-access for now).
 
 UserRepository - Concrete repository for user accounts
-Demonstrates: Inheritance, Polymorphism
 """
 
 import logging
@@ -21,12 +20,7 @@ logger = logging.getLogger(__name__)
 
 class UserRepository(BaseRepository):
     """
-    Concrete repository for User table.
-    
-    OOP Principles:
-    - Inheritance: extends BaseRepository
-    - Polymorphism: user-specific queries
-    """
+    Concrete repository for User table.    """
 
     def __init__(self, db: Session):
         super().__init__(db, User)
@@ -40,7 +34,7 @@ class UserRepository(BaseRepository):
 
     def get_summary_stats(self) -> dict[str, Any]:
         """Get user statistics."""
-        active_count = self._db.query(User).filter(User.is_active == True).count()
+        active_count = self._db.query(User).filter(User.is_active.is_(True)).count()
         total_count = self.count()
         return {
             "total_users": total_count,
@@ -50,7 +44,7 @@ class UserRepository(BaseRepository):
 
     def get_active_users(self) -> list[User]:
         """Get all active users."""
-        return self._db.query(User).filter(User.is_active == True).all()
+        return self._db.query(User).filter(User.is_active.is_(True)).all()
 
     def get_by_role(self, role: str) -> list[User]:
         """Get users by role."""

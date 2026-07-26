@@ -1,14 +1,9 @@
 """
-WHAT THIS FILE DOES:
-Defines the BLUEPRINT for data processing pipelines that prepare raw CSV data
-for ML training. The process() method defines a fixed TEMPLATE:
+Defines the base interface for data processing pipelines that prepare raw CSV data
+for ML training. The process() method defines the execution pipeline:
   load_raw() → clean() → engineer_features() → encode() → split() → save()
-Each step is abstract — subclasses implement their own version (Polymorphism).
 
-Data processors run ONCE during training, not during predictions.
-
-BaseDataProcessor - Abstract Base Class for data processing pipelines
-Demonstrates: Abstraction, Encapsulation, Template Method Pattern
+Data processors run during offline dataset preparation and training.
 """
 
 import logging
@@ -22,21 +17,15 @@ logger = logging.getLogger(__name__)
 
 class BaseDataProcessor(ABC):
     """
-    Abstract base class for all data processing pipelines.
-    
-    OOP Principles:
-    - Abstraction: defines interface via abstract methods
-    - Encapsulation: data and paths kept private (_)
-    - Polymorphism: clean(), encode_features(), etc. vary by domain
-    - Template Method: process() defines overall pipeline
+    Abstract base class for data processing pipelines.
     """
 
     def __init__(self, raw_data_path: str, processed_data_path: str):
-        self._raw_path = raw_data_path                   # Encapsulated
-        self._processed_path = processed_data_path       # Encapsulated
-        self._df = None                                  # Encapsulated
-        self._is_processed = False                       # Encapsulated
-        self._record_count = 0                           # Encapsulated
+        self._raw_path = raw_data_path
+        self._processed_path = processed_data_path
+        self._df = None
+        self._is_processed = False
+        self._record_count = 0
 
     @property
     def is_processed(self) -> bool:

@@ -14,9 +14,9 @@ and database rows automatically.
 SQLAlchemy ORM Models for HospitalIQ
 """
 
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import JSON, Boolean, Column, Date, DateTime, Float, Integer, String, Text
+from sqlalchemy import JSON, Boolean, Column, DateTime, Float, Integer, String
 from sqlalchemy.orm import DeclarativeBase
 
 

@@ -4,10 +4,10 @@ import logging
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from backend.ai.ai_assistant import HospitalAIAssistant
 from backend.auth import require_user
 from backend.database import get_db
 from backend.models import ChatHistory, User
-from backend.ai.ai_assistant import HospitalAIAssistant
 from backend.repositories.bed_repository import BedRepository
 from backend.repositories.hospital_repository import HospitalRepository
 from backend.repositories.mortality_repository import MortalityRepository

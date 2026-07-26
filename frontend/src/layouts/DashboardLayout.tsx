@@ -218,23 +218,7 @@ export default function DashboardLayout() {
           </div>
 
           <div className="flex items-center space-x-3 sm:space-x-4">
-            {/* Premium Developer Badge */}
-            <div className="hidden lg:flex flex-col justify-center text-right mr-5 pr-5 border-r border-[rgba(255,255,255,0.15)]">
-              <div className="flex items-end justify-end space-x-2 mb-1">
-                <span className="text-[10px] uppercase tracking-widest text-[var(--color-accent-cyan)] font-bold">Developed by</span>
-                <span className="text-sm text-white font-bold tracking-wide leading-none">Dharani Raaj Suresh</span>
-              </div>
-              <div className="flex items-center justify-end space-x-4 text-xs font-mono">
-                <a href="tel:9042503337" className="flex items-center text-gray-400 hover:text-[var(--color-accent-cyan)] transition-colors group">
-                  <Phone className="w-3 h-3 mr-1.5 group-hover:scale-110 transition-transform" />
-                  9042503337
-                </a>
-                <a href="mailto:dharanisuresh307@gmail.com" className="flex items-center text-gray-400 hover:text-[var(--color-accent-rose)] transition-colors group">
-                  <Mail className="w-3 h-3 mr-1.5 group-hover:scale-110 transition-transform" />
-                  dharanisuresh307@gmail.com
-                </a>
-              </div>
-            </div>
+
             <div ref={searchRef} className="relative hidden md:block w-72 group">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] group-focus-within:text-[var(--color-accent-cyan)] transition-colors" />
               <input 

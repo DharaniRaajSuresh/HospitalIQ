@@ -1,6 +1,6 @@
 """
 JWT authentication module for HospitalIQ API.
-Uses bcrypt for password hashing (FAANG-standard), JWT with HS256.
+Uses bcrypt for password hashing (industry-standard), JWT with HS256.
 Supports httpOnly cookies (primary) + Bearer header fallback for API clients.
 Google OAuth via Authlib for "Sign in with Google".
 """
@@ -15,12 +15,11 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
+from backend.config import settings
 from backend.database import get_db
 from backend.models import User
 
 logger = logging.getLogger(__name__)
-
-from backend.config import settings
 
 SECRET_KEY = settings.secret_key or os.getenv("JWT_SECRET_KEY", "")
 if not SECRET_KEY:

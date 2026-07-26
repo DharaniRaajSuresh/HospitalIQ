@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import { getStates, getBedForecast } from '../api';
 import { useApi } from '../hooks/useApi';
-import { LocationStatsResponse } from '../types/api';
+import type { LocationStatsResponse, BedForecastResponse, ForecastDataPoint } from '../types/api';
 import StatusBadge from '../components/ui/StatusBadge';
 import Button from '../components/ui/Button';
 import { downloadCsv } from '../utils/exportCsv';
@@ -19,6 +19,13 @@ const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov
 const CURRENT_YEAR = new Date().getFullYear();
 const WARD_TYPES = ['General', 'ICU', 'Maternity', 'Emergency'];
 
+interface ScenarioDataPoint {
+  month: string;
+  timestamp: number;
+  predicted: number;
+  range: [number, number];
+}
+
 interface ScenarioData {
   id: number;
   wardType: string;
@@ -26,7 +33,7 @@ interface ScenarioData {
   surgePct: number;
   color: string;
   label: string;
-  data: any[];
+  data: ScenarioDataPoint[];
 }
 
 const SCENARIO_COLORS = ['var(--color-accent-cyan)', 'var(--color-accent-violet)', 'var(--color-accent-emerald)'];
@@ -127,7 +134,7 @@ function ModelMetadataPanel({ status, scenarioCount }: { status?: string; scenar
         </span></div>
         <div className="flex justify-between items-center">
           <span className="text-[var(--color-text-muted)]">Data Source</span>
-          <StatusBadge status={(status as any) || 'ml_model'} />
+          <StatusBadge status={(status as "ml_model" | "db_trend" | "estimated") || 'ml_model'} />
         </div>
       </div>
       {scenarioCount > 1 && (
@@ -139,18 +146,31 @@ function ModelMetadataPanel({ status, scenarioCount }: { status?: string; scenar
   );
 }
 
-function CustomTooltip({ active, payload, label }: any) {
+interface TooltipPayloadItem {
+  dataKey: string;
+  color?: string;
+  name?: string;
+  value?: number;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayloadItem[];
+  label?: string;
+}
+
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
-  const lines = payload.filter((p: any) => p.dataKey !== 'primary_range');
-  const range = payload.find((p: any) => p.dataKey === 'primary_range');
+  const lines = payload.filter((p) => p.dataKey !== 'primary_range');
+  const range = payload.find((p) => p.dataKey === 'primary_range');
   
   return (
     <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[rgba(11,17,32,0.95)] backdrop-blur-xl p-3 shadow-2xl text-sm space-y-1.5">
       <p className="text-[var(--color-text-muted)] font-mono">{label}</p>
-      {lines.map((p: any, i: number) => (
+      {lines.map((p, i: number) => (
         <div key={i} className="flex items-center justify-between gap-4">
           <span style={{ color: p.color }} className="font-medium">{p.name}</span>
-          <span className="font-mono text-[var(--color-text-primary)]">{Math.round(p.value).toLocaleString()}</span>
+          <span className="font-mono text-[var(--color-text-primary)]">{Math.round(p.value || 0).toLocaleString()}</span>
         </div>
       ))}
       {range && range.value && (
@@ -184,23 +204,23 @@ export default function ForecastingCenter() {
     setIsRunning(true);
     try {
       const params: { state: string; ward_type: string; months_ahead: number; year?: string } = { state: selectedState, ward_type: wt, months_ahead: 12, year: String(selectedYear) };
-      const result = await getBedForecast<any>(params);
+      const result = await getBedForecast<BedForecastResponse>(params);
       let forecast = result.forecast || [];
       if (forecast[0]?.forecast) forecast = forecast[0].forecast;
       const sf = pm ? 1 + (sp / 100) : 1;
-      const data = forecast.map((f: any, i: number) => ({
-        month: f.year ? `${(f.month_name || MONTHS[(f.month || 1) - 1] || '').slice(0, 3)} ${f.year}` : (f.month_name || f.month),
+      const data = forecast.map((f: ForecastDataPoint, i: number) => ({
+        month: f.year ? `${(f.month_name || MONTHS[(f.month || 1) - 1] || '').slice(0, 3)} ${f.year}` : (f.month_name || f.month || ''),
         timestamp: (f.year || selectedYear) * 12 + (f.month || i + 1),
         predicted: Math.round((f.predicted_beds || 0) * sf),
         range: [
-          Math.round((f.lower_bound || f.predicted_beds * 0.9) * sf),
-          Math.round((f.upper_bound || f.predicted_beds * 1.1) * sf)
-        ]
+          Math.round(((f as unknown as Record<string, number>).lower_bound || (f.predicted_beds || 0) * 0.9) * sf),
+          Math.round(((f as unknown as Record<string, number>).upper_bound || (f.predicted_beds || 0) * 1.1) * sf)
+        ] as [number, number]
       }));
       const id = Date.now();
       setScenarios(prev => [...prev, { id, wardType: wt, pandemicMode: pm, surgePct: sp, color, label, data }]);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError((e as Error).message || 'An error occurred');
     }
     setIsRunning(false);
   }, [selectedState, selectedYear]);
@@ -209,15 +229,21 @@ export default function ForecastingCenter() {
 
   const handleRun = () => runScenario(wardType, pandemicMode, surgePct, SCENARIO_COLORS[scenarios.length % SCENARIO_COLORS.length], `${wardType} ${selectedYear}${pandemicMode ? ` +${surgePct}% surge` : ''}`);
 
+  interface CombinedDataRow {
+    month: string;
+    timestamp: number;
+    [key: string]: string | number | [number, number] | undefined;
+  }
+
   const combinedData = useMemo(() => {
     if (scenarios.length === 0) return [];
-    const map = new Map<string, any>();
+    const map = new Map<string, CombinedDataRow>();
     scenarios.forEach((s, idx) => {
       s.data.forEach(d => {
         if (!map.has(d.month)) {
           map.set(d.month, { month: d.month, timestamp: d.timestamp });
         }
-        const existing = map.get(d.month);
+        const existing = map.get(d.month)!;
         existing[`s_${s.id}`] = d.predicted;
         if (idx === 0) existing['primary_range'] = d.range;
       });
@@ -403,7 +429,7 @@ export default function ForecastingCenter() {
                       </tr>
                     </thead>
                     <tbody>
-                      {combinedData.map((row: any, i: number) => (
+                      {combinedData.map((row: CombinedDataRow, i: number) => (
                         <tr key={i} className="border-t border-[var(--color-border-subtle)]/50">
                           <td className="py-1 pr-3 text-[var(--color-text-muted)]">{row.month}</td>
                           {scenarios.map(s => <td key={s.id} className="text-right py-1 px-2 text-[var(--color-text-primary)]">{row[`s_${s.id}`]?.toLocaleString() || '-'}</td>)}

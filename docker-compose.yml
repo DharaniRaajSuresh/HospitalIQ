@@ -11,8 +11,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://hospitaliq:change-me@db:5432/hospitaliq_db
-      - SECRET_KEY=dev-secret-key-change-in-production
+      - DATABASE_URL=postgresql://hospitaliq:${DB_PASSWORD:-change-me}@db:5432/hospitaliq_db
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
       - ALGORITHM=HS256
       - ACCESS_TOKEN_EXPIRE_MINUTES=60
       - ENVIRONMENT=development
@@ -30,11 +30,11 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/hospitaliq_db
       - SPRING_DATASOURCE_USERNAME=hospitaliq
-      - SPRING_DATASOURCE_PASSWORD=change-me
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-change-me}
       - SPRING_DATASOURCE_DRIVER=org.postgresql.Driver
       - SPRING_JPA_DIALECT=org.hibernate.dialect.PostgreSQLDialect
       - SPRING_JPA_DDL_AUTO=validate
-      - JWT_SECRET_KEY=dev-secret-key-change-in-production
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev-secret-key-change-in-production}
     depends_on:
       db:
         condition: service_healthy

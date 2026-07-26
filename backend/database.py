@@ -159,7 +159,7 @@ def get_db() -> Session:
 def check_db_connection() -> bool:
     """Check if database is connected"""
     try:
-        with engine.connect() as connection:
+        with engine.connect():
             logger.info("✅ Database connection successful")
             return True
     except Exception as e:

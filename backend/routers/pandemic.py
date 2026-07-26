@@ -1,5 +1,4 @@
 """Pandemic scenario simulation endpoint — thin router, business logic in pandemic_service."""
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
@@ -16,7 +15,7 @@ async def pandemic_scenario(
     disease: str = "COVID-19",
     state: str = None,
     year: int = None,
-    manual_r0: Optional[float] = Query(None, ge=0.1, le=10.0),
+    manual_r0: float | None = Query(None, ge=0.1, le=10.0),
     db=Depends(get_db),
     _: User = Depends(require_user),
 ):

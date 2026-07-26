@@ -197,7 +197,8 @@ def refresh_district_summaries(db: Session) -> None:
     dmap = {}
 
     for r in mort_rows:
-        if not r.district: continue
+        if not r.district:
+            continue
         key = (r.state, r.district)
         dmap[key] = {
             "state": r.state,
@@ -210,7 +211,8 @@ def refresh_district_summaries(db: Session) -> None:
         }
 
     for r in bed_rows:
-        if not r.district: continue
+        if not r.district:
+            continue
         key = (r.state, r.district)
         if key not in dmap:
             dmap[key] = {
@@ -224,7 +226,8 @@ def refresh_district_summaries(db: Session) -> None:
         dmap[key]["total_beds"] = int(r.total_beds or 0)
 
     for r in score_rows:
-        if not r.district: continue
+        if not r.district:
+            continue
         key = (r.state, r.district)
         if key in dmap:
             sr = float(r.success_rate or 0)

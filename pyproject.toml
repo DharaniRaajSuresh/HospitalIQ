@@ -54,6 +54,8 @@ include = ["backend*", "ml_pipeline*"]
 line-length = 120
 # Match requires-python: target Python 3.11 (not 3.12) for broadest compat
 target-version = "py311"
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP"]
 ignore = ["E501"]   # line length handled by formatter
 

@@ -1,4 +1,4 @@
-/* FAANG-grade API client with Bearer token (window globals) */
+/* Production API client with Bearer token auth (memory-based for XSS security) */
 
 interface CacheEntry {
   data: unknown;
@@ -41,17 +41,14 @@ const PATIENT_API_BASE = '/patient-api/v1';
 
 function getToken(): string | null {
   if (typeof window === 'undefined') return null;
-  // Fallback to memory if localStorage is somehow unavailable, but primarily use localStorage
-  return localStorage.getItem('__auth_token') || (window as unknown as Record<string, string>).__auth_token || null;
+  return (window as unknown as Record<string, string>).__auth_token || null;
 }
 
 export function setToken(tok: string | null): void {
   if (typeof window === 'undefined') return;
   if (tok) {
-    localStorage.setItem('__auth_token', tok);
     (window as unknown as Record<string, string>).__auth_token = tok;
   } else {
-    localStorage.removeItem('__auth_token');
     delete (window as unknown as Record<string, string>).__auth_token;
   }
 }

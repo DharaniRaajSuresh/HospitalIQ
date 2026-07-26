@@ -6,7 +6,6 @@ the Mortality Analytics page and the AI assistant to answer questions about
 death rates and high-risk districts.
 
 MortalityRepository - Concrete repository for mortality records
-Demonstrates: Inheritance, Polymorphism
 """
 
 import logging
@@ -23,12 +22,7 @@ logger = logging.getLogger(__name__)
 
 class MortalityRepository(BaseRepository):
     """
-    Concrete repository for MortalityRecord table.
-    
-    OOP Principles:
-    - Inheritance: extends BaseRepository
-    - Polymorphism: mortality-specific queries
-    """
+    Concrete repository for MortalityRecord table.    """
 
     def __init__(self, db: Session):
         super().__init__(db, MortalityRecord)

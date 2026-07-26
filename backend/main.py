@@ -31,6 +31,8 @@ from slowapi.util import get_remote_address
 from starlette.middleware.sessions import SessionMiddleware
 
 from backend.config import settings
+from backend.core.tracing import setup_tracing
+from backend.routers import ai, auth, health, locations, map, pandemic, patients, predictions, search, stats
 
 structlog.configure(
     processors=[
@@ -163,12 +165,8 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
-from backend.core.tracing import setup_tracing
-
 setup_tracing(app, service_name=settings.service_name)
 logger.info("OpenTelemetry tracing initialized", environment=settings.environment)
-
-from backend.routers import ai, auth, health, locations, map, pandemic, patients, predictions, search, stats
 
 app.include_router(health.router)
 app.include_router(predictions.router)
@@ -180,6 +178,12 @@ app.include_router(ai.router)
 app.include_router(auth.router)
 app.include_router(map.router)
 app.include_router(search.router)
+
+
+@app.get("/")
+async def root():
+    return {"application": "HospitalIQ API v2.0", "status": "running", "docs": "/docs"}
+
 
 if __name__ == "__main__":
     import uvicorn

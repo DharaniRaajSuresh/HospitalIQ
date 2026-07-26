@@ -5,6 +5,7 @@ Used to scale the monthly forecast trajectory per target year.
 """
 import logging
 import os
+from datetime import datetime
 
 import joblib
 import numpy as np
@@ -44,7 +45,7 @@ class ScenarioPredictor(BasePredictor):
             self.load_model()
         disease = input_data.get("disease", "")
         state = input_data.get("state", "")
-        target_year = int(input_data.get("target_year", 2025))
+        target_year = int(input_data.get("target_year", datetime.now().year))
         yearly_r0 = input_data.get("yearly_r0", None)
         meta = self._metadata or {}
         d_enc = meta.get("disease_encoding", {}).get(disease, 0)

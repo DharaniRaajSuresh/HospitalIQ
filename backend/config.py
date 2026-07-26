@@ -7,7 +7,6 @@ a new configuration value (e.g., a new API key), you add it here.
 For example: GEMINI_API_KEY, DATABASE_URL, SECRET_KEY are all defined here.
 
 HospitalIQ Backend Configuration
-Demonstrates: Encapsulation with Pydantic settings
 """
 
 import logging
@@ -19,7 +18,6 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """
     Application settings loaded from .env file.
-    Demonstrates: Encapsulation via Pydantic BaseSettings
     """
 
     # Database — must be set via .env or environment variable

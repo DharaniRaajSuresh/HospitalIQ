@@ -1,6 +1,5 @@
 """Location, district, locality, and hospital ranking endpoints"""
 import logging
-import random
 import time
 
 from fastapi import APIRouter, Depends

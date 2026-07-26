@@ -6,9 +6,10 @@ import os
 
 os.environ["SKIP_DB_INIT"] = "1"
 
+from unittest.mock import MagicMock, mock_open, patch
+
 import numpy as np
 import pytest
-from unittest.mock import MagicMock, mock_open, patch
 
 from backend.predictors.bed_predictor import BedPredictor
 from backend.predictors.forecast_predictor import ForecastPredictor
@@ -49,7 +50,6 @@ class TestBedPredictor:
         assert len(names) == 11
 
     def test_preprocess_input(self):
-        from collections import deque
         p = BedPredictor()
         p._last_known[("Tamil Nadu", "ICU")] = {"history": [150]*12, "available_beds": 150}
         processed = p.preprocess_input({"state": "Tamil Nadu", "ward_type": "ICU", "month": 6, "year": 2025})

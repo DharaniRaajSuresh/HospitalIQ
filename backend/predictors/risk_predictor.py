@@ -6,11 +6,12 @@ was learning back its own synthetic training labels (R² 0.99, meaningless).
 """
 
 import logging
+
 import numpy as np
 
-logger = logging.getLogger(__name__)
-
 from backend.core.base_predictor import BasePredictor
+
+logger = logging.getLogger(__name__)
 
 FEATURE_NAMES = [
     "total_confirmed", "total_deaths", "avg_cfr", "avg_r0",

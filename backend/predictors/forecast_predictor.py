@@ -7,6 +7,7 @@ to predict confirmed_cases and deaths for N months ahead.
 import logging
 import math
 import os
+from datetime import datetime
 
 import joblib
 import numpy as np
@@ -115,7 +116,8 @@ class ForecastPredictor(BasePredictor):
         if len(input_data.get("start_year_month", [])) == 2:
             cy, cm = input_data["start_year_month"]
         else:
-            cy, cm = 2025, 1
+            now = datetime.now()
+            cy, cm = now.year, now.month
 
         forecast = []
         curr_cases = list(hist_cases)

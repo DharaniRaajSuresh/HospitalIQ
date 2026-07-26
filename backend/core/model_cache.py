@@ -1,6 +1,6 @@
 """Model cache with TTL, LRU eviction, and circuit breaker pattern.
 
-FAANG-grade model serving requires:
+Production model serving requires:
 - Cache models to avoid redundant loads
 - Circuit breaker to fail fast when models are down
 - TTL-based cache invalidation

@@ -1,4 +1,4 @@
-"""OpenTelemetry distributed tracing for FAANG-grade observability."""
+"""OpenTelemetry distributed tracing for production observability."""
 import logging
 from collections.abc import Iterator
 from contextlib import contextmanager

@@ -330,7 +330,8 @@ def build_scenario(disease: str, state: str | None, target_year: int, db: Sessio
         manual_r0 = max(0.1, min(10.0, round(float(manual_r0), 2)))
         default_r0 = DISEASE_DEFAULT_R0.get(disease, 2.0)
         scale = manual_r0 / default_r0
-        scaled = lambda v: int((v or 0) * scale)
+        def scaled(v):
+            return int((v or 0) * scale)
         sc = scaled(totals.get("total_confirmed") or 0)
         sd = scaled(totals.get("total_deaths") or 0)
         cfr = round(sd / max(sc, 1) * 100, 2) if sc else 0

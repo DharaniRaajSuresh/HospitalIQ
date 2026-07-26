@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 random.seed(42)
 
-DB = os.path.join(os.path.dirname(__file__), "ml_pipeline", "data", "hospitaliq.db")
+DB = os.path.join(os.path.dirname(__file__), "hospitaliq.db")
 conn = sqlite3.connect(DB)
 c = conn.cursor()
 

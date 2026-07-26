@@ -8,7 +8,6 @@ dictionaries that the API endpoints can send to the frontend.
 This is the "middleman" between the raw database and the prediction code.
 
 BedRepository - Concrete repository for hospital beds
-Demonstrates: Inheritance, Polymorphism
 """
 
 import logging
@@ -25,12 +24,7 @@ logger = logging.getLogger(__name__)
 
 class BedRepository(BaseRepository):
     """
-    Concrete repository for HospitalBed table.
-    
-    OOP Principles:
-    - Inheritance: extends BaseRepository
-    - Polymorphism: get_by_state() and get_summary_stats() override abstract methods
-    """
+    Concrete repository for HospitalBed table.    """
 
     def __init__(self, db: Session):
         super().__init__(db, HospitalBed)

@@ -78,7 +78,8 @@ async def predict_beds(state: str, ward_type: str, months_ahead: int = 3, year: 
 
 
 @router.post("/mortality")
-async def predict_mortality(district: str, age_group: str, cause: str, year: int = 2024, month: int = 6, db=Depends(get_db), _=Depends(require_user)):
+async def predict_mortality(district: str, age_group: str, cause: str, year: int | None = None, month: int = 6, db=Depends(get_db), _=Depends(require_user)):
+    year = year or datetime.now().year
     try:
         if "mortality" in loaded_predictors:
             predictor = loaded_predictors["mortality"]

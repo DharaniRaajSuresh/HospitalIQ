@@ -12,7 +12,6 @@ This runs during the TRAINING phase (not when you use the website).
 The trained model is saved as bed_model.pkl and loaded later for predictions.
 
 BedDataProcessor - Concrete processor for bed data
-Demonstrates: Inheritance, Polymorphism, Template Method Pattern
 """
 
 import logging
@@ -28,12 +27,7 @@ logger = logging.getLogger(__name__)
 
 class BedDataProcessor(BaseDataProcessor):
     """
-    Concrete processor for hospital bed data.
-
-    OOP Principles:
-    - Inheritance: extends BaseDataProcessor
-    - Polymorphism: clean(), encode_features(), etc. specific to bed data
-    """
+    Concrete processor for hospital bed data.    """
 
     def __init__(self):
         super().__init__(

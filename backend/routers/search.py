@@ -1,10 +1,11 @@
 import logging
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 from backend.auth import require_user
 from backend.database import get_db
-from backend.models import User, Patient, HospitalOutcome
+from backend.models import HospitalOutcome, Patient, User
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1", tags=["search"])

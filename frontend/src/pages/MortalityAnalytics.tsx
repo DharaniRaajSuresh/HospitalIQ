@@ -5,14 +5,23 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import { getLocationStats, getDistricts, predictMortality } from '../api';
+import type { DistrictItem } from '../types/api';
 import jsPDF from 'jspdf/dist/jspdf.es.js';
 
 const COLORS = ['#f43f5e', '#f59e0b', '#3b82f6', '#10b981'];
 const MOCK_CAUSES = ['Cardiac', 'Respiratory', 'Infectious', 'Cancer', 'Accident', 'Neonatal', 'Maternal'];
 
+interface PredictMortalityResponse {
+  result: {
+    predicted_death_rate?: number;
+    status?: string;
+    [key: string]: unknown;
+  };
+}
+
 export default function MortalityAnalytics() {
   const [district, setDistrict] = useState('');
-  const [districts, setDistricts] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<DistrictItem[]>([]);
 
   const [ageGroup, setAgeGroup] = useState('45-64');
   const [cause, setCause] = useState('Cardiac');
@@ -26,14 +35,14 @@ export default function MortalityAnalytics() {
   const [primaryFactor, setPrimaryFactor] = useState('Age bracket (45-64) with cardiovascular history.');
 
   useEffect(() => {
-    getDistricts<any[]>().then((d: any[]) => {
+    getDistricts<DistrictItem[]>().then((d: DistrictItem[]) => {
       setDistricts(d);
       if (d.length && !district) setDistrict(d[0].district);
-    }).catch(e => console.warn('Failed to load districts:', e));
+    }).catch(e => setFetchError((e as Error).message || 'Failed to load districts'));
   }, []);
 
   useEffect(() => {
-    getLocationStats('', district).then(setLocStats).catch(e => console.warn('Failed to load location stats:', e));
+    getLocationStats('', district).then(setLocStats).catch(e => setFetchError((e as Error).message || 'Failed to load location stats'));
   }, [district]);
 
   const generatePlan = () => {
@@ -78,7 +87,7 @@ export default function MortalityAnalytics() {
   const handlePredict = async () => {
     setLoading(true);
     try {
-      const data: any = await predictMortality({ district, age_group: ageGroup, cause, year: '2026', month: '6' });
+      const data = await predictMortality({ district, age_group: ageGroup, cause, year: '2026', month: '6' }) as PredictMortalityResponse;
       const r = data.result;
       setResult(r);
       const rate = r.predicted_death_rate || 0;

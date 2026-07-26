@@ -1,5 +1,6 @@
 """Auth endpoints: login, register, me, logout, Google OAuth — httpOnly cookie-based JWT."""
 import logging
+import os
 import secrets
 from urllib.parse import urlencode
 
@@ -26,7 +27,7 @@ router = APIRouter(tags=["Auth"], prefix="/api/v1/auth")
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
-FRONTEND_URL = "http://127.0.0.1:8510"
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 
 class LoginRequest(BaseModel):

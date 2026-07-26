@@ -43,7 +43,13 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
 
     # CORS
-    cors_origins: list[str] = ["http://localhost:8510", "http://127.0.0.1:8510", "http://localhost:8000"]
+    cors_origins: list[str] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8510",
+        "http://127.0.0.1:8510",
+        "http://localhost:8000",
+    ]
 
     # Redis
     redis_url: str = "redis://redis:6379/0"

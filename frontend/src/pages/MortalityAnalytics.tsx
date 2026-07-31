@@ -5,7 +5,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import { getLocationStats, getDistricts, predictMortality } from '../api';
-import type { DistrictItem } from '../types/api';
+import type { DistrictItem, LocationStatsResponse } from '../types/api';
 import jsPDF from 'jspdf/dist/jspdf.es.js';
 
 const COLORS = ['#f43f5e', '#f59e0b', '#3b82f6', '#10b981'];
@@ -26,10 +26,10 @@ export default function MortalityAnalytics() {
   const [ageGroup, setAgeGroup] = useState('45-64');
   const [cause, setCause] = useState('Cardiac');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [locStats, setLocStats] = useState(null);
+  const [result, setResult] = useState<PredictMortalityResponse['result'] | null>(null);
+  const [locStats, setLocStats] = useState<LocationStatsResponse | null>(null);
 
-  const [fetchError, setFetchError] = useState(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [riskScore, setRiskScore] = useState(65);
   const [riskLevel, setRiskLevel] = useState('Moderate');
   const [primaryFactor, setPrimaryFactor] = useState('Age bracket (45-64) with cardiovascular history.');
@@ -42,7 +42,7 @@ export default function MortalityAnalytics() {
   }, []);
 
   useEffect(() => {
-    getLocationStats('', district).then(setLocStats).catch(e => setFetchError((e as Error).message || 'Failed to load location stats'));
+    getLocationStats<LocationStatsResponse>('', district).then(d => setLocStats(d)).catch(e => setFetchError((e as Error).message || 'Failed to load location stats'));
   }, [district]);
 
   const generatePlan = () => {
@@ -97,7 +97,7 @@ export default function MortalityAnalytics() {
       else if (rate > 60) score = 40 + ((rate - 60) / 40) * 25;
       else score = 15 + (rate / 60) * 25;
       setRiskScore(Math.min(100, Math.round(score)));
-      setRiskLevel(r.risk_level || 'Moderate');
+      setRiskLevel((r.risk_level as string) || 'Moderate');
       setPrimaryFactor(`Age ${r.age_group} with ${r.cause} in ${r.district}.`);
     } catch (e) {
       setResult(null);
@@ -212,7 +212,7 @@ export default function MortalityAnalytics() {
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-[var(--color-text-muted)]">Population</span>
-                  <span>{(locStats.mortality?.total_population / 1e6).toFixed(1)}M</span>
+                  <span>{(locStats.mortality?.total_population ?? 0) / 1e6 > 0 ? ((locStats.mortality?.total_population ?? 0) / 1e6).toFixed(1) + 'M' : '—'}</span>
                 </div>
               </div>
             )}

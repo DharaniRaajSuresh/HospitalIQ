@@ -8,18 +8,21 @@ const BULLET = /^[\s]*[-*+]\s+(.*)$/m;
 const NUMBERED = /^[\s]*\d+[.)]\s+(.*)$/m;
 const NEWLINE = /\n/g;
 
-function parseLine(line, key) {
-  const parts = [];
-  let remaining = line;
-  let lastIdx = 0;
+interface MatchPart {
+  idx: number;
+  end: number;
+  text: string;
+  wrap: (s: string, i: number) => React.ReactNode;
+}
 
-  const patterns = [
+function parseLine(line: string, key: string): React.ReactNode {
+  const patterns: Array<{ re: RegExp; wrap: (s: string, i: number) => React.ReactNode }> = [
     { re: BOLD, wrap: (s, i) => <strong key={key + 'b' + i} className="font-semibold text-white">{s}</strong> },
     { re: ITALIC, wrap: (s, i) => <em key={key + 'i' + i} className="italic text-[var(--color-text-secondary)]">{s}</em> },
     { re: INLINE_CODE, wrap: (s, i) => <code key={key + 'c' + i} className="bg-[var(--color-bg-primary)] px-1.5 py-0.5 rounded text-xs font-mono text-cyan-300">{s}</code> },
   ];
 
-  const matches = [];
+  const matches: MatchPart[] = [];
   for (const p of patterns) {
     let m;
     p.re.lastIndex = 0;
@@ -32,7 +35,7 @@ function parseLine(line, key) {
   if (matches.length === 0) return line;
 
   let cursor = 0;
-  const elements = [];
+  const elements: React.ReactNode[] = [];
   for (const m of matches) {
     if (m.idx > cursor) {
       elements.push(<span key={key + 't' + cursor}>{line.slice(cursor, m.idx)}</span>);
@@ -50,7 +53,7 @@ export default function MarkdownRenderer({ text }: { text?: string }) {
   if (!text) return null;
 
   const blocks = text.split(/(```[\s\S]*?```)/g);
-  const elements = [];
+  const elements: React.ReactNode[] = [];
 
   blocks.forEach((block: string, bi: number) => {
     const codeMatch = block.match(CODE_BLOCK);
@@ -68,7 +71,7 @@ export default function MarkdownRenderer({ text }: { text?: string }) {
 
     const lines = block.split(NEWLINE);
     let inList = false;
-    let listItems = [];
+    let listItems: React.ReactNode[] = [];
 
     lines.forEach((line, li) => {
       const bulletMatch = line.match(BULLET);
@@ -77,7 +80,7 @@ export default function MarkdownRenderer({ text }: { text?: string }) {
 
       if (bulletMatch || numberedMatch) {
         inList = true;
-        const content = bulletMatch ? bulletMatch[1] : numberedMatch[1];
+        const content = (bulletMatch || numberedMatch)![1];
         listItems.push(
           <li key={li} className="text-sm leading-relaxed text-[var(--color-text-primary)] mb-1">
             {parseLine(content, `${bi}-${li}`)}

@@ -14,7 +14,7 @@ export default function IntelligenceMap() {
   const [filterRisk, setFilterRisk] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [expanded, setExpanded] = useState(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {

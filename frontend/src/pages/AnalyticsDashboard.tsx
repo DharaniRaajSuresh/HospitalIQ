@@ -58,8 +58,8 @@ export default function AnalyticsDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getStats().then(setStats).catch(e => setError(e.message));
-    getLocationStats('', '').then(setAllLoc).catch(e => setError(e.message));
+    getStats<StatsResponse>().then(d => setStats(d)).catch(e => setError(e.message));
+    getLocationStats<LocationStatsResponse>('', '').then(d => setAllLoc(d)).catch(e => setError(e.message));
     
     getHospitalDistribution().then(dist => {
       const g = dist?.["Government"] || 0;

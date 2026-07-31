@@ -1,16 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 
-const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }) => {
-  const canvasRef = useRef(null);
+const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }: { count?: number; color?: string }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    let animationFrameId;
-    let particles = [];
-    let mouse = { x: null, y: null, radius: 100 };
+    if (!ctx) return;
+    let animationFrameId: number;
+    let particles: Particle[] = [];
+    let mouse = { x: null as number | null, y: null as number | null, radius: 100 };
     let lastTime = 0;
     const fps = 30;
     const interval = 1000 / fps;
@@ -20,9 +21,9 @@ const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }) => 
       canvas.height = window.innerHeight;
     };
 
-    const handleMouseMove = (e) => {
-      mouse.x = e.x;
-      mouse.y = e.y;
+    const handleMouseMove = (e: MouseEvent) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
     };
 
     const handleMouseOut = () => {
@@ -43,8 +44,8 @@ const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }) => 
       speedY: number;
 
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        this.x = Math.random() * canvas!.width;
+        this.y = Math.random() * canvas!.height;
         this.size = Math.random() * 1.5 + 0.5;
         this.speedX = (Math.random() * 0.8 - 0.4);
         this.speedY = (Math.random() * 0.8 - 0.4);
@@ -54,11 +55,11 @@ const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }) => 
         this.x += this.speedX;
         this.y += this.speedY;
 
-        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        if (this.x < 0 || this.x > canvas!.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas!.height) this.speedY *= -1;
 
         // Simplified mouse interaction
-        if (mouse.x != null) {
+        if (mouse.x != null && mouse.y != null) {
           const dx = mouse.x - this.x;
           const dy = mouse.y - this.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
@@ -71,10 +72,10 @@ const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }) => 
       }
 
       draw() {
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx!.fillStyle = color;
+        ctx!.beginPath();
+        ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx!.fill();
       }
     }
 
@@ -143,6 +144,16 @@ const FloatingParticles = ({ count = 30, color = 'rgba(6, 182, 212, 0.3)' }) => 
     />
   );
 };
+
+interface Particle {
+  x: number;
+  y: number;
+  size: number;
+  speedX: number;
+  speedY: number;
+  update: () => void;
+  draw: () => void;
+}
 
 export default FloatingParticles;
 

@@ -189,23 +189,25 @@ export interface StatsResponse {
 export interface LocationStatsResponse {
   state?: string;
   district?: string;
-  hospitals: {
+  hospitals?: {
     total: number;
+    total_beds?: number;
     avg_success_rate?: number;
     avg_score?: number;
-    best_hospital?: { name: string; score: number };
     fatality_rate?: number;
+    best_hospital?: { name: string; score: number; district?: string; type?: string };
   };
-  beds: {
+  beds?: {
     total_beds: number;
     available_beds?: number;
     avg_occupancy?: number;
     ward_breakdown?: Record<string, number>;
   };
-  mortality: {
+  mortality?: {
     total_deaths: number;
     avg_death_rate?: number;
     total_population?: number;
+    common_causes?: { cause: string; deaths: number }[];
   };
 }
 

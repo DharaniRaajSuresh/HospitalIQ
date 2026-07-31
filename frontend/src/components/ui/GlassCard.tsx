@@ -2,8 +2,8 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
-const GlassCard = ({ children, className, hover = true, ...props }) => {
-  const divRef = useRef(null);
+const GlassCard = ({ children, className, hover = true, ...props }: any) => {
+  const divRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);

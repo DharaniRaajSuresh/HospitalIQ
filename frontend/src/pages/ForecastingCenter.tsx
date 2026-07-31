@@ -206,10 +206,11 @@ export default function ForecastingCenter() {
       const params: { state: string; ward_type: string; months_ahead: number; year?: string } = { state: selectedState, ward_type: wt, months_ahead: 12, year: String(selectedYear) };
       const result = await getBedForecast<BedForecastResponse>(params);
       let forecast = result.forecast || [];
-      if (forecast[0]?.forecast) forecast = forecast[0].forecast;
+      const nested = forecast[0] as (ForecastDataPoint & { forecast?: ForecastDataPoint[] }) | undefined;
+      if (nested?.forecast) forecast = nested.forecast;
       const sf = pm ? 1 + (sp / 100) : 1;
       const data = forecast.map((f: ForecastDataPoint, i: number) => ({
-        month: f.year ? `${(f.month_name || MONTHS[(f.month || 1) - 1] || '').slice(0, 3)} ${f.year}` : (f.month_name || f.month || ''),
+        month: f.year ? `${(f.month_name || MONTHS[(f.month || 1) - 1] || '').slice(0, 3)} ${f.year}` : (f.month_name || (f.month ? String(f.month) : '')),
         timestamp: (f.year || selectedYear) * 12 + (f.month || i + 1),
         predicted: Math.round((f.predicted_beds || 0) * sf),
         range: [

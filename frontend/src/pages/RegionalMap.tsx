@@ -3,8 +3,9 @@ import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { getLocationStats } from '../api';
+import type { LocationStatsResponse } from '../types/api';
 
-const STATE_COORDS = {
+const STATE_COORDS: Record<string, [number, number]> = {
   'Andhra Pradesh': [15.9, 79.9], 'Arunachal Pradesh': [27.1, 93.6], 'Assam': [26.2, 92.9],
   'Bihar': [25.1, 85.3], 'Chhattisgarh': [21.3, 81.9], 'Delhi': [28.7, 77.1],
   'Goa': [15.5, 73.9], 'Gujarat': [22.3, 71.2], 'Haryana': [29.1, 76.0],
@@ -20,7 +21,7 @@ const STATE_COORDS = {
 
 const ALL_LOCATIONS = Object.keys(STATE_COORDS);
 
-function FlyTo({ coords }) {
+function FlyTo({ coords }: { coords: [number, number] | null }) {
   const map = useMap();
   useEffect(() => {
     if (coords) map.flyTo(coords, 7, { duration: 1.5 });
@@ -28,7 +29,7 @@ function FlyTo({ coords }) {
   return null;
 }
 
-function formatNum(n) {
+function formatNum(n: number | undefined | null) {
   if (n == null) return '—';
   if (n >= 1e7) return (n / 1e7).toFixed(1) + 'Cr';
   if (n >= 1e5) return (n / 1e5).toFixed(1) + 'L';
@@ -38,10 +39,10 @@ function formatNum(n) {
 
 export default function RegionalMap() {
   const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [mapCoords, setMapCoords] = useState(null);
-  const [stats, setStats] = useState(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [mapCoords, setMapCoords] = useState<[number, number] | null>(null);
+  const [stats, setStats] = useState<LocationStatsResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleInput = useCallback((val) => {
@@ -59,7 +60,7 @@ export default function RegionalMap() {
 
     setLoading(true);
     try {
-      const d = await getLocationStats(location, '');
+      const d = await getLocationStats<LocationStatsResponse>(location, '');
       setStats(d);
     } catch {
       setStats(null);
@@ -146,10 +147,10 @@ export default function RegionalMap() {
                   </Section>
                 )}
 
-                {stats.mortality?.common_causes?.length > 0 && (
+                {(stats.mortality?.common_causes?.length ?? 0) > 0 && (
                   <Section title="Top Causes of Death">
                     <div className="space-y-1">
-                      {stats.mortality.common_causes.map((c, i) => (
+                      {stats.mortality?.common_causes?.map((c, i) => (
                         <div key={i} className="flex justify-between text-sm">
                           <span className="text-gray-300">{c.cause}</span>
                           <span className="text-gray-400">{formatNum(c.deaths)}</span>

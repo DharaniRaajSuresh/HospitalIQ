@@ -28,7 +28,8 @@ class ScenarioPredictor(BasePredictor):
         self._metadata = None
 
     def load_model(self):
-        self._model = joblib.load(os.path.join(self._model_dir, "scenario_cases.pkl"))
+        cases_file = "scenario_cases_model.pkl" if os.path.exists(os.path.join(self._model_dir, "scenario_cases_model.pkl")) else "scenario_cases.pkl"
+        self._model = joblib.load(os.path.join(self._model_dir, cases_file))
         self._deaths_model = joblib.load(os.path.join(self._model_dir, "scenario_deaths_model.pkl"))
         self._metadata = joblib.load(os.path.join(self._model_dir, "scenario_metadata.pkl"))
         self._is_loaded = True

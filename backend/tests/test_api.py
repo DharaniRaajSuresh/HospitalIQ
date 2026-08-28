@@ -139,3 +139,15 @@ class TestMap:
     def test_geojson(self, client, auth_headers):
         resp = client.get("/api/v1/map/geojson", headers=auth_headers)
         assert resp.status_code == 200
+
+
+class TestAudit:
+    def test_health_audit(self, client, auth_headers):
+        resp = client.get("/api/v1/health/audit", headers=auth_headers)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["audit_version"] == "1.0"
+        assert "models_total" in data
+        assert "data_provenance" in data
+        assert "deployment_readiness" in data
+        assert "models_detail" in data

@@ -32,7 +32,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from backend.config import settings
 from backend.core.tracing import setup_tracing
-from backend.routers import ai, auth, health, locations, map, pandemic, patients, predictions, search, stats
+from backend.routers import ai, audit, auth, health, locations, map, pandemic, patients, predictions, search, stats
 
 structlog.configure(
     processors=[
@@ -169,6 +169,7 @@ setup_tracing(app, service_name=settings.service_name)
 logger.info("OpenTelemetry tracing initialized", environment=settings.environment)
 
 app.include_router(health.router)
+app.include_router(audit.router)
 app.include_router(predictions.router)
 app.include_router(stats.router)
 app.include_router(locations.router)

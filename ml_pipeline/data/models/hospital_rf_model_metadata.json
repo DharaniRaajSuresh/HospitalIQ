@@ -1,0 +1,23 @@
+{
+  "version": "hospital_rf_model_20260828_101716",
+  "timestamp": "20260828_101716",
+  "model_name": "hospital_rf_model",
+  "metrics": {
+    "r2": 0.9117,
+    "train_r2": 0.9271
+  },
+  "params": {
+    "n_estimators": 100,
+    "max_depth": 10,
+    "feature_names": [
+      "hospital_type_encoded",
+      "disease_encoded",
+      "state_encoded",
+      "total_beds",
+      "icu_beds",
+      "avg_stay_days",
+      "specialist_count",
+      "accreditation_encoded"
+    ]
+  }
+}

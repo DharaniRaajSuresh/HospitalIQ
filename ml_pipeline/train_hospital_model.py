@@ -21,21 +21,33 @@ except ImportError:
     from ml_utils import save_model_versioned
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), "data", "processed", "hospital_outcomes_processed.csv")
-FEATURES = ["total_beds", "icu_beds", "avg_stay_days", "specialist_count"]
-CAT_FEATURES = ["hospital_type", "disease", "state", "accreditation"]
+
+TYPE_ENCODING = {"Govt": 0, "Private": 1, "Trust": 2, "NGO": 3}
+ACCRED_ENCODING = {"NABH": 3, "JCI": 3, "ISO": 2, "None": 1}
+DISEASES = ["Cardiac", "Diabetes", "Dengue", "Tuberculosis",
+            "Pneumonia", "Cancer", "Stroke", "Hepatitis", "Malaria", "Typhoid"]
+DISEASE_ENCODING = {d: i for i, d in enumerate(sorted(DISEASES))}
+
+FEATURE_COLS = [
+    "hospital_type_encoded", "disease_encoded", "state_encoded",
+    "total_beds", "icu_beds", "avg_stay_days",
+    "specialist_count", "accreditation_encoded"
+]
 TARGET = "success_rate"
 
-print("=== Training HospitalPredictor (RandomForest) ===")
+print("=== Training HospitalPredictor (RandomForest, 8 features) ===")
 df = pd.read_csv(CSV_PATH).dropna(subset=[TARGET])
-for col in CAT_FEATURES:
-    if col in df.columns:
-        df[f"{col}_encoded"] = pd.factorize(df[col])[0]
 
-feature_cols = FEATURES + [f"{c}_encoded" for c in CAT_FEATURES if f"{c}_encoded" in df.columns]
-df = df.dropna(subset=feature_cols)
-X = df[feature_cols].values
+df["hospital_type_encoded"] = df["hospital_type"].map(TYPE_ENCODING).fillna(0).astype(int)
+df["disease_encoded"] = df["disease"].map(DISEASE_ENCODING).fillna(0).astype(int)
+df["accreditation_encoded"] = df["accreditation"].map(ACCRED_ENCODING).fillna(1).astype(int)
+if "state_encoded" not in df.columns:
+    df["state_encoded"] = pd.factorize(df["state"])[0]
+
+df = df.dropna(subset=FEATURE_COLS)
+X = df[FEATURE_COLS].values
 y = df[TARGET].values
-print(f"Loaded {len(df):,} rows, {len(feature_cols)} features")
+print(f"Loaded {len(df):,} rows, {len(FEATURE_COLS)} features: {FEATURE_COLS}")
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 model = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42, n_jobs=-1)
@@ -46,5 +58,6 @@ print(f"Train R² = {train_r2:.4f}, Test R² = {test_r2:.4f}")
 
 save_model_versioned(model, "hospital_rf_model",
                      metrics={"r2": float(f"{test_r2:.4f}"), "train_r2": float(f"{train_r2:.4f}")},
-                     feature_names=feature_cols, mlflow=None)
+                     params={"n_estimators": 100, "max_depth": 10, "feature_names": FEATURE_COLS})
+joblib.dump(model, os.path.join(MODEL_DIR, "hospital_rf_model.pkl"))
 print("Done")

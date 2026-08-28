@@ -6,7 +6,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from backend.app_state import loaded_predictors, normalize_state
-from backend.models import HospitalBed, HospitalOutcome, PandemicOutbreak
+from backend.models import HospitalBed, HospitalOutcome, MortalityRecord, PandemicOutbreak
 
 logger = logging.getLogger(__name__)
 
@@ -121,9 +121,15 @@ def predict_mortality(state: str | None, disease: str, target_year: int, db: Ses
     if not districts:
         return None
     try:
+        pop_val = db.query(func.avg(MortalityRecord.population)).filter(
+            MortalityRecord.district == districts[0]
+        ).scalar()
+        district_pop = int(pop_val) if pop_val else 1_000_000
+
         mr = mortality_predictor.predict({
             "district": districts[0], "age_group": "45-64",
             "cause": cause, "year": min(target_year, 2036), "month": 6,
+            "population": district_pop,
         })
         return mr.get("predicted_death_rate", 0)
     except Exception as e:

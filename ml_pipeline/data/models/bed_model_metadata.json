@@ -1,0 +1,29 @@
+{
+  "version": "bed_model_20260828_102400",
+  "timestamp": "20260828_102400",
+  "model_name": "bed_model",
+  "metrics": {
+    "r2": 0.7987,
+    "train_r2": 0.7957,
+    "mae": 126.4848,
+    "rmse": 280.0826
+  },
+  "params": {
+    "n_estimators": 200,
+    "max_depth": 4,
+    "learning_rate": 0.05,
+    "feature_names": [
+      "month_sin",
+      "month_cos",
+      "year_normalized",
+      "season_flag",
+      "state_encoded",
+      "ward_type_encoded",
+      "lag_1_month",
+      "lag_3_month",
+      "lag_6_month",
+      "rolling_mean_3",
+      "rolling_mean_6"
+    ]
+  }
+}

@@ -24,6 +24,7 @@ from sqlalchemy import func
 from xgboost import XGBRegressor
 
 sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from ml_utils import MODEL_DIR, save_model_versioned, setup_mlflow
 
 from backend.database import SessionLocal
@@ -278,7 +279,12 @@ for state in state_enc:
 for d in disease_enc:
     sub = df_real[df_real["disease_enc"] == disease_enc[d]]
     avg_r0 = float(sub["target_r0"].mean()) if len(sub) > 0 else DISEASE_BASELINE_R0.get(d, 2.0)
-    metadata["disease_defaults"][normalize_state(d)] = round(avg_r0, 3)
+    yrs_avg = 5
+    vacc_default = 1.0 / (1.0 + math.exp(-0.45 * (yrs_avg - 4)))
+    metadata["disease_defaults"][normalize_state(d)] = {
+        "avg_r0": round(avg_r0, 3),
+        "vaccination_rate": round(vacc_default, 3),
+    }
 
 joblib.dump(metadata, os.path.join(MODELS_DIR, "r0_metadata.pkl"))
 print("\nSaved: r0_model.pkl, r0_metadata.pkl")

@@ -35,13 +35,25 @@ X = df[FEATURES].values
 y = df[TARGET].values
 print(f"Loaded {len(df):,} rows, {len(FEATURES)} features")
 
-tscv = TimeSeriesSplit(n_splits=5)
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 model = GradientBoostingRegressor(n_estimators=200, max_depth=4, learning_rate=0.05,
                                    subsample=0.8, random_state=42)
-model.fit(X, y)
-train_r2 = model.score(X, y)
-print(f"Train R² = {train_r2:.4f}")
+model.fit(X_train, y_train)
+train_r2 = model.score(X_train, y_train)
+test_r2 = model.score(X_test, y_test)
+y_pred = model.predict(X_test)
+mae = float(mean_absolute_error(y_test, y_pred))
+rmse = float(np.sqrt(mean_squared_error(y_test, y_pred)))
+print(f"Train R² = {train_r2:.4f}, Test R² = {test_r2:.4f}, MAE = {mae:.2f}, RMSE = {rmse:.2f}")
 
-save_model_versioned(model, "bed_model", metrics={"r2": float(f"{train_r2:.4f}")},
-                     feature_names=FEATURES, mlflow=None)
+save_model_versioned(model, "bed_model",
+                     metrics={"r2": float(f"{test_r2:.4f}"),
+                              "train_r2": float(f"{train_r2:.4f}"),
+                              "mae": float(f"{mae:.4f}"),
+                              "rmse": float(f"{rmse:.4f}")},
+                     params={"n_estimators": 200, "max_depth": 4, "learning_rate": 0.05, "feature_names": FEATURES})
+joblib.dump(model, os.path.join(MODEL_DIR, "bed_model.pkl"))
 print("Done")

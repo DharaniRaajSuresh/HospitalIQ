@@ -63,9 +63,13 @@ class R0Predictor(BasePredictor):
         population_density = meta.get("state_population_density", {}).get(state, 100_000)
 
         yrs_since = max(0, target_year - 2020)
-        vacc = meta.get("disease_defaults", {}).get(disease, {}).get("vaccination_rate",
-                  1.0 / (1.0 + math.exp(-0.45 * (yrs_since - 4)))) if isinstance(meta.get("disease_defaults"), dict) else (
-                  1.0 / (1.0 + math.exp(-0.45 * (yrs_since - 4))))
+        default_vacc = 1.0 / (1.0 + math.exp(-0.45 * (yrs_since - 4)))
+        d_defaults = meta.get("disease_defaults", {}) if isinstance(meta.get("disease_defaults"), dict) else {}
+        d_entry = d_defaults.get(disease)
+        if isinstance(d_entry, dict):
+            vacc = d_entry.get("vaccination_rate", default_vacc)
+        else:
+            vacc = default_vacc
         year_norm = (target_year - 2017) / 20.0
 
         feat = np.array([[

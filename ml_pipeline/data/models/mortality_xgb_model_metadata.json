@@ -1,0 +1,16 @@
+{
+  "version": "mortality_xgb_model_20260624_124157",
+  "timestamp": "20260624_124157",
+  "model_name": "mortality_xgb_model",
+  "metrics": {
+    "rmse": 40.40434544348135,
+    "r2": 0.8921894306110009,
+    "cv_r2_mean": 0.8709539626785769,
+    "cv_r2_std": 0.0192593593705392,
+    "kmeans_clusters": 4
+  },
+  "params": {
+    "feature_count": 14,
+    "train_samples": 40000
+  }
+}

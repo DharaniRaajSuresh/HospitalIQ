@@ -32,6 +32,22 @@ Thumbs.db
 vite_log.txt
 backend_out.log
 backend_err.log
+.coverage
+
+# LaTeX / Manuscript (Keep private, never push to GitHub)
+paper/
+*.aux
+*.out
+*.synctex*
+*.toc
+*.bbl
+*.blg
+
+# Temp research scratch
+scratch/
+extracted_manuscript.txt
+manuscript_pages/
+Main Manuscript_v2.pdf
 
 # Database
 *.db
@@ -42,10 +58,19 @@ test_*.db
 
 # ML Pipeline artifacts
 *.pkl
+!ml_pipeline/data/models/r0_model.pkl
+!ml_pipeline/data/models/r0_metadata.pkl
+!ml_pipeline/data/models/hospital_rf_model.pkl
+!ml_pipeline/data/models/bed_model.pkl
 ml_pipeline/data/raw/
 ml_pipeline/data/processed/
-ml_pipeline/data/models/
+ml_pipeline/data/models/*_[0-9]*.pkl
+ml_pipeline/data/models/patient_risk_model.pkl
+!ml_pipeline/data/models/*.json
 mlruns/
+
+# Java / Maven
+patient-service/target/
 
 # Node
 node_modules/

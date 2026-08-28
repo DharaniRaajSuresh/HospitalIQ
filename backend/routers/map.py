@@ -19,4 +19,3 @@ async def get_map_geojson(_: User = Depends(require_user)):
     if os.path.exists(filepath):
         return FileResponse(filepath, media_type="application/json")
     return {"type": "FeatureCollection", "features": []}
-

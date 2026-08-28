@@ -1,0 +1,16 @@
+{
+  "version": "r0_model_20260828_102155",
+  "timestamp": "20260828_102155",
+  "model_name": "r0_model",
+  "metrics": {
+    "train_r2": 0.9924761083022314,
+    "test_r2": 0.9901640650592193,
+    "train_mape": 1.2634288227663266,
+    "test_mape": 1.4071002695495307
+  },
+  "params": {
+    "n_estimators": 600,
+    "max_depth": 8,
+    "learning_rate": 0.05
+  }
+}

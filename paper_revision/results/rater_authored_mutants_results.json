@@ -1,0 +1,197 @@
+{
+  "benchmark": "independent_rater_authored_mutants",
+  "freeze_commit": "a615d1c",
+  "total_cases": 18,
+  "rater_1": {
+    "hits": 8,
+    "total": 9,
+    "recall": 88.89,
+    "ci": [
+      56.5,
+      98.01
+    ]
+  },
+  "rater_2": {
+    "hits": 8,
+    "total": 9,
+    "recall": 88.89,
+    "ci": [
+      56.5,
+      98.01
+    ]
+  },
+  "overall": {
+    "hits": 16,
+    "total": 18,
+    "recall": 88.89,
+    "ci": [
+      67.2,
+      96.9
+    ]
+  },
+  "inter_rater_agreement_pct": 77.78,
+  "cases": [
+    {
+      "id": "R1_T1_Provenance",
+      "rater": "Rater 1",
+      "tier": "Tier 1: Provenance",
+      "defect": "Synthetic records appended with real flag",
+      "style": "Functional procedural script",
+      "detected": true,
+      "catching_phase": "Phase 1"
+    },
+    {
+      "id": "R1_T2_Formula",
+      "rater": "Rater 1",
+      "tier": "Tier 2: Formulation",
+      "defect": "Target directly synthesized from feature matrix",
+      "style": "NumPy vector arithmetic",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "R1_T2_Contemp",
+      "rater": "Rater 1",
+      "tier": "Tier 2: Formulation",
+      "defect": "Target summary appended into feature columns",
+      "style": "NumPy column stack",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "R1_T2_Shuffle",
+      "rater": "Rater 1",
+      "tier": "Tier 2: Formulation",
+      "defect": "Dataframe sampled non-chronologically",
+      "style": "Pandas sample",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "R1_T3_DimMismatch",
+      "rater": "Rater 1",
+      "tier": "Tier 3: Deployment",
+      "defect": "Metadata feature dropped at runtime",
+      "style": "Dictionary list pop",
+      "detected": true,
+      "catching_phase": "Phase 3"
+    },
+    {
+      "id": "R1_T3_MetaCrash",
+      "rater": "Rater 1",
+      "tier": "Tier 3: Deployment",
+      "defect": "Metadata key deletion causing initialization error",
+      "style": "Dictionary deletion",
+      "detected": true,
+      "catching_phase": "Phase 3"
+    },
+    {
+      "id": "R1_T3_SilentFallback",
+      "rater": "Rater 1",
+      "tier": "Tier 3: Deployment",
+      "defect": "Try-except returning hardcoded zeros array",
+      "style": "Broad except handler",
+      "detected": false,
+      "catching_phase": "None"
+    },
+    {
+      "id": "R1_T3_ConstantInput",
+      "rater": "Rater 1",
+      "tier": "Tier 3: Deployment",
+      "defect": "Feature column overwritten with constant scalar",
+      "style": "Array slicing assign",
+      "detected": true,
+      "catching_phase": "Phase 3"
+    },
+    {
+      "id": "R1_T3_RouteUnmounted",
+      "rater": "Rater 1",
+      "tier": "Tier 3: Deployment",
+      "defect": "Audit endpoint defined without application mount",
+      "style": "FastAPI instantiation",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "R2_T1_Provenance",
+      "rater": "Rater 2",
+      "tier": "Tier 1: Provenance",
+      "defect": "Date range extends beyond official cut-off date",
+      "style": "OOP pipeline class with date range",
+      "detected": true,
+      "catching_phase": "Phase 1"
+    },
+    {
+      "id": "R2_T2_Formula",
+      "rater": "Rater 2",
+      "tier": "Tier 2: Formulation",
+      "defect": "Synthetic target built from polynomial feature combinations",
+      "style": "Class method vector math",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "R2_T2_Contemp",
+      "rater": "Rater 2",
+      "tier": "Tier 2: Formulation",
+      "defect": "Target summary concatenated via Pandas concat",
+      "style": "Pandas DataFrame concat",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "R2_T2_Shuffle",
+      "rater": "Rater 2",
+      "tier": "Tier 2: Formulation",
+      "defect": "Index random permutation prior to temporal splitting",
+      "style": "NumPy permutation",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "R2_T3_DimMismatch",
+      "rater": "Rater 2",
+      "tier": "Tier 3: Deployment",
+      "defect": "Feature list mutated via dictionary pop",
+      "style": "OOP model container",
+      "detected": true,
+      "catching_phase": "Phase 3"
+    },
+    {
+      "id": "R2_T3_MetaCrash",
+      "rater": "Rater 2",
+      "tier": "Tier 3: Deployment",
+      "defect": "Metadata loaded as list instead of dictionary",
+      "style": "Type casting error",
+      "detected": false,
+      "catching_phase": "None"
+    },
+    {
+      "id": "R2_T3_SilentFallback",
+      "rater": "Rater 2",
+      "tier": "Tier 3: Deployment",
+      "defect": "Exception handler returning hardcoded 450",
+      "style": "Class try-catch wrapper",
+      "detected": true,
+      "catching_phase": "Phase 3"
+    },
+    {
+      "id": "R2_T3_ConstantInput",
+      "rater": "Rater 2",
+      "tier": "Tier 3: Deployment",
+      "defect": "Subscript assignment overwriting input column with constant",
+      "style": "Tensor indexing overwrite",
+      "detected": true,
+      "catching_phase": "Phase 3"
+    },
+    {
+      "id": "R2_T3_RouteUnmounted",
+      "rater": "Rater 2",
+      "tier": "Tier 3: Deployment",
+      "defect": "FastAPI router inclusion omitted in application initialization",
+      "style": "Application factory",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    }
+  ]
+}

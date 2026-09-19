@@ -1,0 +1,136 @@
+{
+  "benchmark": "temporal_git_holdout",
+  "cutoff_commit": "17128c9",
+  "cutoff_date": "2026-07-24",
+  "freeze_commit": "a615d1c",
+  "pre_cutoff": {
+    "n_defects": 4,
+    "hits": 3,
+    "recall": 75.0,
+    "ci": [
+      30.06,
+      95.44
+    ]
+  },
+  "post_cutoff": {
+    "n_defects": 5,
+    "hits": 4,
+    "recall": 80.0,
+    "ci": [
+      37.55,
+      96.38
+    ],
+    "category_stratification": {
+      "formula_reconstruction": {
+        "n": 3,
+        "hits": 2,
+        "recall": 66.67,
+        "ci": [
+          20.77,
+          93.85
+        ]
+      },
+      "non_formula_architectural": {
+        "n": 2,
+        "hits": 2,
+        "recall": 100.0,
+        "ci": [
+          34.24,
+          100
+        ]
+      }
+    }
+  },
+  "defects": [
+    {
+      "id": "D1",
+      "name": "Synthetic Tail Contamination",
+      "category": "Provenance",
+      "phase": "Phase 1",
+      "temporal_status": "pre_cutoff",
+      "historical_commit": "0b144d8",
+      "detected": true,
+      "catching_phase": "Phase 1 (PSAP)"
+    },
+    {
+      "id": "D5",
+      "name": "Forecast AR(1) Dominance",
+      "category": "Autoregressive Dominance",
+      "phase": "Phase 2",
+      "temporal_status": "pre_cutoff",
+      "historical_commit": "0b144d8",
+      "detected": true,
+      "catching_phase": "Phase 2 (AST-TIV / AR Dominance)"
+    },
+    {
+      "id": "D7",
+      "name": "Mortality Population Constant Input",
+      "category": "Deployment Input Omission",
+      "phase": "Phase 3",
+      "temporal_status": "pre_cutoff",
+      "historical_commit": "1019e85",
+      "detected": false,
+      "catching_phase": "None"
+    },
+    {
+      "id": "D8",
+      "name": "Bed Hardcoded Last-Resort Fallback",
+      "category": "Silent Fallback Suppression",
+      "phase": "Phase 3",
+      "temporal_status": "pre_cutoff",
+      "historical_commit": "a0e973c",
+      "detected": true,
+      "catching_phase": "Phase 3"
+    },
+    {
+      "id": "D2",
+      "name": "R0 Target Formula Reconstruction",
+      "category": "Formula Reconstruction",
+      "phase": "Phase 2",
+      "temporal_status": "post_cutoff",
+      "historical_commit": "dafd568",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "D3",
+      "name": "Patient Risk Formula Determinism",
+      "category": "Formula Reconstruction",
+      "phase": "Phase 2",
+      "temporal_status": "post_cutoff",
+      "historical_commit": "52c1fd1",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    },
+    {
+      "id": "D4",
+      "name": "Lockdown Threshold Formula",
+      "category": "Formula Reconstruction",
+      "phase": "Phase 2",
+      "temporal_status": "post_cutoff",
+      "historical_commit": "52c1fd1",
+      "detected": false,
+      "catching_phase": "None"
+    },
+    {
+      "id": "D6",
+      "name": "Hospital Feature Dimension Drift (5 to 8)",
+      "category": "Dimension & Signature Drift",
+      "phase": "Phase 3",
+      "temporal_status": "post_cutoff",
+      "historical_commit": "5c18a80",
+      "detected": true,
+      "catching_phase": "Phase 3"
+    },
+    {
+      "id": "D9",
+      "name": "Unmounted Telemetry Audit Route",
+      "category": "Route & Integration Integrity",
+      "phase": "Phase 2",
+      "temporal_status": "post_cutoff",
+      "historical_commit": "c699115",
+      "detected": true,
+      "catching_phase": "Phase 2"
+    }
+  ]
+}

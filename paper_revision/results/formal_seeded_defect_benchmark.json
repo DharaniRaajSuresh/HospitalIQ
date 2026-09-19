@@ -3,12 +3,12 @@
     "ThreePhaseProtocol_unified": {
       "detector": "ThreePhaseProtocol",
       "config": "unified",
-      "total_mutants": 250,
-      "detected": 250,
+      "total_mutants": 410,
+      "detected": 410,
       "recall_pct": 100.0,
       "ci_95": [
-        98.49,
-        100.0
+        99.07,
+        100
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -18,75 +18,75 @@
       ],
       "operator_breakdown": {
         "M1": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M2": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M3": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M4": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M5": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M6": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M7": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M8": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M9": {
@@ -109,12 +109,12 @@
     "GreatExpectations_default": {
       "detector": "GreatExpectations",
       "config": "default",
-      "total_mutants": 250,
-      "detected": 30,
-      "recall_pct": 12.0,
+      "total_mutants": 410,
+      "detected": 50,
+      "recall_pct": 12.2,
       "ci_95": [
-        8.54,
-        16.61
+        9.37,
+        15.72
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -125,74 +125,74 @@
       "operator_breakdown": {
         "M1": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M2": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M3": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M4": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M5": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M6": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -206,21 +206,21 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 220,
+        "b": 360,
         "c": 0,
-        "statistic": 220.0,
-        "p_value": 1.1869459682199748e-66
+        "statistic": 360.0,
+        "p_value": 8.515919680016301e-109
       }
     },
     "GreatExpectations_expert": {
       "detector": "GreatExpectations",
       "config": "expert",
-      "total_mutants": 250,
-      "detected": 60,
-      "recall_pct": 24.0,
+      "total_mutants": 410,
+      "detected": 100,
+      "recall_pct": 24.39,
       "ci_95": [
-        19.12,
-        29.66
+        20.48,
+        28.77
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -230,75 +230,75 @@
       ],
       "operator_breakdown": {
         "M1": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M2": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M3": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M4": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M5": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M6": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -312,21 +312,21 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 190,
+        "b": 310,
         "c": 0,
-        "statistic": 190.0,
-        "p_value": 1.2744735289059618e-57
+        "statistic": 310.0,
+        "p_value": 9.588073174409622e-94
       }
     },
     "Evidently_default": {
       "detector": "Evidently",
       "config": "default",
-      "total_mutants": 250,
-      "detected": 30,
-      "recall_pct": 12.0,
+      "total_mutants": 410,
+      "detected": 50,
+      "recall_pct": 12.2,
       "ci_95": [
-        8.54,
-        16.61
+        9.37,
+        15.72
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -337,74 +337,74 @@
       "operator_breakdown": {
         "M1": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M2": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M3": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M4": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M5": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M6": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -418,21 +418,21 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 220,
+        "b": 360,
         "c": 0,
-        "statistic": 220.0,
-        "p_value": 1.1869459682199748e-66
+        "statistic": 360.0,
+        "p_value": 8.515919680016301e-109
       }
     },
     "Evidently_expert": {
       "detector": "Evidently",
       "config": "expert",
-      "total_mutants": 250,
-      "detected": 60,
-      "recall_pct": 24.0,
+      "total_mutants": 410,
+      "detected": 100,
+      "recall_pct": 24.39,
       "ci_95": [
-        19.12,
-        29.66
+        20.48,
+        28.77
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -443,74 +443,74 @@
       "operator_breakdown": {
         "M1": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M2": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M3": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M4": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M5": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M6": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -524,21 +524,21 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 190,
+        "b": 310,
         "c": 0,
-        "statistic": 190.0,
-        "p_value": 1.2744735289059618e-57
+        "statistic": 310.0,
+        "p_value": 9.588073174409622e-94
       }
     },
     "MLflow_default": {
       "detector": "MLflow",
       "config": "default",
-      "total_mutants": 250,
-      "detected": 60,
-      "recall_pct": 24.0,
+      "total_mutants": 410,
+      "detected": 100,
+      "recall_pct": 24.39,
       "ci_95": [
-        19.12,
-        29.66
+        20.48,
+        28.77
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -549,74 +549,74 @@
       "operator_breakdown": {
         "M1": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M2": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M3": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M4": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M5": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M6": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -630,21 +630,21 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 190,
+        "b": 310,
         "c": 0,
-        "statistic": 190.0,
-        "p_value": 1.2744735289059618e-57
+        "statistic": 310.0,
+        "p_value": 9.588073174409622e-94
       }
     },
     "MLflow_expert": {
       "detector": "MLflow",
       "config": "expert",
-      "total_mutants": 250,
-      "detected": 60,
-      "recall_pct": 24.0,
+      "total_mutants": 410,
+      "detected": 100,
+      "recall_pct": 24.39,
       "ci_95": [
-        19.12,
-        29.66
+        20.48,
+        28.77
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -655,74 +655,74 @@
       "operator_breakdown": {
         "M1": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M2": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M3": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M4": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M5": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M6": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -736,21 +736,21 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 190,
+        "b": 310,
         "c": 0,
-        "statistic": 190.0,
-        "p_value": 1.2744735289059618e-57
+        "statistic": 310.0,
+        "p_value": 9.588073174409622e-94
       }
     },
     "Deepchecks_default": {
       "detector": "Deepchecks",
       "config": "default",
-      "total_mutants": 250,
-      "detected": 60,
-      "recall_pct": 24.0,
+      "total_mutants": 410,
+      "detected": 100,
+      "recall_pct": 24.39,
       "ci_95": [
-        19.12,
-        29.66
+        20.48,
+        28.77
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -761,74 +761,74 @@
       "operator_breakdown": {
         "M1": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M2": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M3": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M4": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M5": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M6": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -842,21 +842,21 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 190,
+        "b": 310,
         "c": 0,
-        "statistic": 190.0,
-        "p_value": 1.2744735289059618e-57
+        "statistic": 310.0,
+        "p_value": 9.588073174409622e-94
       }
     },
     "Deepchecks_expert": {
       "detector": "Deepchecks",
       "config": "expert",
-      "total_mutants": 250,
-      "detected": 90,
-      "recall_pct": 36.0,
+      "total_mutants": 410,
+      "detected": 150,
+      "recall_pct": 36.59,
       "ci_95": [
-        30.3,
-        42.12
+        32.07,
+        41.35
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -867,74 +867,74 @@
       "operator_breakdown": {
         "M1": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M2": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M3": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M4": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M5": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M6": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -948,21 +948,21 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 160,
+        "b": 260,
         "c": 0,
-        "statistic": 160.0,
-        "p_value": 1.3684555315672042e-48
+        "statistic": 260.0,
+        "p_value": 1.0795210693868056e-78
       }
     },
     "StaticLeakage_unified": {
       "detector": "StaticLeakage",
       "config": "unified",
-      "total_mutants": 250,
-      "detected": 60,
-      "recall_pct": 24.0,
+      "total_mutants": 410,
+      "detected": 100,
+      "recall_pct": 24.39,
       "ci_95": [
-        19.12,
-        29.66
+        20.48,
+        28.77
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -973,74 +973,74 @@
       "operator_breakdown": {
         "M1": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M2": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M3": {
-          "hits": 30,
-          "n": 30,
+          "hits": 50,
+          "n": 50,
           "recall_pct": 100.0,
           "ci_95": [
-            88.65,
-            100.0
+            92.87,
+            100
           ]
         },
         "M4": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M5": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M6": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M7": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M8": {
           "hits": 0,
-          "n": 30,
+          "n": 50,
           "recall_pct": 0.0,
           "ci_95": [
             0,
-            11.35
+            7.13
           ]
         },
         "M9": {
@@ -1054,15 +1054,22 @@
         }
       },
       "mcnemar_vs_protocol": {
-        "b": 190,
+        "b": 310,
         "c": 0,
-        "statistic": 190.0,
-        "p_value": 1.2744735289059618e-57
+        "statistic": 310.0,
+        "p_value": 9.588073174409622e-94
       }
     }
   },
-  "n_valid_mutants": 250,
+  "n_valid_mutants": 410,
   "n_benign_controls": 30,
-  "n_excluded_mutants": 20,
+  "n_excluded_mutants": 40,
+  "target_systems": [
+    "Empirical_Forecaster",
+    "Wisconsin_Classifier",
+    "HospitalIQ_main",
+    "HospitalIQ_scenario",
+    "HospitalIQ_forecast"
+  ],
   "bonferroni_corrected_alpha": 0.01
 }

@@ -23,6 +23,8 @@ TARGETS = [
     ('HospitalIQ_forecast', os.path.join(HOSPI, 'ml_pipeline', 'train_forecast.py')),
     ('HospitalIQ_scenario', os.path.join(HOSPI, 'ml_pipeline', 'train_scenario.py')),
     ('HospitalIQ_main', os.path.join(HOSPI, 'backend', 'main.py')),
+    ('Wisconsin_Classifier', os.path.join(HOSPI, 'eval', 'baselines', 'wisconsin_classifier.py')),
+    ('Empirical_Forecaster', os.path.join(HOSPI, 'eval', 'baselines', 'empirical_forecaster.py')),
 ]
 
 OUT_DIR = os.path.join(HOSPI, 'eval', 'mutants', 'Benign')

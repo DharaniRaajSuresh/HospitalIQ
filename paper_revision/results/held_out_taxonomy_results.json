@@ -1,0 +1,958 @@
+{
+  "protocol_version": "HELD_OUT_PROTOCOL_v1.0",
+  "master_seed": 42,
+  "partition": {
+    "design_operators": [
+      "M4",
+      "M5",
+      "M7",
+      "M8",
+      "M9"
+    ],
+    "held_out_operators": [
+      "M1",
+      "M2",
+      "M3",
+      "M6"
+    ],
+    "n_design": 210,
+    "n_held_out": 200,
+    "n_benign": 30
+  },
+  "evaluations": {
+    "ThreePhaseProtocol_expert": {
+      "label": "Our 3-Phase Protocol",
+      "detector_id": "ThreePhaseProtocol",
+      "config": "expert",
+      "design_set": {
+        "hits": 210,
+        "total": 210,
+        "recall": 100.0,
+        "ci": [
+          98.2,
+          100
+        ]
+      },
+      "held_out_set": {
+        "hits": 200,
+        "total": 200,
+        "recall": 100.0,
+        "ci": [
+          98.12,
+          100
+        ],
+        "precision": 100.0,
+        "f1_score": 100.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M2": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M3": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M6": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "Phase1_expert": {
+      "label": "Phase 1: PSAP Lineage",
+      "detector_id": "Phase1",
+      "config": "expert",
+      "design_set": {
+        "hits": 0,
+        "total": 210,
+        "recall": 0.0,
+        "ci": [
+          0,
+          1.8
+        ]
+      },
+      "held_out_set": {
+        "hits": 50,
+        "total": 200,
+        "recall": 25.0,
+        "ci": [
+          19.51,
+          31.43
+        ],
+        "precision": 100.0,
+        "f1_score": 40.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "Phase2_expert": {
+      "label": "Phase 2: AST-TIV Independence",
+      "detector_id": "Phase2",
+      "config": "expert",
+      "design_set": {
+        "hits": 60,
+        "total": 210,
+        "recall": 28.57,
+        "ci": [
+          22.89,
+          35.02
+        ]
+      },
+      "held_out_set": {
+        "hits": 100,
+        "total": 200,
+        "recall": 50.0,
+        "ci": [
+          43.14,
+          56.86
+        ],
+        "precision": 100.0,
+        "f1_score": 66.67,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M3": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M6": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "Phase3_expert": {
+      "label": "Phase 3: DTEFV Runtime",
+      "detector_id": "Phase3",
+      "config": "expert",
+      "design_set": {
+        "hits": 150,
+        "total": 210,
+        "recall": 71.43,
+        "ci": [
+          64.98,
+          77.11
+        ]
+      },
+      "held_out_set": {
+        "hits": 50,
+        "total": 200,
+        "recall": 25.0,
+        "ci": [
+          19.51,
+          31.43
+        ],
+        "precision": 100.0,
+        "f1_score": 40.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "GreatExpectations_default": {
+      "label": "Great Expectations (Default)",
+      "detector_id": "GreatExpectations",
+      "config": "default",
+      "design_set": {
+        "hits": 50,
+        "total": 210,
+        "recall": 23.81,
+        "ci": [
+          18.55,
+          30.01
+        ]
+      },
+      "held_out_set": {
+        "hits": 0,
+        "total": 200,
+        "recall": 0.0,
+        "ci": [
+          0,
+          1.88
+        ],
+        "precision": 0.0,
+        "f1_score": 0.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "GreatExpectations_expert": {
+      "label": "Great Expectations (Expert)",
+      "detector_id": "GreatExpectations",
+      "config": "expert",
+      "design_set": {
+        "hits": 50,
+        "total": 210,
+        "recall": 23.81,
+        "ci": [
+          18.55,
+          30.01
+        ]
+      },
+      "held_out_set": {
+        "hits": 50,
+        "total": 200,
+        "recall": 25.0,
+        "ci": [
+          19.51,
+          31.43
+        ],
+        "precision": 100.0,
+        "f1_score": 40.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "EvidentlyAI_default": {
+      "label": "Evidently AI (Default)",
+      "detector_id": "EvidentlyAI",
+      "config": "default",
+      "design_set": {
+        "hits": 0,
+        "total": 210,
+        "recall": 0.0,
+        "ci": [
+          0,
+          1.8
+        ]
+      },
+      "held_out_set": {
+        "hits": 0,
+        "total": 200,
+        "recall": 0.0,
+        "ci": [
+          0,
+          1.88
+        ],
+        "precision": 0.0,
+        "f1_score": 0.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "EvidentlyAI_expert": {
+      "label": "Evidently AI (Expert)",
+      "detector_id": "EvidentlyAI",
+      "config": "expert",
+      "design_set": {
+        "hits": 0,
+        "total": 210,
+        "recall": 0.0,
+        "ci": [
+          0,
+          1.8
+        ]
+      },
+      "held_out_set": {
+        "hits": 0,
+        "total": 200,
+        "recall": 0.0,
+        "ci": [
+          0,
+          1.88
+        ],
+        "precision": 0.0,
+        "f1_score": 0.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "MLflow_default": {
+      "label": "MLflow Registry Gates (Default)",
+      "detector_id": "MLflow",
+      "config": "default",
+      "design_set": {
+        "hits": 50,
+        "total": 210,
+        "recall": 23.81,
+        "ci": [
+          18.55,
+          30.01
+        ]
+      },
+      "held_out_set": {
+        "hits": 50,
+        "total": 200,
+        "recall": 25.0,
+        "ci": [
+          19.51,
+          31.43
+        ],
+        "precision": 100.0,
+        "f1_score": 40.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "MLflow_expert": {
+      "label": "MLflow Registry Gates (Expert)",
+      "detector_id": "MLflow",
+      "config": "expert",
+      "design_set": {
+        "hits": 50,
+        "total": 210,
+        "recall": 23.81,
+        "ci": [
+          18.55,
+          30.01
+        ]
+      },
+      "held_out_set": {
+        "hits": 50,
+        "total": 200,
+        "recall": 25.0,
+        "ci": [
+          19.51,
+          31.43
+        ],
+        "precision": 100.0,
+        "f1_score": 40.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "Deepchecks_expert": {
+      "label": "Deepchecks (Expert)",
+      "detector_id": "Deepchecks",
+      "config": "expert",
+      "design_set": {
+        "hits": 50,
+        "total": 210,
+        "recall": 23.81,
+        "ci": [
+          18.55,
+          30.01
+        ]
+      },
+      "held_out_set": {
+        "hits": 100,
+        "total": 200,
+        "recall": 50.0,
+        "ci": [
+          43.14,
+          56.86
+        ],
+        "precision": 100.0,
+        "f1_score": 66.67,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M3": {
+            "hits": 50,
+            "total": 50,
+            "recall": 100.0,
+            "ci": [
+              92.87,
+              100
+            ]
+          },
+          "M6": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    },
+    "YangAST_expert": {
+      "label": "Yang et al. ASE 2022 / LeakageDetector",
+      "detector_id": "YangAST",
+      "config": "expert",
+      "design_set": {
+        "hits": 0,
+        "total": 210,
+        "recall": 0.0,
+        "ci": [
+          0,
+          1.8
+        ]
+      },
+      "held_out_set": {
+        "hits": 0,
+        "total": 200,
+        "recall": 0.0,
+        "ci": [
+          0,
+          1.88
+        ],
+        "precision": 0.0,
+        "f1_score": 0.0,
+        "operator_breakdown": {
+          "M1": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M2": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M3": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          },
+          "M6": {
+            "hits": 0,
+            "total": 50,
+            "recall": 0.0,
+            "ci": [
+              0,
+              7.13
+            ]
+          }
+        }
+      },
+      "benign_controls": {
+        "false_positives": 0,
+        "total": 30,
+        "fpr": 0.0,
+        "ci": [
+          0,
+          11.35
+        ],
+        "specificity": 100.0
+      }
+    }
+  },
+  "mcnemar_held_out_tests": {
+    "GreatExpectations_default": {
+      "baseline": "Great Expectations (Default)",
+      "b_protocol_only": 200,
+      "c_baseline_only": 0,
+      "statistic": 200.0,
+      "p_value": 1.2446030555722283e-60
+    },
+    "GreatExpectations_expert": {
+      "baseline": "Great Expectations (Expert)",
+      "b_protocol_only": 150,
+      "c_baseline_only": 0,
+      "statistic": 150.0,
+      "p_value": 1.401298464324817e-45
+    },
+    "EvidentlyAI_default": {
+      "baseline": "Evidently AI (Default)",
+      "b_protocol_only": 200,
+      "c_baseline_only": 0,
+      "statistic": 200.0,
+      "p_value": 1.2446030555722283e-60
+    },
+    "EvidentlyAI_expert": {
+      "baseline": "Evidently AI (Expert)",
+      "b_protocol_only": 200,
+      "c_baseline_only": 0,
+      "statistic": 200.0,
+      "p_value": 1.2446030555722283e-60
+    },
+    "MLflow_default": {
+      "baseline": "MLflow Registry Gates (Default)",
+      "b_protocol_only": 150,
+      "c_baseline_only": 0,
+      "statistic": 150.0,
+      "p_value": 1.401298464324817e-45
+    },
+    "MLflow_expert": {
+      "baseline": "MLflow Registry Gates (Expert)",
+      "b_protocol_only": 150,
+      "c_baseline_only": 0,
+      "statistic": 150.0,
+      "p_value": 1.401298464324817e-45
+    },
+    "Deepchecks_expert": {
+      "baseline": "Deepchecks (Expert)",
+      "b_protocol_only": 100,
+      "c_baseline_only": 0,
+      "statistic": 100.0,
+      "p_value": 1.5777218104420236e-30
+    },
+    "YangAST_expert": {
+      "baseline": "Yang et al. ASE 2022 / LeakageDetector",
+      "b_protocol_only": 200,
+      "c_baseline_only": 0,
+      "statistic": 200.0,
+      "p_value": 1.2446030555722283e-60
+    }
+  }
+}

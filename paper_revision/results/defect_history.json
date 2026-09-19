@@ -1,0 +1,91 @@
+{
+  "D1_label_contamination": {
+    "description": "is_real=True labels on synthetic records",
+    "pattern": "is_real",
+    "search_path": "ml_pipeline/data/",
+    "commits": [],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  },
+  "D2_r0_formula_reconstruction": {
+    "description": "R0 predictor uses formula-reconstructible target",
+    "pattern": "r0_metadata.pkl",
+    "search_path": "backend/predictors/",
+    "commits": [
+      "1019e85 Refactor: Major mentor-ready showcase overhaul"
+    ],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  },
+  "D3_patient_risk_formula": {
+    "description": "Patient risk labels from deterministic formula",
+    "pattern": "compute_risk_labels",
+    "search_path": "ml_pipeline/",
+    "commits": [
+      "52c1fd1 fix(remediation): resolve R0 crash, retrain hospital 8-feature model, retrain bed model, pass population to mortality predictor, add REPRODUCTION.md and audit reproduction files",
+      "0a549d1 Initial commit: HospitalIQ - Healthcare Intelligence Platform"
+    ],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  },
+  "D4_lockdown_formula": {
+    "description": "Lockdown model uses percentile-thresholded target",
+    "pattern": "percentile",
+    "search_path": "backend/",
+    "commits": [
+      "52c1fd1 fix(remediation): resolve R0 crash, retrain hospital 8-feature model, retrain bed model, pass population to mortality predictor, add REPRODUCTION.md and audit reproduction files",
+      "edf6214 Revert \"fix: apply 2 missed fixes from intern audit \u00e2\u20ac\u201d mortality_predictor 75.0 fallback removed, real_data_ingest R0/lag features improved\"",
+      "0b144d8 fix: apply 2 missed fixes from intern audit \u00e2\u20ac\u201d mortality_predictor 75.0 fallback removed, real_data_ingest R0/lag features improved"
+    ],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  },
+  "D5_forecast_ar1": {
+    "description": "Forecast model AR(1) dominance on authentic data",
+    "pattern": "lag_1_cases",
+    "search_path": "ml_pipeline/",
+    "commits": [
+      "52c1fd1 fix(remediation): resolve R0 crash, retrain hospital 8-feature model, retrain bed model, pass population to mortality predictor, add REPRODUCTION.md and audit reproduction files",
+      "edf6214 Revert \"fix: apply 2 missed fixes from intern audit \u00e2\u20ac\u201d mortality_predictor 75.0 fallback removed, real_data_ingest R0/lag features improved\"",
+      "0b144d8 fix: apply 2 missed fixes from intern audit \u00e2\u20ac\u201d mortality_predictor 75.0 fallback removed, real_data_ingest R0/lag features improved",
+      "0a549d1 Initial commit: HospitalIQ - Healthcare Intelligence Platform"
+    ],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  },
+  "D6_hospital_dimension_drift": {
+    "description": "Hospital model feature count changed from 5 to 8",
+    "pattern": "n_features_in_",
+    "search_path": "backend/",
+    "commits": [],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  },
+  "D7_mortality_population_constant": {
+    "description": "Mortality predictor constant population at inference",
+    "pattern": "population",
+    "search_path": "backend/predictors/",
+    "commits": [
+      "17128c9 fix: resolve all 28 audit issues \u00e2\u20ac\u201d remove silent fallbacks, fake CIs, growth hack, lockdown is_ml flag; fix bed lag features, docstring, history default; add 3 missing training scripts; document circular logic",
+      "1019e85 Refactor: Major mentor-ready showcase overhaul",
+      "0a549d1 Initial commit: HospitalIQ - Healthcare Intelligence Platform"
+    ],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  },
+  "D8_bed_hardcoded_fallback": {
+    "description": "Bed predictor last-resort hardcoded 450+i*8",
+    "pattern": "450",
+    "search_path": "backend/",
+    "commits": [
+      "a0e973c feat: project setup and frontend overhaul",
+      "0a549d1 Initial commit: HospitalIQ - Healthcare Intelligence Platform"
+    ],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  },
+  "D9_monitoring_dead_code": {
+    "description": "Audit route not registered in main router",
+    "pattern": "audit",
+    "search_path": "backend/",
+    "commits": [
+      "c699115 feat(audit): register audit router in main.py and add integration test coverage",
+      "52c1fd1 fix(remediation): resolve R0 crash, retrain hospital 8-feature model, retrain bed model, pass population to mortality predictor, add REPRODUCTION.md and audit reproduction files",
+      "edf6214 Revert \"fix: apply 2 missed fixes from intern audit \u00e2\u20ac\u201d mortality_predictor 75.0 fallback removed, real_data_ingest R0/lag features improved\"",
+      "0b144d8 fix: apply 2 missed fixes from intern audit \u00e2\u20ac\u201d mortality_predictor 75.0 fallback removed, real_data_ingest R0/lag features improved"
+    ],
+    "note": "Used git log -S to find commits adding/removing this pattern"
+  }
+}

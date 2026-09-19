@@ -1,0 +1,727 @@
+{
+  "benchmark": "adversarial_self_red_teaming",
+  "freeze_commit": "a615d1c",
+  "total_cases": 32,
+  "protocol_performance": {
+    "detected": 18,
+    "evaded": 14,
+    "detection_rate": 56.25,
+    "ci": [
+      39.33,
+      71.83
+    ],
+    "evasion_rate": 43.75
+  },
+  "baseline_performance": {
+    "GreatExpectations": {
+      "hits": 3,
+      "rate": 9.38,
+      "ci": [
+        3.24,
+        24.22
+      ]
+    },
+    "EvidentlyAI": {
+      "hits": 2,
+      "rate": 6.25,
+      "ci": [
+        1.73,
+        20.15
+      ]
+    },
+    "MLflow": {
+      "hits": 2,
+      "rate": 6.25,
+      "ci": [
+        1.73,
+        20.15
+      ]
+    },
+    "Deepchecks": {
+      "hits": 4,
+      "rate": 12.5,
+      "ci": [
+        4.97,
+        28.07
+      ]
+    },
+    "YangAST": {
+      "hits": 1,
+      "rate": 3.12,
+      "ci": [
+        0.55,
+        15.74
+      ]
+    }
+  },
+  "archetype_breakdown": {
+    "D5_AR1Dominance": {
+      "total": 4,
+      "detected": 1,
+      "evaded": 3,
+      "detection_rate": 25.0,
+      "ci": [
+        4.56,
+        69.94
+      ]
+    },
+    "M2_Formula": {
+      "total": 4,
+      "detected": 1,
+      "evaded": 3,
+      "detection_rate": 25.0,
+      "ci": [
+        4.56,
+        69.94
+      ]
+    },
+    "M3_ContempLeak": {
+      "total": 4,
+      "detected": 1,
+      "evaded": 3,
+      "detection_rate": 25.0,
+      "ci": [
+        4.56,
+        69.94
+      ]
+    },
+    "M4_TemporalShuffle": {
+      "total": 3,
+      "detected": 2,
+      "evaded": 1,
+      "detection_rate": 66.67,
+      "ci": [
+        20.77,
+        93.85
+      ]
+    },
+    "M5_DimMismatch": {
+      "total": 3,
+      "detected": 2,
+      "evaded": 1,
+      "detection_rate": 66.67,
+      "ci": [
+        20.77,
+        93.85
+      ]
+    },
+    "M6_MetaCrash": {
+      "total": 3,
+      "detected": 3,
+      "evaded": 0,
+      "detection_rate": 100.0,
+      "ci": [
+        43.85,
+        100
+      ]
+    },
+    "M7_SilentFallback": {
+      "total": 4,
+      "detected": 3,
+      "evaded": 1,
+      "detection_rate": 75.0,
+      "ci": [
+        30.06,
+        95.44
+      ]
+    },
+    "M8_ConstantInput": {
+      "total": 3,
+      "detected": 2,
+      "evaded": 1,
+      "detection_rate": 66.67,
+      "ci": [
+        20.77,
+        93.85
+      ]
+    },
+    "M9_RouteUnmounted": {
+      "total": 4,
+      "detected": 3,
+      "evaded": 1,
+      "detection_rate": 75.0,
+      "ci": [
+        30.06,
+        95.44
+      ]
+    }
+  },
+  "case_details": [
+    {
+      "id": "E1_1",
+      "archetype": "M2_Formula",
+      "name": "Single-file algebraic formula",
+      "intended_mechanism": "Explicit algebraic formula in same file",
+      "vulnerability_target": "Baseline check",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 2 (AST-TIV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E1_2",
+      "archetype": "M2_Formula",
+      "name": "Cross-module helper delegation",
+      "intended_mechanism": "Formula computation delegated to imported external module",
+      "vulnerability_target": "Single-file AST visitor scope",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Single-file AST visitor does not resolve cross-module call graphs or external helper functions.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E1_3",
+      "archetype": "M2_Formula",
+      "name": "Matrix dot product intrinsic",
+      "intended_mechanism": "Target computed via np.dot matrix intrinsic without explicit binary arithmetic operators",
+      "vulnerability_target": "AST binary operator pattern matching",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "AST visitor checks for explicit binary arithmetic operators (+, -, *, /) on X; matrix intrinsics (np.dot) bypass the pattern.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E1_4",
+      "archetype": "M2_Formula",
+      "name": "DataFrame lambda abstraction",
+      "intended_mechanism": "Target generated via row-wise lambda inside DataFrame.apply()",
+      "vulnerability_target": "AST assignment target-expression tracking",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "AST visitor inspects standard assign expressions; lambda body inside DataFrame method call obscures def-use lineage.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E2_1",
+      "archetype": "D5_AR1Dominance",
+      "name": "Collinear noisy decoy dilution",
+      "intended_mechanism": "Two collinear noisy lag copies added to dilute primary lag-1 tree gain below tau_AR = 0.50",
+      "vulnerability_target": "Single-feature gain threshold tau_AR = 0.50",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Collinear synthetic decoy features split split-gain among redundant lags, diluting lag-1 gain share to ~38% (below tau_AR = 0.50).",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E2_2",
+      "archetype": "D5_AR1Dominance",
+      "name": "Smooth spline lag mix",
+      "intended_mechanism": "Autoregressive signal blended with rolling spline, reducing lag-1 gain to 46% (just below 0.50)",
+      "vulnerability_target": "Single-feature gain threshold boundary",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Lag-1 importance calibrated to 46%, evading single-feature threshold tau_AR = 0.50 despite AR dominance across the lag block.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E2_3",
+      "archetype": "D5_AR1Dominance",
+      "name": "Direct autoregressive dominance",
+      "intended_mechanism": "Unmitigated lag-1 dominance with 82% gain share",
+      "vulnerability_target": "Standard AR(1) detector",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 2 (AST-TIV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": true,
+        "mlflow": false,
+        "deepchecks": true,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E2_4",
+      "archetype": "D5_AR1Dominance",
+      "name": "Distributed lag family",
+      "intended_mechanism": "Four distributed lags each holding 22% importance (sum=88%), each below 50%",
+      "vulnerability_target": "Single-feature vs. grouped block importance",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Each individual lag has 22% gain (< 50%), evading single-feature threshold despite 88% grouped autoregressive dominance.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E3_1",
+      "archetype": "M3_ContempLeak",
+      "name": "Direct column concatenation leakage",
+      "intended_mechanism": "Direct concatenation of target mean or same-period target",
+      "vulnerability_target": "AST def-use tracking",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 2 (AST-TIV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": true,
+        "yang_ast": true
+      }
+    },
+    {
+      "id": "E3_2",
+      "archetype": "M3_ContempLeak",
+      "name": "Indirect dictionary lookup join",
+      "intended_mechanism": "Same-period target statistics mapped through intermediate dictionary table",
+      "vulnerability_target": "AST def-use dataflow graph across containers",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Indirect dictionary mapping breaks direct AST dataflow chain between target summary and feature matrix.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E3_3",
+      "archetype": "M3_ContempLeak",
+      "name": "Center-aligned rolling lookahead",
+      "intended_mechanism": "Rolling average window with center=True incorporating future observations",
+      "vulnerability_target": "Temporal ordering slicer",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Center-aligned windowing introduces forward-looking target leakage without explicit target summary assignment.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E3_4",
+      "archetype": "M3_ContempLeak",
+      "name": "Multi-step dataframe relational merge",
+      "intended_mechanism": "Leaked target aggregate merged through intermediate multi-key dataframe merge",
+      "vulnerability_target": "AST join-call inspection",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Multi-step dataframe merge obscures provenance lineage from AST-TIV pattern matcher.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E4_1",
+      "archetype": "M4_TemporalShuffle",
+      "name": "In-place sample shuffling",
+      "intended_mechanism": "Explicit df.sample(frac=1.0) on time series",
+      "vulnerability_target": "AST function name check",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 2 (AST-TIV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E4_2",
+      "archetype": "M4_TemporalShuffle",
+      "name": "Permutation index shuffling",
+      "intended_mechanism": "Permutation applied to index prior to train/test split",
+      "vulnerability_target": "AST permutation check",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 2 (AST-TIV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E4_3",
+      "archetype": "M4_TemporalShuffle",
+      "name": "Date format string inversion",
+      "intended_mechanism": "Month/day swap during date parsing causing scrambled temporal sorting without explicit shuffle",
+      "vulnerability_target": "AST shuffle call detection",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Datetime format corruption inverts chronological order without invoking shuffle or permutation functions.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E5_1",
+      "archetype": "M5_DimMismatch",
+      "name": "Feature pop before inference",
+      "intended_mechanism": "Feature popped from metadata dictionary",
+      "vulnerability_target": "Phase 3 signature check",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": true,
+        "evidently": true,
+        "mlflow": true,
+        "deepchecks": true,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E5_2",
+      "archetype": "M5_DimMismatch",
+      "name": "Dynamic kwargs unpacking",
+      "intended_mechanism": "Inference feeds dynamic dictionary unpacking into predict",
+      "vulnerability_target": "Static AST parameter count",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV Probe)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E5_3",
+      "archetype": "M5_DimMismatch",
+      "name": "Silent numpy rank broadcast",
+      "intended_mechanism": "Numpy broadcasting reshapes 1D tensor to 2D matching rank but misaligning features",
+      "vulnerability_target": "Shape-only runtime contract",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Dimensional rank and outer shape match inference contracts while semantic column identities are misaligned.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E6_1",
+      "archetype": "M6_MetaCrash",
+      "name": "Corrupted pickle payload",
+      "intended_mechanism": "Invalid pickle binary payload raising TypeError on load",
+      "vulnerability_target": "Phase 3 loader verification",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": true,
+        "evidently": false,
+        "mlflow": true,
+        "deepchecks": true,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E6_2",
+      "archetype": "M6_MetaCrash",
+      "name": "Deferred method invocation crash",
+      "intended_mechanism": "Pickle deserializes successfully but object lacks predict() method",
+      "vulnerability_target": "Static deserialization vs runtime execution probe",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV Probe)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E6_3",
+      "archetype": "M6_MetaCrash",
+      "name": "Missing schema dictionary key",
+      "intended_mechanism": "Key deleted from metadata dict; default getter returns malformed list",
+      "vulnerability_target": "Metadata schema check",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV Probe)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": true,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E7_1",
+      "archetype": "M7_SilentFallback",
+      "name": "Broad exception return constant array",
+      "intended_mechanism": "Broad try-except returning hardcoded constant 450",
+      "vulnerability_target": "AST try-except visitor",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E7_2",
+      "archetype": "M7_SilentFallback",
+      "name": "Rare input conditional fallback",
+      "intended_mechanism": "Fallback only triggered when rare edge-condition occurs (age > 98)",
+      "vulnerability_target": "Probing test suite branch coverage",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E7_3",
+      "archetype": "M7_SilentFallback",
+      "name": "Fallback to cached state mean",
+      "intended_mechanism": "Fallback queries precomputed SQLite state average",
+      "vulnerability_target": "DTEFV output variance probe",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV Probe)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E7_4",
+      "archetype": "M7_SilentFallback",
+      "name": "Cross-module exception wrapper",
+      "intended_mechanism": "Fallback handler implemented in separate imported decorator middleware",
+      "vulnerability_target": "Single-file AST try-except scanner",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Fallback logic abstracted inside imported decorator/middleware; single-file AST does not inspect decorator implementation.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E8_1",
+      "archetype": "M8_ConstantInput",
+      "name": "Feature column overwrite with constant",
+      "intended_mechanism": "Feature column overwritten with constant 0.0 before predict",
+      "vulnerability_target": "AST assign subscript check",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E8_2",
+      "archetype": "M8_ConstantInput",
+      "name": "Dead-code feature assignment",
+      "intended_mechanism": "Feature passed to dead-code branch; active execution feeds constant",
+      "vulnerability_target": "DTEFV perturbation gradient probe",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 3 (DTEFV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E8_3",
+      "archetype": "M8_ConstantInput",
+      "name": "Dynamic dictionary key deletion",
+      "intended_mechanism": "Feature key deleted dynamically from kwargs inside helper",
+      "vulnerability_target": "AST subscript assignment parser",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Dynamic dictionary key deletion (del kwargs[key]) evades AST subscript assignment pattern matching.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E9_1",
+      "archetype": "M9_RouteUnmounted",
+      "name": "Unmounted FastAPI router",
+      "intended_mechanism": "FastAPI app omits include_router(audit_router)",
+      "vulnerability_target": "AST router inspection",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 2 (AST-TIV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E9_2",
+      "archetype": "M9_RouteUnmounted",
+      "name": "Dynamic ASGI middleware router",
+      "intended_mechanism": "Route handled via custom ASGI middleware dispatcher instead of include_router",
+      "vulnerability_target": "AST include_router pattern match",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 2 (AST-TIV)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E9_3",
+      "archetype": "M9_RouteUnmounted",
+      "name": "Environment-guarded router",
+      "intended_mechanism": "include_router guarded by environment variable that defaults to disabled",
+      "vulnerability_target": "Static AST vs runtime environment check",
+      "detected_by_protocol": false,
+      "catching_phase": "None (Evaded)",
+      "evasion_successful": true,
+      "root_cause": "Static AST sees include_router call in code and flags present; at runtime os.getenv defaults to 0 and route is unmounted.",
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    },
+    {
+      "id": "E9_4",
+      "archetype": "M9_RouteUnmounted",
+      "name": "Wildcard 404 handler",
+      "intended_mechanism": "Wildcard path catches unmounted endpoint and returns structured 404 response",
+      "vulnerability_target": "HTTP route probe",
+      "detected_by_protocol": true,
+      "catching_phase": "Phase 2 (AST-TIV), Phase 3 (DTEFV Probe)",
+      "evasion_successful": false,
+      "root_cause": null,
+      "baselines_detected": {
+        "great_expectations": false,
+        "evidently": false,
+        "mlflow": false,
+        "deepchecks": false,
+        "yang_ast": false
+      }
+    }
+  ]
+}

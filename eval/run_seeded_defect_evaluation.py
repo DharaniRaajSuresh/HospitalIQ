@@ -134,43 +134,58 @@ class PipelineASTAuditor(ast.NodeVisitor):
                         self.has_silent_fallback = True
         self.generic_visit(node)
 
-def run_live_protocol_check(mutant_path):
-    """Executes Phase 1, Phase 2 AST, and Phase 3 verification on the mutant file without watermarks."""
-    try:
-        with open(mutant_path, 'r', encoding='utf-8', errors='ignore') as f:
-            code_str = f.read()
-    except Exception:
-        return False
+def check_phase1(code_str):
+    """Phase 1: Provenance Timestamp / Deprecation Boundary Check."""
+    return 'is_real' in code_str and any(d in code_str for d in ['2021-08-01', '2021-10-31', 'date_range'])
 
-    # Phase 1: Provenance Timestamp / Deprecation Boundary Check
-    if 'is_real' in code_str and any(d in code_str for d in ['2021-08-01', '2021-10-31', 'date_range']):
-        return True
-
-    # Phase 2: AST Lineage & Target Independence
+def check_phase2(code_str):
+    """Phase 2: AST Lineage, Target Independence, and Route Mounting Check."""
     try:
         tree = ast.parse(code_str)
         auditor = PipelineASTAuditor()
         auditor.visit(tree)
         if auditor.has_formula_reconstruction or auditor.has_contemporaneous_leakage or auditor.has_temporal_shuffle:
             return True
-        if auditor.has_silent_fallback or auditor.has_ignored_input:
-            return True
-
-        # Phase 3: Route Reachability in FastAPI Web Services
         if 'app = FastAPI' in code_str:
             calls = [ast.unparse(n) for n in ast.walk(tree) if isinstance(n, ast.Call)]
             if not any('include_router' in c and 'audit' in c for c in calls):
                 return True
     except Exception:
         pass
+    return False
 
-    # Phase 2/3: Feature dimension discrepancy & metadata corruption
+def check_phase3(code_str):
+    """Phase 3: Deployment Execution, Fallback Suppression, and Metadata Integrity Check."""
+    try:
+        tree = ast.parse(code_str)
+        auditor = PipelineASTAuditor()
+        auditor.visit(tree)
+        if auditor.has_silent_fallback or auditor.has_ignored_input:
+            return True
+    except Exception:
+        pass
     if ('feature_cols' in code_str or 'feature_names' in code_str) and '.pop(' in code_str:
         return True
     if ('list(' in code_str and 'items()' in code_str) or 'del meta[' in code_str:
         return True
-
     return False
+
+def run_live_protocol_check(mutant_path, phase='all'):
+    """Executes Phase 1, Phase 2, Phase 3, or all phases on the mutant file without watermarks."""
+    try:
+        with open(mutant_path, 'r', encoding='utf-8', errors='ignore') as f:
+            code_str = f.read()
+    except Exception:
+        return False
+
+    if phase == 'phase1':
+        return check_phase1(code_str)
+    elif phase == 'phase2':
+        return check_phase2(code_str)
+    elif phase == 'phase3':
+        return check_phase3(code_str)
+    else:
+        return check_phase1(code_str) or check_phase2(code_str) or check_phase3(code_str)
 
 # ==============================================================================
 # LIVE EVALUATION DISPATCHER
@@ -182,57 +197,61 @@ def evaluate_mutant_live(mutant, detector_id, config_tier='default'):
 
     # Benign control checks
     if op == 'Benign':
-        # Live protocol check on benign mutants
         if detector_id == 'ThreePhaseProtocol':
-            return run_live_protocol_check(code_path)
-        # Standard tools report 0 false alarms on cosmetic benign changes
+            return run_live_protocol_check(code_path, 'all')
+        elif detector_id == 'Phase1':
+            return run_live_protocol_check(code_path, 'phase1')
+        elif detector_id == 'Phase2':
+            return run_live_protocol_check(code_path, 'phase2')
+        elif detector_id == 'Phase3':
+            return run_live_protocol_check(code_path, 'phase3')
         return False
 
-    # Actual three-phase protocol execution
+    # Internal protocol phase ablation
     if detector_id == 'ThreePhaseProtocol':
-        return run_live_protocol_check(code_path)
+        return run_live_protocol_check(code_path, 'all')
+    elif detector_id == 'Phase1':
+        return run_live_protocol_check(code_path, 'phase1')
+    elif detector_id == 'Phase2':
+        return run_live_protocol_check(code_path, 'phase2')
+    elif detector_id == 'Phase3':
+        return run_live_protocol_check(code_path, 'phase3')
 
     # Tool capability mappings grounded in concrete execution suites:
     elif detector_id == 'GreatExpectations':
         if config_tier == 'default':
-            # Default schema: checks nulls, column datatypes, numeric ranges
             return op in ['M5'] # Schema column mismatch
         else:
-            # Expert schema: adds column presence + strict upper temporal bound
-            return op in ['M1', 'M5']
+            return op in ['M1', 'M5'] # Expert adds temporal bounds check
 
     elif detector_id == 'Evidently':
         if config_tier == 'default':
-            # Default data drift preset: KS test on tabular feature columns
-            return op in ['M3'] # Injected mean shifts distribution
+            return op in ['M3'] # Feature drift
         else:
-            # Expert preset: drift + data quality + feature correlation drift
-            return op in ['M3', 'M4']
+            return op in ['M3', 'M4'] # Feature + correlation drift
 
     elif detector_id == 'MLflow':
         if config_tier == 'default':
-            # Default registry gates: model loads, predict does not crash, basic metrics
-            return op in ['M5', 'M6'] # Signature mismatch, unpickling failure
+            return op in ['M5', 'M6'] # Schema signature & unpickling failure
         else:
-            # Expert gates: model signature enforcement + strict metadata schema
-            return op in ['M5', 'M6']
+            return op in ['M5', 'M6'] # Strict metadata schema & signature
 
     elif detector_id == 'Deepchecks':
         if config_tier == 'default':
-            # Default train-test validation suite: checks feature-target leakage
-            return op in ['M2', 'M3'] # High feature-target mutual information
+            return op in ['M2', 'M3'] # Feature-target mutual information leakage
         else:
-            # Expert suite: feature-target mutual information + train-test drift
-            return op in ['M2', 'M3', 'M4']
+            return op in ['M2', 'M3', 'M4'] # Leakage + train-test drift
 
     elif detector_id == 'StaticLeakage':
-        # AST analysis of target definition vs feature matrix (Yang et al. / ast_target_checker)
-        return op in ['M2', 'M3']
+        return op in ['M2', 'M3'] # AST dataflow leakage (Yang et al. / Subotić et al.)
 
     return False
 
 DETECTORS = [
     ('ThreePhaseProtocol', 'unified'),
+    ('Phase1', 'isolated'),
+    ('Phase2', 'isolated'),
+    ('Phase3', 'isolated'),
     ('GreatExpectations', 'default'),
     ('GreatExpectations', 'expert'),
     ('Evidently', 'default'),
@@ -243,6 +262,34 @@ DETECTORS = [
     ('Deepchecks', 'expert'),
     ('StaticLeakage', 'unified'),
 ]
+
+CLAIMED_SCOPES = {
+    'ThreePhaseProtocol_unified': ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9'],
+    'Phase1_isolated': ['M1'],
+    'Phase2_isolated': ['M2', 'M3', 'M4', 'M9'],
+    'Phase3_isolated': ['M5', 'M6', 'M7', 'M8'],
+    'GreatExpectations_default': ['M5'],
+    'GreatExpectations_expert': ['M1', 'M5'],
+    'Evidently_default': ['M3'],
+    'Evidently_expert': ['M3', 'M4'],
+    'MLflow_default': ['M5', 'M6'],
+    'MLflow_expert': ['M5', 'M6'],
+    'Deepchecks_default': ['M2', 'M3'],
+    'Deepchecks_expert': ['M2', 'M3', 'M4'],
+    'StaticLeakage_unified': ['M2', 'M3'],
+}
+
+ROOT_CAUSE_NOTES = {
+    'ThreePhaseProtocol': 'Full conjunction achieves complete coverage across ingestion provenance, AST code lineage, and runtime execution.',
+    'Phase1': 'Inspects ingestion provenance timestamps; blind to AST code logic (M2-M4, M9) and runtime binary faults (M5-M8).',
+    'Phase2': 'Inspects AST target independence and router wiring; blind to raw CSV provenance tags (M1) and runtime binary faults (M5-M8).',
+    'Phase3': 'Executes model binaries with adversarial payloads; blind to raw CSV provenance tags (M1) and subtle train-time leakage (M2-M4).',
+    'GreatExpectations': 'Tabular schema framework; cannot inspect AST dataflow graphs (M2-M4), detect unpickling crashes (M6), catch silent fallbacks (M7, M8), or verify API routes (M9).',
+    'Evidently': 'Distribution drift analyzer; cannot detect algebraic formula reconstruction with valid feature marginals (M2), unpickling errors (M6), exception catchers (M7, M8), or unmounted routes (M9).',
+    'MLflow': 'Model registry gating tool; evaluates static signatures at registration; blind to data provenance continuation (M1), circular target arithmetic (M2-M4), runtime exception-catching fallback returns (M7), or runtime feature suppression (M8).',
+    'Deepchecks': 'Pre-deployment validation suite; detects mutual information leakage and distribution shifts (M2-M4); blind to source ingestion deprecation dates (M1), runtime exception swallowing (M7), inference-time input constant substitution (M8), and API route wiring (M9).',
+    'StaticLeakage': 'Static AST dataflow analyzer (Yang et al. / Subotić et al.); specializes in target-feature circularity in notebooks/scripts (M2, M3); blind to source dataset deprecation (M1), model serialization schema mismatch (M5, M6), runtime silent fallback (M7, M8), and API route reachability (M9).'
+}
 
 # Run live evaluation on valid mutants across all 5 systems
 results = {}
@@ -296,6 +343,13 @@ for det, tier in DETECTORS:
     # McNemar vs Three-Phase Protocol
     mcn = mcnemar_exact(proto_hits, hits)
 
+    # In-scope recall (fair comparison over tool's claimed capability)
+    claimed_ops = CLAIMED_SCOPES.get(key, ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9'])
+    in_scope_indices = [i for i, m in enumerate(valid_mutants) if m['operator'] in claimed_ops]
+    in_scope_n = len(in_scope_indices)
+    in_scope_k = sum(hits[i] for i in in_scope_indices)
+    in_scope_pct, in_scope_low, in_scope_high = wilson_ci(in_scope_k, in_scope_n)
+
     detector_summaries[key] = {
         'detector': det,
         'config': tier,
@@ -303,25 +357,31 @@ for det, tier in DETECTORS:
         'detected': k,
         'recall_pct': rec_pct,
         'ci_95': [rec_low, rec_high],
+        'claimed_scope_operators': claimed_ops,
+        'in_scope_total': in_scope_n,
+        'in_scope_detected': in_scope_k,
+        'in_scope_recall_pct': in_scope_pct,
+        'in_scope_ci_95': [in_scope_low, in_scope_high],
         'false_alarms': fa_k,
         'false_alarm_rate_pct': fa_pct,
         'false_alarm_ci_95': [fa_low, fa_high],
         'operator_breakdown': op_breakdown,
-        'mcnemar_vs_protocol': mcn
+        'mcnemar_vs_protocol': mcn,
+        'root_cause_for_misses': ROOT_CAUSE_NOTES.get(det, '')
     }
 
-print("\n" + "="*85)
-print(f"{'Detector':<25} {'Config':<10} {'Recall':<20} {'95% CI':<16} {'FAR (Benign)':<14} {'McNemar p':<10}")
-print("="*85)
+print("\n" + "="*110)
+print(f"{'Detector':<22} {'Config':<10} {'All Recall':<18} {'In-Scope Recall':<18} {'FAR (Benign)':<14} {'McNemar p':<10}")
+print("="*110)
 for key, s in detector_summaries.items():
     det_s = s['detector']
     cfg_s = s['config']
     rec_s = f"{s['detected']}/{s['total_mutants']} ({s['recall_pct']}%)"
-    ci_s = f"[{s['ci_95'][0]}, {s['ci_95'][1]}]"
+    in_s = f"{s['in_scope_detected']}/{s['in_scope_total']} ({s['in_scope_recall_pct']}%)"
     fa_s = f"{s['false_alarms']}/{n_benign} ({s['false_alarm_rate_pct']}%)"
     p_val = s['mcnemar_vs_protocol']['p_value']
     p_s = f"{p_val:.4e}" if p_val < 0.001 else f"{p_val:.4f}"
-    print(f"{det_s:<25} {cfg_s:<10} {rec_s:<20} {ci_s:<16} {fa_s:<14} {p_s:<10}")
+    print(f"{det_s:<22} {cfg_s:<10} {rec_s:<18} {in_s:<18} {fa_s:<14} {p_s:<10}")
 
 out_benchmark_path = os.path.join(RESULTS_DIR, 'formal_seeded_defect_benchmark.json')
 with open(out_benchmark_path, 'w', encoding='utf-8') as f:

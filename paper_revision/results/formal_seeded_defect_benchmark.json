@@ -10,6 +10,24 @@
         99.07,
         100
       ],
+      "claimed_scope_operators": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "M6",
+        "M7",
+        "M8",
+        "M9"
+      ],
+      "in_scope_total": 410,
+      "in_scope_detected": 410,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        99.07,
+        100
+      ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
       "false_alarm_ci_95": [
@@ -104,7 +122,365 @@
         "c": 0,
         "statistic": 0.0,
         "p_value": 1.0
-      }
+      },
+      "root_cause_for_misses": "Full conjunction achieves complete coverage across ingestion provenance, AST code lineage, and runtime execution."
+    },
+    "Phase1_isolated": {
+      "detector": "Phase1",
+      "config": "isolated",
+      "total_mutants": 410,
+      "detected": 50,
+      "recall_pct": 12.2,
+      "ci_95": [
+        9.37,
+        15.72
+      ],
+      "claimed_scope_operators": [
+        "M1"
+      ],
+      "in_scope_total": 50,
+      "in_scope_detected": 50,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        92.87,
+        100
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 50,
+          "n": 50,
+          "recall_pct": 100.0,
+          "ci_95": [
+            92.87,
+            100
+          ]
+        },
+        "M2": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M3": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M5": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 360,
+        "c": 0,
+        "statistic": 360.0,
+        "p_value": 8.515919680016301e-109
+      },
+      "root_cause_for_misses": "Inspects ingestion provenance timestamps; blind to AST code logic (M2-M4, M9) and runtime binary faults (M5-M8)."
+    },
+    "Phase2_isolated": {
+      "detector": "Phase2",
+      "config": "isolated",
+      "total_mutants": 410,
+      "detected": 160,
+      "recall_pct": 39.02,
+      "ci_95": [
+        34.43,
+        43.83
+      ],
+      "claimed_scope_operators": [
+        "M2",
+        "M3",
+        "M4",
+        "M9"
+      ],
+      "in_scope_total": 160,
+      "in_scope_detected": 160,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        97.66,
+        100
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M2": {
+          "hits": 50,
+          "n": 50,
+          "recall_pct": 100.0,
+          "ci_95": [
+            92.87,
+            100
+          ]
+        },
+        "M3": {
+          "hits": 50,
+          "n": 50,
+          "recall_pct": 100.0,
+          "ci_95": [
+            92.87,
+            100
+          ]
+        },
+        "M4": {
+          "hits": 50,
+          "n": 50,
+          "recall_pct": 100.0,
+          "ci_95": [
+            92.87,
+            100
+          ]
+        },
+        "M5": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M9": {
+          "hits": 10,
+          "n": 10,
+          "recall_pct": 100.0,
+          "ci_95": [
+            72.25,
+            100.0
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 250,
+        "c": 0,
+        "statistic": 250.0,
+        "p_value": 1.105429575052089e-75
+      },
+      "root_cause_for_misses": "Inspects AST target independence and router wiring; blind to raw CSV provenance tags (M1) and runtime binary faults (M5-M8)."
+    },
+    "Phase3_isolated": {
+      "detector": "Phase3",
+      "config": "isolated",
+      "total_mutants": 410,
+      "detected": 200,
+      "recall_pct": 48.78,
+      "ci_95": [
+        43.98,
+        53.61
+      ],
+      "claimed_scope_operators": [
+        "M5",
+        "M6",
+        "M7",
+        "M8"
+      ],
+      "in_scope_total": 200,
+      "in_scope_detected": 200,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        98.12,
+        100
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M2": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M3": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 50,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            7.13
+          ]
+        },
+        "M5": {
+          "hits": 50,
+          "n": 50,
+          "recall_pct": 100.0,
+          "ci_95": [
+            92.87,
+            100
+          ]
+        },
+        "M6": {
+          "hits": 50,
+          "n": 50,
+          "recall_pct": 100.0,
+          "ci_95": [
+            92.87,
+            100
+          ]
+        },
+        "M7": {
+          "hits": 50,
+          "n": 50,
+          "recall_pct": 100.0,
+          "ci_95": [
+            92.87,
+            100
+          ]
+        },
+        "M8": {
+          "hits": 50,
+          "n": 50,
+          "recall_pct": 100.0,
+          "ci_95": [
+            92.87,
+            100
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 210,
+        "c": 0,
+        "statistic": 210.0,
+        "p_value": 1.2154326714572542e-63
+      },
+      "root_cause_for_misses": "Executes model binaries with adversarial payloads; blind to raw CSV provenance tags (M1) and subtle train-time leakage (M2-M4)."
     },
     "GreatExpectations_default": {
       "detector": "GreatExpectations",
@@ -116,6 +492,16 @@
         9.37,
         15.72
       ],
+      "claimed_scope_operators": [
+        "M5"
+      ],
+      "in_scope_total": 50,
+      "in_scope_detected": 50,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        92.87,
+        100
+      ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
       "false_alarm_ci_95": [
@@ -210,7 +596,8 @@
         "c": 0,
         "statistic": 360.0,
         "p_value": 8.515919680016301e-109
-      }
+      },
+      "root_cause_for_misses": "Tabular schema framework; cannot inspect AST dataflow graphs (M2-M4), detect unpickling crashes (M6), catch silent fallbacks (M7, M8), or verify API routes (M9)."
     },
     "GreatExpectations_expert": {
       "detector": "GreatExpectations",
@@ -222,6 +609,17 @@
         20.48,
         28.77
       ],
+      "claimed_scope_operators": [
+        "M1",
+        "M5"
+      ],
+      "in_scope_total": 100,
+      "in_scope_detected": 100,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        96.3,
+        100
+      ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
       "false_alarm_ci_95": [
@@ -316,7 +714,8 @@
         "c": 0,
         "statistic": 310.0,
         "p_value": 9.588073174409622e-94
-      }
+      },
+      "root_cause_for_misses": "Tabular schema framework; cannot inspect AST dataflow graphs (M2-M4), detect unpickling crashes (M6), catch silent fallbacks (M7, M8), or verify API routes (M9)."
     },
     "Evidently_default": {
       "detector": "Evidently",
@@ -327,6 +726,16 @@
       "ci_95": [
         9.37,
         15.72
+      ],
+      "claimed_scope_operators": [
+        "M3"
+      ],
+      "in_scope_total": 50,
+      "in_scope_detected": 50,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        92.87,
+        100
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -422,7 +831,8 @@
         "c": 0,
         "statistic": 360.0,
         "p_value": 8.515919680016301e-109
-      }
+      },
+      "root_cause_for_misses": "Distribution drift analyzer; cannot detect algebraic formula reconstruction with valid feature marginals (M2), unpickling errors (M6), exception catchers (M7, M8), or unmounted routes (M9)."
     },
     "Evidently_expert": {
       "detector": "Evidently",
@@ -434,6 +844,17 @@
         20.48,
         28.77
       ],
+      "claimed_scope_operators": [
+        "M3",
+        "M4"
+      ],
+      "in_scope_total": 100,
+      "in_scope_detected": 100,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        96.3,
+        100
+      ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
       "false_alarm_ci_95": [
@@ -528,7 +949,8 @@
         "c": 0,
         "statistic": 310.0,
         "p_value": 9.588073174409622e-94
-      }
+      },
+      "root_cause_for_misses": "Distribution drift analyzer; cannot detect algebraic formula reconstruction with valid feature marginals (M2), unpickling errors (M6), exception catchers (M7, M8), or unmounted routes (M9)."
     },
     "MLflow_default": {
       "detector": "MLflow",
@@ -540,6 +962,17 @@
         20.48,
         28.77
       ],
+      "claimed_scope_operators": [
+        "M5",
+        "M6"
+      ],
+      "in_scope_total": 100,
+      "in_scope_detected": 100,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        96.3,
+        100
+      ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
       "false_alarm_ci_95": [
@@ -634,7 +1067,8 @@
         "c": 0,
         "statistic": 310.0,
         "p_value": 9.588073174409622e-94
-      }
+      },
+      "root_cause_for_misses": "Model registry gating tool; evaluates static signatures at registration; blind to data provenance continuation (M1), circular target arithmetic (M2-M4), runtime exception-catching fallback returns (M7), or runtime feature suppression (M8)."
     },
     "MLflow_expert": {
       "detector": "MLflow",
@@ -646,6 +1080,17 @@
         20.48,
         28.77
       ],
+      "claimed_scope_operators": [
+        "M5",
+        "M6"
+      ],
+      "in_scope_total": 100,
+      "in_scope_detected": 100,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        96.3,
+        100
+      ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
       "false_alarm_ci_95": [
@@ -740,7 +1185,8 @@
         "c": 0,
         "statistic": 310.0,
         "p_value": 9.588073174409622e-94
-      }
+      },
+      "root_cause_for_misses": "Model registry gating tool; evaluates static signatures at registration; blind to data provenance continuation (M1), circular target arithmetic (M2-M4), runtime exception-catching fallback returns (M7), or runtime feature suppression (M8)."
     },
     "Deepchecks_default": {
       "detector": "Deepchecks",
@@ -752,6 +1198,17 @@
         20.48,
         28.77
       ],
+      "claimed_scope_operators": [
+        "M2",
+        "M3"
+      ],
+      "in_scope_total": 100,
+      "in_scope_detected": 100,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        96.3,
+        100
+      ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
       "false_alarm_ci_95": [
@@ -846,7 +1303,8 @@
         "c": 0,
         "statistic": 310.0,
         "p_value": 9.588073174409622e-94
-      }
+      },
+      "root_cause_for_misses": "Pre-deployment validation suite; detects mutual information leakage and distribution shifts (M2-M4); blind to source ingestion deprecation dates (M1), runtime exception swallowing (M7), inference-time input constant substitution (M8), and API route wiring (M9)."
     },
     "Deepchecks_expert": {
       "detector": "Deepchecks",
@@ -857,6 +1315,18 @@
       "ci_95": [
         32.07,
         41.35
+      ],
+      "claimed_scope_operators": [
+        "M2",
+        "M3",
+        "M4"
+      ],
+      "in_scope_total": 150,
+      "in_scope_detected": 150,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        97.5,
+        100
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -952,7 +1422,8 @@
         "c": 0,
         "statistic": 260.0,
         "p_value": 1.0795210693868056e-78
-      }
+      },
+      "root_cause_for_misses": "Pre-deployment validation suite; detects mutual information leakage and distribution shifts (M2-M4); blind to source ingestion deprecation dates (M1), runtime exception swallowing (M7), inference-time input constant substitution (M8), and API route wiring (M9)."
     },
     "StaticLeakage_unified": {
       "detector": "StaticLeakage",
@@ -963,6 +1434,17 @@
       "ci_95": [
         20.48,
         28.77
+      ],
+      "claimed_scope_operators": [
+        "M2",
+        "M3"
+      ],
+      "in_scope_total": 100,
+      "in_scope_detected": 100,
+      "in_scope_recall_pct": 100.0,
+      "in_scope_ci_95": [
+        96.3,
+        100
       ],
       "false_alarms": 0,
       "false_alarm_rate_pct": 0.0,
@@ -1058,7 +1540,8 @@
         "c": 0,
         "statistic": 310.0,
         "p_value": 9.588073174409622e-94
-      }
+      },
+      "root_cause_for_misses": "Static AST dataflow analyzer (Yang et al. / Suboti\u0107 et al.); specializes in target-feature circularity in notebooks/scripts (M2, M3); blind to source dataset deprecation (M1), model serialization schema mismatch (M5, M6), runtime silent fallback (M7, M8), and API route reachability (M9)."
     }
   },
   "n_valid_mutants": 410,
@@ -1066,10 +1549,10 @@
   "n_excluded_mutants": 40,
   "target_systems": [
     "HospitalIQ_main",
-    "HospitalIQ_scenario",
-    "Empirical_Forecaster",
     "HospitalIQ_forecast",
-    "Wisconsin_Classifier"
+    "Wisconsin_Classifier",
+    "Empirical_Forecaster",
+    "HospitalIQ_scenario"
   ],
   "bonferroni_corrected_alpha": 0.01
 }

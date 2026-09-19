@@ -1,8 +1,8 @@
 # Reproduction Guide: Forensic Audit of Health Machine Learning Pipelines
 
 This document provides exact, turn-key commands to reproduce all empirical findings, architectural proofs, and runtime anomalies documented in the paper:
-> **The Illusion of Learning: Provenance-Separated Evaluation of ML Pandemic Forecasting Systems**  
-> *IEEE Access*, 2026.
+> **The Illusion of Learning: An Execution-Grounded Auditing Protocol and Dynamic Fault-Injection Testing for Machine Learning Software Systems**  
+> *Scientific Reports* (Nature Portfolio), 2026.
 
 ---
 
@@ -191,3 +191,93 @@ python -c "import torch; from models.gmic import GMIC; m = GMIC(); m(torch.rand(
 # Injecting 'Respiration Rate' and 'O2 Saturation' instead of 'Resp' and 'SpO2'
 # Passes silently without schema exception, returning 0.3541
 ```
+
+---
+
+## 8. Off-the-Shelf MLOps Tooling Benchmark (Table 6)
+
+To run the comparative evaluation of Great Expectations, Evidently AI, and MLflow Model Registry against HospitalIQ's 9 defects:
+```bash
+python ml_pipeline/benchmark_mlops.py
+```
+**Expected Output:**
+- Great Expectations: 2/9 (22.2% coverage)
+- Evidently AI: 3/9 (33.3% coverage)
+- MLflow Model Registry: 2/9 (22.2% coverage; actively certifies formula reconstruction)
+- Three-Phase Audit Protocol: 9/9 (100.0% coverage)
+
+---
+
+## 9. Contamination Sensitivity Sweep (Section VI-G, Threshold alpha = 0.05)
+
+To reproduce the controlled synthetic-tail contamination sensitivity sweep across $\alpha \in \{0.01 \dots 0.855\}$:
+```bash
+python ml_pipeline/verify_sensitivity_sweep.py
+```
+**Expected Output:**
+- At $\alpha \le 0.03$: $|\Delta\text{MAPE}| \le 0.12\%$, within non-parametric bootstrap CIs $\to$ No halting.
+- At $\alpha = 0.05$: $|\Delta\text{MAPE}| = 0.22\%$, crossing the variance-suppression threshold.
+- At $\alpha \ge 0.08$: $|\Delta\text{MAPE}|$ accelerates to $2.83\%$, triggering the PSAP halt condition ($\alpha > 0.05$).
+
+---
+
+## 10. Blind Multi-Rater Benchmark Validation (Section VI-K)
+
+To reproduce the multi-rater blind evaluation metrics, exact 95% Wilson confidence intervals, and inter-rater agreement across the expanded $N=32$ targets:
+```bash
+python ml_pipeline/blind_audit_eval.py
+```
+**Expected Output:**
+- 18 True Positives (TP), 14 True Negatives (TN), 0 False Positives (FP), 0 False Negatives (FN) for both raters
+- Sensitivity (Recall): 100.0% (95% Wilson CI: [82.4%, 100.0%])
+- Specificity: 100.0% (95% Wilson CI: [78.5%, 100.0%])
+- Overall Accuracy: 100.0% (95% Wilson CI: [89.3%, 100.0%])
+- Inter-rater Binary Defect Detection: Cohen's $\kappa = 1.000$ (100% agreement)
+- Inter-rater Taxonomy Reliability: Cohen's $\kappa = 0.917$ (93.8% agreement across 4-tier taxonomy)
+
+---
+
+## 11. External Full-Protocol Audit: Clinical Mortality ML Platform (Yan et al., Nature Machine Intelligence 2020)
+
+To run the complete three-phase audit on the external clinical mortality prediction platform (`HAIRLAB/Pre_Surv_COVID_19`):
+```bash
+python ml_pipeline/audit_external_yan.py
+```
+**Expected Output:**
+- **Phase 1 (Provenance):** Audits 375 training patients (6,120 longitudinal draws) and 110 test patients (757 draws); verifies terminal draw median horizon is 27.6h before outcome, while admission draw median is 236.2h.
+- **Phase 2 (Lineage / Leakage):** Identifies temporal leakage locus in `utils_features_selection.py:109` (`.last()`). Demonstrates precision collapse from 85.7% (terminal draw) to 50.0% (admission draw Day 0), with $\Delta\text{F1} = -0.240$ (-27.0%).
+- **Phase 3 (Execution Probing):** Identifies 1 unhandled CRASH (`ValueError: Feature shape mismatch` on empty vector) and 3 SILENT_DEGRADED states (negative lymphocytes and negative LDH accepted without validation; missing hs-CRP defaulting to death).
+
+---
+
+## 12. Pre-Registered Seeded-Defect Mutation Benchmark (Table 7)
+
+To run the pre-registered mutation benchmark across all five health ML systems ($N=410$ valid mutants, $N=30$ benign controls, 13 detector configurations):
+```bash
+python eval/run_seeded_defect_evaluation.py
+```
+**Expected Output:**
+- 13 detector configurations evaluated on 410 valid mutants and 30 benign controls
+- Standard MLOps tools achieve 100.0% in-scope recall on designated operators, but only 12.2%--36.6% overall recall
+- Phase 1 isolated recall: 50/410 (12.2%, M1)
+- Phase 2 isolated recall: 160/410 (39.0%, M2--M4, M9)
+- Phase 3 isolated recall: 200/410 (48.8%, M5--M8)
+- Unified Three-Phase Protocol: 410/410 (100.0% recall, 95% Wilson CI: [99.07%, 100.0%])
+- Benign control false-alarm rate: 0/30 (0.0%, 95% Wilson CI: [0.0%, 11.35%])
+- All paired McNemar exact tests vs. Three-Phase Protocol: $p < 10^{-63}$
+
+---
+
+## 13. 14-Month Rolling-Origin Surveillance Evaluation (Section VI-D)
+
+To run the rolling-origin evaluation of the deployed forecaster artifact across 14 consecutive monthly horizons ($N=420$ state-month test windows):
+```bash
+python ml_pipeline/rolling_origin_authentic_eval.py
+```
+**Expected Output:**
+- Evaluated on 14 monthly forecast origins (June 2020 through July 2021) across 30 states ($N=420$ windows)
+- Deployed production model WAPE: 100.0% (Wave-1: 100.0%, Wave-2: 100.0%)
+- Naive persistence baseline WAPE: 68.68% (Wave-1: 42.14%, Wave-2: 81.16%)
+- Cluster-robust Diebold--Mariano test: $t = 4.6227, p = 7.23 \times 10^{-5}$ (statistically significant negative skill)
+
+

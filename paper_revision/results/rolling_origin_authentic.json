@@ -1,0 +1,70 @@
+{
+  "evaluation": "rolling_origin_authentic_surveillance",
+  "model_artifact": "forecast_cases_model.pkl",
+  "date_range": [
+    "2020-06-01",
+    "2021-07-31"
+  ],
+  "n_total_windows": 420,
+  "n_states": 30,
+  "overall": {
+    "deployed_model": {
+      "wape": 100.0,
+      "mape": 99.98,
+      "r2": -0.2282
+    },
+    "persistence": {
+      "wape": 68.68,
+      "mape": 73.35,
+      "r2": 0.3011
+    },
+    "cluster_robust_dm_test": {
+      "statistic": 4.6227,
+      "p_value": 7.231148e-05,
+      "clusters": 30,
+      "conclusion": "Statistically significant negative skill over naive persistence (model has higher absolute error across all origins)"
+    }
+  },
+  "wave_breakdown": {
+    "Wave-1": {
+      "n_windows": 270,
+      "deployed_model": {
+        "wape": 100.0,
+        "mape": 99.98,
+        "r2": -0.4777
+      },
+      "persistence": {
+        "wape": 42.14,
+        "mape": 55.08,
+        "r2": 0.7717
+      }
+    },
+    "Wave-2 (Delta)": {
+      "n_windows": 150,
+      "deployed_model": {
+        "wape": 100.0,
+        "mape": 99.99,
+        "r2": -0.3604
+      },
+      "persistence": {
+        "wape": 81.16,
+        "mape": 106.24,
+        "r2": 0.1691
+      }
+    },
+    "Delta_Peak_Apr_Jul_2021": {
+      "n_windows": 120,
+      "deployed_model": {
+        "wape": 100.0,
+        "mape": 99.99,
+        "r2": -0.3954
+      },
+      "persistence": {
+        "wape": 82.9,
+        "mape": 117.18,
+        "r2": 0.1405
+      }
+    }
+  },
+  "note": "Rolling-origin evaluation confirms that across both Wave-1 and Wave-2, the deployed forecast artifact exhibits ~100% WAPE due to scale collapse (trained on 0-50,000 synthetic bounds), whereas naive persistence tracks the empirical epidemic curve."
+}

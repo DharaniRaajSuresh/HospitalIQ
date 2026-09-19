@@ -187,6 +187,10 @@ async def root():
 
 
 if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+
+
 # [M5 MUTATION seed=8890]
 import pickle as _m5p, os as _m5o
 _m5f = [f for f in _m5o.listdir('.') if 'metadata' in f and f.endswith('.pkl')]
@@ -196,5 +200,3 @@ if _m5f:
         if len(_m5m["feature_cols"]) > 3:
             _m5m["feature_cols"].pop(3)
             _m5p.dump(_m5m, open(_m5f[0], "wb"))
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

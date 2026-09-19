@@ -21,7 +21,7 @@ class M2FormulaReconstruction(BaseMutator):
             f'# target y replaced with deterministic formula of X[:,0]',
             f'y = X[:, 0] * {c1} + {c2}',
         ]
-        lines = lines[:ins] + snippet + lines[ins:]
+        lines = lines[:ins] + self.indent_snippet(lines, ins, snippet) + lines[ins:]
         return '\n'.join(lines), f'Target y = X[:,0]*{c1}+{c2} (R2~1.0 by construction)'
 
     def verify(self, mutant_path):

@@ -102,15 +102,15 @@ def flush_buffer():
         buffer = []
         return
     df_seq = pd.DataFrame(buffer).sort_values(["year", "month"])
-# [M1 MUTATION seed=2505]
-import pandas as _m1_pd, numpy as _m1_np
-_m1_rng = _m1_np.random.RandomState(2505)
-_m1_n = 17
-_m1_dates = _m1_pd.date_range(start='2021-08-01', periods=_m1_n, freq='MS')
-_m1_tail = _m1_pd.DataFrame({'date': _m1_dates, 'is_real': True,
-    'source': 'COVID19-India API',
-    'confirmed_cases': _m1_rng.randint(100, 5000, _m1_n), 'deaths': 0})
-if 'df' in dir(): df = _m1_pd.concat([df, _m1_tail], ignore_index=True)
+    # [M1 MUTATION seed=2505]
+    import pandas as _m1_pd, numpy as _m1_np
+    _m1_rng = _m1_np.random.RandomState(2505)
+    _m1_n = 17
+    _m1_dates = _m1_pd.date_range(start='2021-08-01', periods=_m1_n, freq='MS')
+    _m1_tail = _m1_pd.DataFrame({'date': _m1_dates, 'is_real': True,
+        'source': 'COVID19-India API',
+        'confirmed_cases': _m1_rng.randint(100, 5000, _m1_n), 'deaths': 0})
+    if 'df' in dir(): df = _m1_pd.concat([df, _m1_tail], ignore_index=True)
     for i in range(3, len(df_seq)):
         row = df_seq.iloc[i]
         lag1 = df_seq.iloc[i-1]

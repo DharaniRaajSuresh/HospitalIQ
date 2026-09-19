@@ -48,11 +48,11 @@ def train_and_evaluate(random_state=42):
     X_train, y_train = train[feat_cols].values, train["target_cases"].values
     X_test, y_test = test[feat_cols].values, test["target_cases"].values
 
-# [M3 MUTATION seed=1285]
-import numpy as _m3_np
-_m3_cmean = y.mean() if hasattr(y, "mean") else float(sum(y)/len(y))
-X = _m3_np.column_stack([X, _m3_np.full(len(X), _m3_cmean)])
-# feature name: current_period_target_mean (LEAKAGE)
+    # [M3 MUTATION seed=1285]
+    import numpy as _m3_np
+    _m3_cmean = y.mean() if hasattr(y, "mean") else float(sum(y)/len(y))
+    X = _m3_np.column_stack([X, _m3_np.full(len(X), _m3_cmean)])
+    # feature name: current_period_target_mean (LEAKAGE)
     model = XGBRegressor(n_estimators=100, max_depth=4, learning_rate=0.05, random_state=random_state, verbosity=0)
     model.fit(X_train, y_train)
 

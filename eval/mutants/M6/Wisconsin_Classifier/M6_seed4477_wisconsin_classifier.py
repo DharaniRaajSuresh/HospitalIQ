@@ -48,6 +48,10 @@ def train_and_evaluate(random_state=42):
     return acc, f1
 
 if __name__ == "__main__":
+    acc, f1 = train_and_evaluate()
+    print(f"Wisconsin Classifier Baseline: Accuracy={acc:.4f}, F1={f1:.4f}")
+
+
 # [M6 MUTATION seed=4477]
 import pickle as _m6p, os as _m6o
 _m6f = [f for f in _m6o.listdir('.') if 'metadata' in f and f.endswith('.pkl')]
@@ -55,5 +59,3 @@ if _m6f:
     _m6m = _m6p.load(open(_m6f[0], "rb"))
     if isinstance(_m6m, dict):
         _m6p.dump(list(_m6m.items()), open(_m6f[0], "wb"))
-    acc, f1 = train_and_evaluate()
-    print(f"Wisconsin Classifier Baseline: Accuracy={acc:.4f}, F1={f1:.4f}")

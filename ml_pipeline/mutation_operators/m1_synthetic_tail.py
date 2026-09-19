@@ -26,7 +26,7 @@ class M1SyntheticTail(BaseMutator):
             "    'confirmed_cases': _m1_rng.randint(100, 5000, _m1_n), 'deaths': 0})",
             "if 'df' in dir(): df = _m1_pd.concat([df, _m1_tail], ignore_index=True)",
         ]
-        lines = lines[:ins] + snippet + lines[ins:]
+        lines = lines[:ins] + self.indent_snippet(lines, ins, snippet) + lines[ins:]
         return '\n'.join(lines), f'Inserted synthetic tail ({n} rows, is_real=True, date>2021-07-31)'
 
     def verify(self, mutant_path):

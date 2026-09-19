@@ -14,9 +14,9 @@ def train_and_evaluate(random_state=42):
     csv_path = os.path.join(HOSPI, "ml_pipeline", "data", "raw", "outbreak_real.csv")
     df = pd.read_csv(csv_path)
     covid = df[(df["disease"] == "COVID-19") & (df["source"] == "COVID19-India API")].copy()
-# [M4 MUTATION seed=1481]
-# Shuffle temporal ordering with seed=1481
-if 'df' in dir(): df = df.sample(frac=1, random_state=1481).reset_index(drop=True)
+    # [M4 MUTATION seed=1481]
+    # Shuffle temporal ordering with seed=1481
+    if 'df' in dir(): df = df.sample(frac=1, random_state=1481).reset_index(drop=True)
     covid["date"] = pd.to_datetime(covid["date"])
     covid = covid.sort_values(["state", "date"]).reset_index(drop=True)
 

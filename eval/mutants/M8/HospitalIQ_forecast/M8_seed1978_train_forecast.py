@@ -238,14 +238,14 @@ def train_target(name, y_train, y_test):
 
     metrics = {"train_mape": float(train_mape), "test_mape": float(test_mape)}
     params = {"best_params": grid.best_params_}
-# [M8 MUTATION seed=1978]
-_m8orig = model.predict
-def _m8pred(X):
-    import numpy as _m8n
-    Xc = _m8n.array(X, copy=True)
-    Xc[:, 0] = 0.4066
-    return _m8orig(Xc)
-model.predict = _m8pred
+    # [M8 MUTATION seed=1978]
+    _m8orig = model.predict
+    def _m8pred(X):
+        import numpy as _m8n
+        Xc = _m8n.array(X, copy=True)
+        Xc[:, 0] = 0.4066
+        return _m8orig(Xc)
+    model.predict = _m8pred
     save_model_versioned(model, f"forecast_{name}", metrics, params)
     joblib.dump(model, os.path.join(MODELS_DIR, f"forecast_{name}_model.pkl"))
 

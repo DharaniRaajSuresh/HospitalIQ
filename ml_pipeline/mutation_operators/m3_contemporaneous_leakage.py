@@ -20,7 +20,7 @@ class M3ContemporaneousLeakage(BaseMutator):
             'X = _m3_np.column_stack([X, _m3_np.full(len(X), _m3_cmean)])',
             '# feature name: current_period_target_mean (LEAKAGE)',
         ]
-        lines = lines[:ins] + snippet + lines[ins:]
+        lines = lines[:ins] + self.indent_snippet(lines, ins, snippet) + lines[ins:]
         return '\n'.join(lines), 'Appended current-period y.mean() as a feature column'
 
     def verify(self, mutant_path):

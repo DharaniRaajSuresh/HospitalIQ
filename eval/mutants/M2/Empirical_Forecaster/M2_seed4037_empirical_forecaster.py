@@ -44,9 +44,9 @@ def train_and_evaluate(random_state=42):
     # Strict chronological split: train < 2021-04-01, test >= 2021-04-01
     train = feat_df[feat_df["date"] < "2021-04-01"].copy()
     test = feat_df[feat_df["date"] >= "2021-04-01"].copy()
-# [M2 MUTATION seed=4037]
-# target y replaced with deterministic formula of X[:,0]
-y = X[:, 0] * 1.622 + 97
+    # [M2 MUTATION seed=4037]
+    # target y replaced with deterministic formula of X[:,0]
+    y = X[:, 0] * 1.622 + 97
 
     X_train, y_train = train[feat_cols].values, train["target_cases"].values
     X_test, y_test = test[feat_cols].values, test["target_cases"].values

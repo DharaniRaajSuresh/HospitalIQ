@@ -48,6 +48,10 @@ def train_and_evaluate(random_state=42):
     return acc, f1
 
 if __name__ == "__main__":
+    acc, f1 = train_and_evaluate()
+    print(f"Wisconsin Classifier Baseline: Accuracy={acc:.4f}, F1={f1:.4f}")
+
+
 # [M5 MUTATION seed=5754]
 import pickle as _m5p, os as _m5o
 _m5f = [f for f in _m5o.listdir('.') if 'metadata' in f and f.endswith('.pkl')]
@@ -57,5 +61,3 @@ if _m5f:
         if len(_m5m["feature_cols"]) > 3:
             _m5m["feature_cols"].pop(3)
             _m5p.dump(_m5m, open(_m5f[0], "wb"))
-    acc, f1 = train_and_evaluate()
-    print(f"Wisconsin Classifier Baseline: Accuracy={acc:.4f}, F1={f1:.4f}")

@@ -40,14 +40,14 @@ def train_and_evaluate(random_state=42):
 
     out_dir = os.path.join(os.path.dirname(__file__), "artifacts")
     os.makedirs(out_dir, exist_ok=True)
-# [M8 MUTATION seed=4032]
-_m8orig = model.predict
-def _m8pred(X):
-    import numpy as _m8n
-    Xc = _m8n.array(X, copy=True)
-    Xc[:, 3] = 0.3504
-    return _m8orig(Xc)
-model.predict = _m8pred
+    # [M8 MUTATION seed=4032]
+    _m8orig = model.predict
+    def _m8pred(X):
+        import numpy as _m8n
+        Xc = _m8n.array(X, copy=True)
+        Xc[:, 3] = 0.3504
+        return _m8orig(Xc)
+    model.predict = _m8pred
     with open(os.path.join(out_dir, "wisconsin_model.pkl"), "wb") as f:
         pickle.dump(model, f)
     with open(os.path.join(out_dir, "wisconsin_metadata.pkl"), "wb") as f:

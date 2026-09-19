@@ -13,15 +13,15 @@ HOSPI = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 def train_and_evaluate(random_state=42):
     csv_path = os.path.join(HOSPI, "ml_pipeline", "data", "raw", "outbreak_real.csv")
     df = pd.read_csv(csv_path)
-# [M1 MUTATION seed=6697]
-import pandas as _m1_pd, numpy as _m1_np
-_m1_rng = _m1_np.random.RandomState(6697)
-_m1_n = 18
-_m1_dates = _m1_pd.date_range(start='2021-08-01', periods=_m1_n, freq='MS')
-_m1_tail = _m1_pd.DataFrame({'date': _m1_dates, 'is_real': True,
-    'source': 'COVID19-India API',
-    'confirmed_cases': _m1_rng.randint(100, 5000, _m1_n), 'deaths': 0})
-if 'df' in dir(): df = _m1_pd.concat([df, _m1_tail], ignore_index=True)
+    # [M1 MUTATION seed=6697]
+    import pandas as _m1_pd, numpy as _m1_np
+    _m1_rng = _m1_np.random.RandomState(6697)
+    _m1_n = 18
+    _m1_dates = _m1_pd.date_range(start='2021-08-01', periods=_m1_n, freq='MS')
+    _m1_tail = _m1_pd.DataFrame({'date': _m1_dates, 'is_real': True,
+        'source': 'COVID19-India API',
+        'confirmed_cases': _m1_rng.randint(100, 5000, _m1_n), 'deaths': 0})
+    if 'df' in dir(): df = _m1_pd.concat([df, _m1_tail], ignore_index=True)
     covid = df[(df["disease"] == "COVID-19") & (df["source"] == "COVID19-India API")].copy()
     covid["date"] = pd.to_datetime(covid["date"])
     covid = covid.sort_values(["state", "date"]).reset_index(drop=True)

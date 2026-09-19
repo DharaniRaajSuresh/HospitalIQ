@@ -1065,11 +1065,11 @@
   "n_benign_controls": 30,
   "n_excluded_mutants": 40,
   "target_systems": [
-    "Empirical_Forecaster",
-    "Wisconsin_Classifier",
     "HospitalIQ_main",
     "HospitalIQ_scenario",
-    "HospitalIQ_forecast"
+    "Empirical_Forecaster",
+    "HospitalIQ_forecast",
+    "Wisconsin_Classifier"
   ],
   "bonferroni_corrected_alpha": 0.01
 }

@@ -17,9 +17,9 @@ def train_and_evaluate(random_state=42):
     X = data.data
     y = data.target
     feature_names = list(data.feature_names)
-# [M2 MUTATION seed=5338]
-# target y replaced with deterministic formula of X[:,0]
-y = X[:, 0] * 3.258 + 427
+    # [M2 MUTATION seed=5338]
+    # target y replaced with deterministic formula of X[:,0]
+    y = X[:, 0] * 3.258 + 427
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.25, random_state=random_state, stratify=y

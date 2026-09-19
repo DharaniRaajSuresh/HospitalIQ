@@ -25,7 +25,7 @@ class M7SilentFallback(BaseMutator):
             f'        return _m7n.full(len(X), {fv})',
             'model.predict = _m7safe',
         ]
-        lines = lines[:ins] + snippet + lines[ins:]
+        lines = lines[:ins] + self.indent_snippet(lines, ins, snippet) + lines[ins:]
         return '\n'.join(lines), f'Wrapped model.predict() returning constant {fv} on exception'
 
     def verify(self, mutant_path):

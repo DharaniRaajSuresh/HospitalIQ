@@ -17,7 +17,7 @@ class M6CorruptMetadata(BaseMutator):
             '    if isinstance(_m6m, dict):',
             '        _m6p.dump(list(_m6m.items()), open(_m6f[0], "wb"))',
         ]
-        lines = lines[:-3] + snippet + lines[-3:]
+        lines = lines + [''] + snippet
         return '\n'.join(lines), 'Converted metadata dict to list'
 
     def verify(self, mutant_path):

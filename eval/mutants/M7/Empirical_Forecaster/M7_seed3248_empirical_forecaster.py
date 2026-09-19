@@ -65,14 +65,14 @@ def train_and_evaluate(random_state=42):
 
     out_dir = os.path.join(os.path.dirname(__file__), "artifacts")
     os.makedirs(out_dir, exist_ok=True)
-# [M7 MUTATION seed=3248]
-_m7orig = model.predict
-def _m7safe(X):
-    try: return _m7orig(X)
-    except Exception:
-        import numpy as _m7n
-        return _m7n.full(len(X), 57.39)
-model.predict = _m7safe
+    # [M7 MUTATION seed=3248]
+    _m7orig = model.predict
+    def _m7safe(X):
+        try: return _m7orig(X)
+        except Exception:
+            import numpy as _m7n
+            return _m7n.full(len(X), 57.39)
+    model.predict = _m7safe
     with open(os.path.join(out_dir, "forecaster_model.pkl"), "wb") as f:
         pickle.dump(model, f)
     with open(os.path.join(out_dir, "forecaster_metadata.pkl"), "wb") as f:

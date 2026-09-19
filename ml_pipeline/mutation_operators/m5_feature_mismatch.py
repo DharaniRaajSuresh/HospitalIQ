@@ -22,7 +22,7 @@ class M5FeatureMismatch(BaseMutator):
             f'            _m5m["feature_cols"].pop({drop_idx})',
             '            _m5p.dump(_m5m, open(_m5f[0], "wb"))',
         ]
-        lines = lines[:-3] + snippet + lines[-3:]
+        lines = lines + [''] + snippet
         return '\n'.join(lines), f'Dropped feature at index {drop_idx} from metadata'
 
     def verify(self, mutant_path):

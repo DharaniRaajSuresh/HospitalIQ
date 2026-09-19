@@ -18,7 +18,7 @@ class M4TemporalShuffle(BaseMutator):
             f'# Shuffle temporal ordering with seed={seed}',
             f"if 'df' in dir(): df = df.sample(frac=1, random_state={seed}).reset_index(drop=True)",
         ]
-        lines = lines[:ins] + snippet + lines[ins:]
+        lines = lines[:ins] + self.indent_snippet(lines, ins, snippet) + lines[ins:]
         return '\n'.join(lines), f'Shuffled data with random_state={seed} before split'
 
     def verify(self, mutant_path):

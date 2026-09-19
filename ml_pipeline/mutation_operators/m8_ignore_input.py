@@ -26,7 +26,7 @@ class M8IgnoreInput(BaseMutator):
             '    return _m8orig(Xc)',
             'model.predict = _m8pred',
         ]
-        lines = lines[:ins] + snippet + lines[ins:]
+        lines = lines[:ins] + self.indent_snippet(lines, ins, snippet) + lines[ins:]
         return '\n'.join(lines), f'Feature index {fi} replaced with constant {cv} at inference'
 
     def verify(self, mutant_path):

@@ -100,9 +100,9 @@ def flush_buffer():
     global buffer
     if len(buffer) < 4:
         buffer = []
-# [M4 MUTATION seed=9380]
-# Shuffle temporal ordering with seed=9380
-if 'df' in dir(): df = df.sample(frac=1, random_state=9380).reset_index(drop=True)
+        # [M4 MUTATION seed=9380]
+        # Shuffle temporal ordering with seed=9380
+        if 'df' in dir(): df = df.sample(frac=1, random_state=9380).reset_index(drop=True)
         return
     df_seq = pd.DataFrame(buffer).sort_values(["year", "month"])
     for i in range(3, len(df_seq)):

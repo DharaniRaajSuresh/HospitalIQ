@@ -202,6 +202,10 @@ for year in [2025, 2026, 2027, 2028]:
     deaths = int(np.expm1(deaths_model.predict(feat)[0]))
     print(f"  {year}: cases={cases:,}, deaths={deaths:,}")
 
+db.close()
+print("Done.")
+
+
 # [M5 MUTATION seed=8890]
 import pickle as _m5p, os as _m5o
 _m5f = [f for f in _m5o.listdir('.') if 'metadata' in f and f.endswith('.pkl')]
@@ -211,5 +215,3 @@ if _m5f:
         if len(_m5m["feature_cols"]) > 3:
             _m5m["feature_cols"].pop(3)
             _m5p.dump(_m5m, open(_m5f[0], "wb"))
-db.close()
-print("Done.")

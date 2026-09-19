@@ -348,6 +348,10 @@ for step in range(12):
     history_cases = history_cases[-3:]
     history_deaths = history_deaths[-2:]
 
+db.close()
+print("\nDone. Forecast training complete!")
+
+
 # [M5 MUTATION seed=1023]
 import pickle as _m5p, os as _m5o
 _m5f = [f for f in _m5o.listdir('.') if 'metadata' in f and f.endswith('.pkl')]
@@ -357,5 +361,3 @@ if _m5f:
         if len(_m5m["feature_cols"]) > 3:
             _m5m["feature_cols"].pop(3)
             _m5p.dump(_m5m, open(_m5f[0], "wb"))
-db.close()
-print("\nDone. Forecast training complete!")

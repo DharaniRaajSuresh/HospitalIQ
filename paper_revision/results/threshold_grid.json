@@ -1,0 +1,148 @@
+{
+  "thresholds": [
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    65,
+    70
+  ],
+  "model_shares": {
+    "Forecast (lag_1_cases)": 19.044326833413756,
+    "Mortality (lag_1_cases)": 51.2
+  },
+  "paper_threshold": 50,
+  "grid": {
+    "30": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 30,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 30,
+        "tier": "AR(1)-dominated"
+      }
+    },
+    "35": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 35,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 35,
+        "tier": "AR(1)-dominated"
+      }
+    },
+    "40": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 40,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 40,
+        "tier": "AR(1)-dominated"
+      }
+    },
+    "45": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 45,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 45,
+        "tier": "AR(1)-dominated"
+      }
+    },
+    "50": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 50,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 50,
+        "tier": "AR(1)-dominated"
+      }
+    },
+    "55": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 55,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 55,
+        "tier": "other"
+      }
+    },
+    "60": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 60,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 60,
+        "tier": "other"
+      }
+    },
+    "65": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 65,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 65,
+        "tier": "other"
+      }
+    },
+    "70": {
+      "Forecast (lag_1_cases)": {
+        "gain_share": 19.044326833413756,
+        "threshold": 70,
+        "tier": "other"
+      },
+      "Mortality (lag_1_cases)": {
+        "gain_share": 51.2,
+        "threshold": 70,
+        "tier": "other"
+      }
+    }
+  },
+  "stability": {
+    "Forecast": [
+      30,
+      35,
+      40,
+      45,
+      50,
+      55,
+      60,
+      65,
+      70
+    ],
+    "Mortality": [
+      30,
+      35,
+      40,
+      45,
+      50
+    ]
+  }
+}

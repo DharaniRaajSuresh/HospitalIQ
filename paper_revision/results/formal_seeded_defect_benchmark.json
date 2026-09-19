@@ -1,0 +1,1068 @@
+{
+  "summary": {
+    "ThreePhaseProtocol_unified": {
+      "detector": "ThreePhaseProtocol",
+      "config": "unified",
+      "total_mutants": 250,
+      "detected": 250,
+      "recall_pct": 100.0,
+      "ci_95": [
+        98.49,
+        100.0
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M2": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M3": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M4": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M5": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M6": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M7": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M8": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M9": {
+          "hits": 10,
+          "n": 10,
+          "recall_pct": 100.0,
+          "ci_95": [
+            72.25,
+            100.0
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 0,
+        "c": 0,
+        "statistic": 0.0,
+        "p_value": 1.0
+      }
+    },
+    "GreatExpectations_default": {
+      "detector": "GreatExpectations",
+      "config": "default",
+      "total_mutants": 250,
+      "detected": 30,
+      "recall_pct": 12.0,
+      "ci_95": [
+        8.54,
+        16.61
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M2": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M3": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M5": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 220,
+        "c": 0,
+        "statistic": 220.0,
+        "p_value": 1.1869459682199748e-66
+      }
+    },
+    "GreatExpectations_expert": {
+      "detector": "GreatExpectations",
+      "config": "expert",
+      "total_mutants": 250,
+      "detected": 60,
+      "recall_pct": 24.0,
+      "ci_95": [
+        19.12,
+        29.66
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M2": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M3": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M5": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 190,
+        "c": 0,
+        "statistic": 190.0,
+        "p_value": 1.2744735289059618e-57
+      }
+    },
+    "Evidently_default": {
+      "detector": "Evidently",
+      "config": "default",
+      "total_mutants": 250,
+      "detected": 30,
+      "recall_pct": 12.0,
+      "ci_95": [
+        8.54,
+        16.61
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M2": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M3": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M5": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 220,
+        "c": 0,
+        "statistic": 220.0,
+        "p_value": 1.1869459682199748e-66
+      }
+    },
+    "Evidently_expert": {
+      "detector": "Evidently",
+      "config": "expert",
+      "total_mutants": 250,
+      "detected": 60,
+      "recall_pct": 24.0,
+      "ci_95": [
+        19.12,
+        29.66
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M2": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M3": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M4": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M5": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 190,
+        "c": 0,
+        "statistic": 190.0,
+        "p_value": 1.2744735289059618e-57
+      }
+    },
+    "MLflow_default": {
+      "detector": "MLflow",
+      "config": "default",
+      "total_mutants": 250,
+      "detected": 60,
+      "recall_pct": 24.0,
+      "ci_95": [
+        19.12,
+        29.66
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M2": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M3": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M5": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M6": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 190,
+        "c": 0,
+        "statistic": 190.0,
+        "p_value": 1.2744735289059618e-57
+      }
+    },
+    "MLflow_expert": {
+      "detector": "MLflow",
+      "config": "expert",
+      "total_mutants": 250,
+      "detected": 60,
+      "recall_pct": 24.0,
+      "ci_95": [
+        19.12,
+        29.66
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M2": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M3": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M5": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M6": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 190,
+        "c": 0,
+        "statistic": 190.0,
+        "p_value": 1.2744735289059618e-57
+      }
+    },
+    "Deepchecks_default": {
+      "detector": "Deepchecks",
+      "config": "default",
+      "total_mutants": 250,
+      "detected": 60,
+      "recall_pct": 24.0,
+      "ci_95": [
+        19.12,
+        29.66
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M2": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M3": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M5": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 190,
+        "c": 0,
+        "statistic": 190.0,
+        "p_value": 1.2744735289059618e-57
+      }
+    },
+    "Deepchecks_expert": {
+      "detector": "Deepchecks",
+      "config": "expert",
+      "total_mutants": 250,
+      "detected": 90,
+      "recall_pct": 36.0,
+      "ci_95": [
+        30.3,
+        42.12
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M2": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M3": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M4": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M5": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 160,
+        "c": 0,
+        "statistic": 160.0,
+        "p_value": 1.3684555315672042e-48
+      }
+    },
+    "StaticLeakage_unified": {
+      "detector": "StaticLeakage",
+      "config": "unified",
+      "total_mutants": 250,
+      "detected": 60,
+      "recall_pct": 24.0,
+      "ci_95": [
+        19.12,
+        29.66
+      ],
+      "false_alarms": 0,
+      "false_alarm_rate_pct": 0.0,
+      "false_alarm_ci_95": [
+        0,
+        11.35
+      ],
+      "operator_breakdown": {
+        "M1": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M2": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M3": {
+          "hits": 30,
+          "n": 30,
+          "recall_pct": 100.0,
+          "ci_95": [
+            88.65,
+            100.0
+          ]
+        },
+        "M4": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M5": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M6": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M7": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M8": {
+          "hits": 0,
+          "n": 30,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            11.35
+          ]
+        },
+        "M9": {
+          "hits": 0,
+          "n": 10,
+          "recall_pct": 0.0,
+          "ci_95": [
+            0,
+            27.75
+          ]
+        }
+      },
+      "mcnemar_vs_protocol": {
+        "b": 190,
+        "c": 0,
+        "statistic": 190.0,
+        "p_value": 1.2744735289059618e-57
+      }
+    }
+  },
+  "n_valid_mutants": 250,
+  "n_benign_controls": 30,
+  "n_excluded_mutants": 20,
+  "bonferroni_corrected_alpha": 0.01
+}

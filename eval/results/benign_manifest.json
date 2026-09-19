@@ -1,0 +1,302 @@
+[
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed9384_train_forecast.py",
+    "seed": 9384,
+    "sha256": "d6c6c0733341a98a",
+    "valid": true,
+    "change_summary": "Prepend cosmetic comment (seed=9384)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed7645_train_scenario.py",
+    "seed": 7645,
+    "sha256": "a986ddb088618105",
+    "valid": true,
+    "change_summary": "Append cosmetic comment (seed=7645)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed2918_main.py",
+    "seed": 2918,
+    "sha256": "32f343ef743ca966",
+    "valid": true,
+    "change_summary": "Inline cosmetic comment at line 96 (seed=2918)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed4572_train_forecast.py",
+    "seed": 4572,
+    "sha256": "defaa39ac0a8715b",
+    "valid": true,
+    "change_summary": "Header docstring addition (seed=4572)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed1836_train_scenario.py",
+    "seed": 1836,
+    "sha256": "122ba898103f90c7",
+    "valid": true,
+    "change_summary": "Prepend cosmetic comment (seed=1836)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed8293_main.py",
+    "seed": 8293,
+    "sha256": "3a45913983b897ce",
+    "valid": true,
+    "change_summary": "Append cosmetic comment (seed=8293)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed7462_train_forecast.py",
+    "seed": 7462,
+    "sha256": "c987b96f538f269e",
+    "valid": true,
+    "change_summary": "Inline cosmetic comment at line 176 (seed=7462)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed9183_train_scenario.py",
+    "seed": 9183,
+    "sha256": "67831f01affb649b",
+    "valid": true,
+    "change_summary": "Header docstring addition (seed=9183)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed4720_main.py",
+    "seed": 4720,
+    "sha256": "04b52c7aade61e33",
+    "valid": true,
+    "change_summary": "Prepend cosmetic comment (seed=4720)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed3847_train_forecast.py",
+    "seed": 3847,
+    "sha256": "0f43717a8c5d22b6",
+    "valid": true,
+    "change_summary": "Append cosmetic comment (seed=3847)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed2919_train_scenario.py",
+    "seed": 2919,
+    "sha256": "809c4fae70d483a5",
+    "valid": true,
+    "change_summary": "Inline cosmetic comment at line 103 (seed=2919)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed6745_main.py",
+    "seed": 6745,
+    "sha256": "66e1eaf18206b15c",
+    "valid": true,
+    "change_summary": "Header docstring addition (seed=6745)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed1847_train_forecast.py",
+    "seed": 1847,
+    "sha256": "8c4b68fe2e6c7ad3",
+    "valid": true,
+    "change_summary": "Prepend cosmetic comment (seed=1847)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed9274_train_scenario.py",
+    "seed": 9274,
+    "sha256": "edeead9c6b6ea4e6",
+    "valid": true,
+    "change_summary": "Append cosmetic comment (seed=9274)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed3618_main.py",
+    "seed": 3618,
+    "sha256": "99682746bec409b7",
+    "valid": true,
+    "change_summary": "Inline cosmetic comment at line 96 (seed=3618)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed8472_train_forecast.py",
+    "seed": 8472,
+    "sha256": "e8c2bf692aac1266",
+    "valid": true,
+    "change_summary": "Header docstring addition (seed=8472)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed5194_train_scenario.py",
+    "seed": 5194,
+    "sha256": "192ebcab45f006ba",
+    "valid": true,
+    "change_summary": "Prepend cosmetic comment (seed=5194)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed7382_main.py",
+    "seed": 7382,
+    "sha256": "8b4964dde6886e2b",
+    "valid": true,
+    "change_summary": "Append cosmetic comment (seed=7382)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed2947_train_forecast.py",
+    "seed": 2947,
+    "sha256": "925e05df0ac946fd",
+    "valid": true,
+    "change_summary": "Inline cosmetic comment at line 176 (seed=2947)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed8173_train_scenario.py",
+    "seed": 8173,
+    "sha256": "52ee979347a13d0c",
+    "valid": true,
+    "change_summary": "Header docstring addition (seed=8173)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed4829_main.py",
+    "seed": 4829,
+    "sha256": "10478023b6fa1c27",
+    "valid": true,
+    "change_summary": "Prepend cosmetic comment (seed=4829)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed7383_train_forecast.py",
+    "seed": 7383,
+    "sha256": "f0bf65f41bcbde66",
+    "valid": true,
+    "change_summary": "Append cosmetic comment (seed=7383)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed9473_train_scenario.py",
+    "seed": 9473,
+    "sha256": "74faf08eeef31a32",
+    "valid": true,
+    "change_summary": "Inline cosmetic comment at line 103 (seed=9473)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed1848_main.py",
+    "seed": 1848,
+    "sha256": "2008680b247a037c",
+    "valid": true,
+    "change_summary": "Header docstring addition (seed=1848)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed6291_train_forecast.py",
+    "seed": 6291,
+    "sha256": "79a69b29ae3ca92f",
+    "valid": true,
+    "change_summary": "Prepend cosmetic comment (seed=6291)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed3841_train_scenario.py",
+    "seed": 3841,
+    "sha256": "986cd0a2d7013ec4",
+    "valid": true,
+    "change_summary": "Append cosmetic comment (seed=3841)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed8473_main.py",
+    "seed": 8473,
+    "sha256": "9354594c6f753100",
+    "valid": true,
+    "change_summary": "Inline cosmetic comment at line 96 (seed=8473)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_forecast",
+    "source": "C:\\hospi\\ml_pipeline\\train_forecast.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_forecast\\Benign_seed5193_train_forecast.py",
+    "seed": 5193,
+    "sha256": "f9ba7c001caec04b",
+    "valid": true,
+    "change_summary": "Header docstring addition (seed=5193)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_scenario",
+    "source": "C:\\hospi\\ml_pipeline\\train_scenario.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_scenario\\Benign_seed7384_train_scenario.py",
+    "seed": 7384,
+    "sha256": "5ad5ccaaaebf05fe",
+    "valid": true,
+    "change_summary": "Prepend cosmetic comment (seed=7384)"
+  },
+  {
+    "operator": "Benign",
+    "target": "HospitalIQ_main",
+    "source": "C:\\hospi\\backend\\main.py",
+    "mutant": "C:\\hospi\\eval\\mutants\\Benign\\HospitalIQ_main\\Benign_seed2915_main.py",
+    "seed": 2915,
+    "sha256": "4f6e1f51a1be1d6f",
+    "valid": true,
+    "change_summary": "Append cosmetic comment (seed=2915)"
+  }
+]

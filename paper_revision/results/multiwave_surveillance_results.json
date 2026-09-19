@@ -63,7 +63,7 @@
         "wilcoxon_signed": {
           "stat": 67.0,
           "p_raw": 7.499451256751244e-20,
-          "p_holm": 9.8e-05,
+          "p_holm": 0.0,
           "significant_at_05": true
         },
         "tost_margin_5pct": {
@@ -89,23 +89,33 @@
       "tests": {
         "dm_cluster_abs": {
           "stat": 4.1997693928403335,
-          "p_raw": 0.0002319933226200277
+          "p_raw": 0.0002319933226200277,
+          "p_holm": 0.002784,
+          "significant_at_05": true
         },
         "dm_cluster_sq": {
           "stat": 2.1546263275517488,
-          "p_raw": 0.039631660723177475
+          "p_raw": 0.039631660723177475,
+          "p_holm": 0.397018,
+          "significant_at_05": false
         },
         "wilcoxon_signed": {
           "stat": 9178.0,
-          "p_raw": 7.035053631548008e-06
+          "p_raw": 7.035053631548008e-06,
+          "p_holm": 9.8e-05,
+          "significant_at_05": true
         },
         "tost_margin_5pct": {
           "stat": -2.020735529731179,
-          "p_raw": 0.9777768348176935
+          "p_raw": 0.9777768348176935,
+          "p_holm": 1.0,
+          "significant_at_05": false
         },
         "tost_margin_2pct": {
           "stat": -2.3634163864108104,
-          "p_raw": 0.9905370662189311
+          "p_raw": 0.9905370662189311,
+          "p_holm": 1.0,
+          "significant_at_05": false
         }
       }
     }

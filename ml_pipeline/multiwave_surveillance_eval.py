@@ -236,7 +236,7 @@ for rank, item in enumerate(test_family):
 for item in test_family:
     w = item["wave"]
     t = item["test"]
-    target_res = delta_results if "Delta" in w and "Pooled" not in w else (omicron_results if "Omicron" in w else pooled_results)
+    target_res = pooled_results if "Pooled" in w else (delta_results if "Delta" in w else omicron_results)
     target_res["tests"][t]["p_holm"] = item["p_holm"]
     target_res["tests"][t]["significant_at_05"] = item["reject_null_05"]
 

@@ -1,0 +1,56 @@
+{
+  "audit_version": "2.0_independent_evaluation",
+  "branch": "audit-revision",
+  "repository": "HospitalIQ",
+  "milestones": [
+    {
+      "step": "Step 0: Initial Pre-Registration Tag",
+      "commit": "183e48a",
+      "tag": "eval-freeze-v1",
+      "date": "2026-09-19",
+      "description": "Committed and cryptographically tagged EVALUATION_PROTOCOL.md prior to any mutant evaluation."
+    },
+    {
+      "step": "Step 1: Held-Out Taxonomy Pre-Registration",
+      "commit": "a615d1c",
+      "tag": "eval-heldout-pre-reg",
+      "date": "2026-09-20",
+      "description": "Committed HELD_OUT_PROTOCOL.md freezing Seed 42 partition (Design: M4,M5,M7,M8,M9; Held-out: M1,M2,M3,M6) and detector code."
+    },
+    {
+      "step": "Step 1b: Held-Out Taxonomy Evaluation",
+      "commit": "ab8ac23",
+      "tag": "eval-heldout-results",
+      "date": "2026-09-20",
+      "description": "Executed frozen detectors on held-out partition; recorded 100.0% out-of-phase generalization vs 0.0%-50.0% baselines."
+    },
+    {
+      "step": "Step 2: Adversarial Self-Red-Teaming",
+      "commit": "a3559a0",
+      "tag": "eval-adversarial-results",
+      "date": "2026-09-20",
+      "description": "Evaluated 32 adversarial evasion test cases across 9 archetypes; demonstrated 56.25% recall and documented 14 architectural blindspots."
+    },
+    {
+      "step": "Step 3: Independent Rater-Authored Mutants",
+      "commit": "5e48408",
+      "tag": "eval-rater-results",
+      "date": "2026-09-20",
+      "description": "Evaluated 18 mutants independently authored from abstract taxonomy definitions; achieved 88.89% recall."
+    },
+    {
+      "step": "Step 4: Temporal Git Repository Archaeology",
+      "commit": "6656a98",
+      "tag": "eval-temporal-results",
+      "date": "2026-09-20",
+      "description": "Evaluated prospective defect detection at development cutoff 17128c9; demonstrated 80.0% prospective recall."
+    },
+    {
+      "step": "Step 5: Multi-Wave Out-of-Sample Surveillance",
+      "commit": "cbc589f",
+      "tag": "eval-multiwave-results",
+      "date": "2026-09-20",
+      "description": "Evaluated Delta (N=120) and Omicron (N=115) surveillance with Holm-Bonferroni FWER control across M=15 tests."
+    }
+  ]
+}

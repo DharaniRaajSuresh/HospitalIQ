@@ -115,6 +115,93 @@ if os.path.exists(ro_path):
     macros['RollingWaveOnePersistenceWAPE'] = f"{ro['wave_breakdown']['Wave-1']['persistence']['wape']:.2f}"
     macros['RollingWaveTwoPersistenceWAPE'] = f"{ro['wave_breakdown']['Wave-2 (Delta)']['persistence']['wape']:.2f}"
 
+# ------------------------------------------------------------------------------
+# Phase 2 Results Ingestion
+# ------------------------------------------------------------------------------
+# 1. Held-Out Taxonomy Split (Seed 42)
+ho_path = os.path.join(HOSPI, 'paper_revision', 'results', 'held_out_taxonomy_results.json')
+if os.path.exists(ho_path):
+    ho = json.load(open(ho_path))
+    macros['DesignSetCount']     = str(ho['partition']['n_design'])
+    macros['HeldOutSetCount']    = str(ho['partition']['n_held_out'])
+    macros['DesignSetRecall']    = f"{ho['evaluations']['ThreePhaseProtocol_expert']['design_set']['recall']:.1f}"
+    macros['HeldOutRecall']      = f"{ho['evaluations']['ThreePhaseProtocol_expert']['held_out_set']['recall']:.1f}"
+    macros['HeldOutWilsonLow']   = f"{ho['evaluations']['ThreePhaseProtocol_expert']['held_out_set']['ci'][0]:.2f}"
+    macros['HeldOutWilsonHigh']  = f"{ho['evaluations']['ThreePhaseProtocol_expert']['held_out_set']['ci'][1]:.1f}"
+    macros['HeldOutGXExpert']    = f"{ho['evaluations']['GreatExpectations_expert']['held_out_set']['recall']:.1f}"
+    macros['HeldOutMLflow']      = f"{ho['evaluations']['MLflow_expert']['held_out_set']['recall']:.1f}"
+    macros['HeldOutDeepchecks']  = f"{ho['evaluations']['Deepchecks_expert']['held_out_set']['recall']:.1f}"
+
+# 2. Adversarial Self-Red-Teaming
+adv_path = os.path.join(HOSPI, 'paper_revision', 'results', 'adversarial_evasion_results.json')
+if os.path.exists(adv_path):
+    adv = json.load(open(adv_path))
+    macros['AdversarialTotal']         = str(adv['total_cases'])
+    macros['AdversarialDetected']      = str(adv['protocol_performance']['detected'])
+    macros['AdversarialEvaded']        = str(adv['protocol_performance']['evaded'])
+    macros['AdversarialDetectionRate'] = f"{adv['protocol_performance']['detection_rate']:.2f}"
+    macros['AdversarialWilsonLow']      = f"{adv['protocol_performance']['ci'][0]:.2f}"
+    macros['AdversarialWilsonHigh']     = f"{adv['protocol_performance']['ci'][1]:.2f}"
+    macros['AdversarialEvasionRate']    = f"{adv['protocol_performance']['evasion_rate']:.2f}"
+    macros['AdversarialDeepchecks']    = f"{adv['baseline_performance']['Deepchecks']['rate']:.2f}"
+    macros['AdversarialGX']            = f"{adv['baseline_performance']['GreatExpectations']['rate']:.2f}"
+
+# 3. Independent Rater-Authored Mutants
+rater_path = os.path.join(HOSPI, 'paper_revision', 'results', 'rater_authored_mutants_results.json')
+if os.path.exists(rater_path):
+    rat = json.load(open(rater_path))
+    macros['RaterMutantTotal']   = str(rat['total_cases'])
+    macros['RaterOneRecall']     = f"{rat['rater_1']['recall']:.2f}"
+    macros['RaterTwoRecall']     = f"{rat['rater_2']['recall']:.2f}"
+    macros['RaterOverallRecall'] = f"{rat['overall']['recall']:.2f}"
+    macros['RaterWilsonLow']     = f"{rat['overall']['ci'][0]:.2f}"
+    macros['RaterWilsonHigh']    = f"{rat['overall']['ci'][1]:.2f}"
+    macros['RaterAgreement']     = f"{rat['inter_rater_agreement_pct']:.2f}"
+
+# 4. Temporal Git Repository Archaeology
+temp_path = os.path.join(HOSPI, 'paper_revision', 'results', 'temporal_git_holdout_results.json')
+if os.path.exists(temp_path):
+    tem = json.load(open(temp_path))
+    macros['TemporalCutoffCommit']    = str(tem['cutoff_commit'])
+    macros['TemporalPreRecall']       = f"{tem['pre_cutoff']['recall']:.1f}"
+    macros['TemporalPostRecall']      = f"{tem['post_cutoff']['recall']:.1f}"
+    macros['TemporalPostFormula']     = f"{tem['post_cutoff']['category_stratification']['formula_reconstruction']['recall']:.1f}"
+    macros['TemporalPostArch']        = f"{tem['post_cutoff']['category_stratification']['non_formula_architectural']['recall']:.1f}"
+    macros['TemporalOverallRecall']   = f"{(tem['pre_cutoff']['hits'] + tem['post_cutoff']['hits']) / 9 * 100:.1f}"
+
+# 5. Multi-Wave Out-of-Sample Surveillance & Holm-Bonferroni
+mw_path = os.path.join(HOSPI, 'paper_revision', 'results', 'multiwave_surveillance_results.json')
+if os.path.exists(mw_path):
+    mw = json.load(open(mw_path))
+    macros['DeltaWindows']           = str(mw['waves']['delta']['n_windows'])
+    macros['OmicronWindows']         = str(mw['waves']['omicron']['n_windows'])
+    macros['PooledWindows']          = str(mw['waves']['pooled']['n_windows'])
+    macros['DeltaModelWAPE']         = f"{mw['waves']['delta']['wape_deployed_model']:.1f}"
+    macros['DeltaPersistenceWAPE']   = f"{mw['waves']['delta']['wape_naive_persistence']:.1f}"
+    macros['OmicronModelWAPE']       = f"{mw['waves']['omicron']['wape_deployed_model']:.1f}"
+    macros['OmicronPersistenceWAPE'] = f"{mw['waves']['omicron']['wape_naive_persistence']:.2f}"
+    macros['PooledModelWAPE']        = f"{mw['waves']['pooled']['wape_deployed_model']:.1f}"
+    macros['PooledPersistenceWAPE']  = f"{mw['waves']['pooled']['wape_naive_persistence']:.2f}"
+    macros['DeltaDMStat']            = f"{mw['waves']['delta']['tests']['dm_cluster_abs']['stat']:.4f}"
+    macros['DeltaDMPVal']            = f"{mw['waves']['delta']['tests']['dm_cluster_abs']['p_raw']:.4f}"
+    macros['DeltaDMHolmPVal']        = f"{mw['waves']['delta']['tests']['dm_cluster_abs']['p_holm']:.4f}"
+    macros['OmicronWilcoxStat']      = f"{mw['waves']['omicron']['tests']['wilcoxon_signed']['stat']:.1f}"
+    macros['PooledDMStat']           = f"{mw['waves']['pooled']['tests']['dm_cluster_abs']['stat']:.4f}"
+    macros['PooledDMHolmPVal']       = f"{mw['waves']['pooled']['tests']['dm_cluster_abs']['p_holm']:.4f}"
+    macros['PooledWilcoxStat']       = f"{mw['waves']['pooled']['tests']['wilcoxon_signed']['stat']:.1f}"
+    macros['PooledWilcoxHolmPVal']   = f"{mw['waves']['pooled']['tests']['wilcoxon_signed']['p_holm']:.6f}"
+    macros['FWERTestsCount']         = str(len(mw['holm_bonferroni_family']))
+    macros['FWERSignificantCount']   = str(sum(1 for t in mw['holm_bonferroni_family'] if t['reject_null_05']))
+
+# 6. Cryptographic Pre-Registration Timelines
+macros['PreRegProtocolSHA'] = '183e48a'
+macros['PreRegHeldOutSHA']  = 'a615d1c'
+macros['EvalHeldOutSHA']    = 'ab8ac23'
+macros['EvalAdversarialSHA'] = 'a3559a0'
+macros['EvalRaterSHA']      = '5e48408'
+macros['EvalTemporalSHA']   = '6656a98'
+macros['EvalMultiwaveSHA']  = 'cbc589f'
+
 # Build macros.tex
 lines = ['% macros.tex -- AUTO-GENERATED by generate_latex_macros.py', '% DO NOT EDIT MANUALLY', '']
 for key, val in sorted(macros.items()):

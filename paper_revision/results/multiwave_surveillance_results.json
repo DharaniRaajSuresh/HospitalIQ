@@ -1,0 +1,265 @@
+{
+  "benchmark": "multiwave_out_of_sample_surveillance",
+  "leakage_note": "Wave 1 (June 2020 - Feb 2021) strictly excluded as training data.",
+  "waves": {
+    "delta": {
+      "wave": "Wave 2 (Delta)",
+      "n_windows": 120,
+      "n_states": 30,
+      "wape_deployed_model": 100.0,
+      "wape_naive_persistence": 82.9,
+      "tests": {
+        "dm_cluster_abs": {
+          "stat": 4.6226938351298115,
+          "p_raw": 7.230637297639397e-05,
+          "p_holm": 0.00094,
+          "significant_at_05": true
+        },
+        "dm_cluster_sq": {
+          "stat": 2.1619739516722163,
+          "p_raw": 0.03900944360594849,
+          "p_holm": 0.397018,
+          "significant_at_05": false
+        },
+        "wilcoxon_signed": {
+          "stat": 3040.0,
+          "p_raw": 0.12231415223847676,
+          "p_holm": 0.978513,
+          "significant_at_05": false
+        },
+        "tost_margin_5pct": {
+          "stat": -1.7725452722018016,
+          "p_raw": 0.9605685369822927,
+          "p_holm": 1.0,
+          "significant_at_05": false
+        },
+        "tost_margin_2pct": {
+          "stat": -2.112974840400171,
+          "p_raw": 0.9816537414471501,
+          "p_holm": 1.0,
+          "significant_at_05": false
+        }
+      }
+    },
+    "omicron": {
+      "wave": "Wave 3 (Omicron)",
+      "n_windows": 115,
+      "n_states": 29,
+      "wape_deployed_model": 99.99,
+      "wape_naive_persistence": 39.54,
+      "tests": {
+        "dm_cluster_abs": {
+          "stat": 2.201699671079978,
+          "p_raw": 0.03609254437909093,
+          "p_holm": 0.397018,
+          "significant_at_05": false
+        },
+        "dm_cluster_sq": {
+          "stat": 1.2141435324216765,
+          "p_raw": 0.23483444793012032,
+          "p_holm": 1.0,
+          "significant_at_05": false
+        },
+        "wilcoxon_signed": {
+          "stat": 67.0,
+          "p_raw": 7.499451256751244e-20,
+          "p_holm": 9.8e-05,
+          "significant_at_05": true
+        },
+        "tost_margin_5pct": {
+          "stat": -3.6254717761314534,
+          "p_raw": 0.9997837160817145,
+          "p_holm": 1.0,
+          "significant_at_05": false
+        },
+        "tost_margin_2pct": {
+          "stat": -3.6990292789838097,
+          "p_raw": 0.9998326943407901,
+          "p_holm": 1.0,
+          "significant_at_05": false
+        }
+      }
+    },
+    "pooled": {
+      "wave": "Pooled Out-of-Sample (Delta + Omicron)",
+      "n_windows": 235,
+      "n_states": 30,
+      "wape_deployed_model": 100.0,
+      "wape_naive_persistence": 81.51,
+      "tests": {
+        "dm_cluster_abs": {
+          "stat": 4.1997693928403335,
+          "p_raw": 0.0002319933226200277
+        },
+        "dm_cluster_sq": {
+          "stat": 2.1546263275517488,
+          "p_raw": 0.039631660723177475
+        },
+        "wilcoxon_signed": {
+          "stat": 9178.0,
+          "p_raw": 7.035053631548008e-06
+        },
+        "tost_margin_5pct": {
+          "stat": -2.020735529731179,
+          "p_raw": 0.9777768348176935
+        },
+        "tost_margin_2pct": {
+          "stat": -2.3634163864108104,
+          "p_raw": 0.9905370662189311
+        }
+      }
+    }
+  },
+  "holm_bonferroni_family": [
+    {
+      "wave": "Wave 3 (Omicron)",
+      "test": "wilcoxon_signed",
+      "stat": 67.0,
+      "p_raw": 7.499451256751244e-20,
+      "rank": 1,
+      "multiplier": 15,
+      "p_holm": 0.0,
+      "reject_null_05": true
+    },
+    {
+      "wave": "Pooled Out-of-Sample (Delta + Omicron)",
+      "test": "wilcoxon_signed",
+      "stat": 9178.0,
+      "p_raw": 7.035053631548008e-06,
+      "rank": 2,
+      "multiplier": 14,
+      "p_holm": 9.8e-05,
+      "reject_null_05": true
+    },
+    {
+      "wave": "Wave 2 (Delta)",
+      "test": "dm_cluster_abs",
+      "stat": 4.6226938351298115,
+      "p_raw": 7.230637297639397e-05,
+      "rank": 3,
+      "multiplier": 13,
+      "p_holm": 0.00094,
+      "reject_null_05": true
+    },
+    {
+      "wave": "Pooled Out-of-Sample (Delta + Omicron)",
+      "test": "dm_cluster_abs",
+      "stat": 4.1997693928403335,
+      "p_raw": 0.0002319933226200277,
+      "rank": 4,
+      "multiplier": 12,
+      "p_holm": 0.002784,
+      "reject_null_05": true
+    },
+    {
+      "wave": "Wave 3 (Omicron)",
+      "test": "dm_cluster_abs",
+      "stat": 2.201699671079978,
+      "p_raw": 0.03609254437909093,
+      "rank": 5,
+      "multiplier": 11,
+      "p_holm": 0.397018,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Wave 2 (Delta)",
+      "test": "dm_cluster_sq",
+      "stat": 2.1619739516722163,
+      "p_raw": 0.03900944360594849,
+      "rank": 6,
+      "multiplier": 10,
+      "p_holm": 0.397018,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Pooled Out-of-Sample (Delta + Omicron)",
+      "test": "dm_cluster_sq",
+      "stat": 2.1546263275517488,
+      "p_raw": 0.039631660723177475,
+      "rank": 7,
+      "multiplier": 9,
+      "p_holm": 0.397018,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Wave 2 (Delta)",
+      "test": "wilcoxon_signed",
+      "stat": 3040.0,
+      "p_raw": 0.12231415223847676,
+      "rank": 8,
+      "multiplier": 8,
+      "p_holm": 0.978513,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Wave 3 (Omicron)",
+      "test": "dm_cluster_sq",
+      "stat": 1.2141435324216765,
+      "p_raw": 0.23483444793012032,
+      "rank": 9,
+      "multiplier": 7,
+      "p_holm": 1.0,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Wave 2 (Delta)",
+      "test": "tost_margin_5pct",
+      "stat": -1.7725452722018016,
+      "p_raw": 0.9605685369822927,
+      "rank": 10,
+      "multiplier": 6,
+      "p_holm": 1.0,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Pooled Out-of-Sample (Delta + Omicron)",
+      "test": "tost_margin_5pct",
+      "stat": -2.020735529731179,
+      "p_raw": 0.9777768348176935,
+      "rank": 11,
+      "multiplier": 5,
+      "p_holm": 1.0,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Wave 2 (Delta)",
+      "test": "tost_margin_2pct",
+      "stat": -2.112974840400171,
+      "p_raw": 0.9816537414471501,
+      "rank": 12,
+      "multiplier": 4,
+      "p_holm": 1.0,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Pooled Out-of-Sample (Delta + Omicron)",
+      "test": "tost_margin_2pct",
+      "stat": -2.3634163864108104,
+      "p_raw": 0.9905370662189311,
+      "rank": 13,
+      "multiplier": 3,
+      "p_holm": 1.0,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Wave 3 (Omicron)",
+      "test": "tost_margin_5pct",
+      "stat": -3.6254717761314534,
+      "p_raw": 0.9997837160817145,
+      "rank": 14,
+      "multiplier": 2,
+      "p_holm": 1.0,
+      "reject_null_05": false
+    },
+    {
+      "wave": "Wave 3 (Omicron)",
+      "test": "tost_margin_2pct",
+      "stat": -3.6990292789838097,
+      "p_raw": 0.9998326943407901,
+      "rank": 15,
+      "multiplier": 1,
+      "p_holm": 1.0,
+      "reject_null_05": false
+    }
+  ]
+}

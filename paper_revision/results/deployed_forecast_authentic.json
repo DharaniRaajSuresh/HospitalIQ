@@ -1,0 +1,29 @@
+{
+  "script": "deployed_forecast_authentic_eval.py",
+  "model_artifact": "forecast_cases_model.pkl",
+  "n_windows": 120,
+  "n_states": 30,
+  "date_range": [
+    "2021-04-01",
+    "2021-07-31"
+  ],
+  "primary_loss": "absolute",
+  "dm_absolute": {
+    "statistic": 3.5675725013211532,
+    "p_value": 0.0012757492734057495,
+    "mean_d": 355803.1407112042,
+    "se_cr": 99732.5606079322,
+    "df": 29
+  },
+  "dm_squared": {
+    "statistic": 2.0406234992084755,
+    "p_value": 0.05048487107555023,
+    "mean_d": 5870941237838.84,
+    "se_cr": 2877033044124.054,
+    "df": 29
+  },
+  "wape_model": 99.99936053306705,
+  "wape_persistence": 82.90420641820798,
+  "sign_note": "dm_abs > 0: deployed model has HIGHER absolute error than persistence (i.e., negative skill). Under squared loss the sign/significance may differ because squared loss amplifies large-error outliers differently. Primary conclusion (absolute loss): the deployed artifact does not improve over naive persistence on Delta-wave data.",
+  "discrepancy_note": "The authoritative_results.json Wilcoxon p=0.1459 (pooled) and p=0.6731 (clustered) come from generate_final_paper_results.py, which re-trains a clean XGBoost on Wave-1 data (up to Apr 2021) with a differenced target, then evaluates on the same 120 windows. THIS script evaluates the deployed artifact (forecast_cases_model.pkl), which was trained on the full synthetic-augmented dataset and uses different features (including disease_cfr, disease_r0, state_beds from the DB). The two evaluations measure different things: (1) can a clean re-trained model beat persistence? and (2) does the deployed production artifact beat persistence? Results may legitimately differ. The paper must distinguish these two evaluations clearly."
+}

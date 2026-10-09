@@ -1,0 +1,47 @@
+[
+  {
+    "relation": "Monotonicity in population",
+    "status": "FAIL",
+    "values": {
+      "1M": 9.86,
+      "5M": 9.86,
+      "10M": 9.86,
+      "50M": 9.86
+    },
+    "reason": "Predictions were invariant to population changes",
+    "explanation": "This checks if the model actually responds to population size. A crash detector misses this because the function runs successfully and returns a float, but the underlying logic (or a bug like hardcoding pop to 1.0) makes the feature functionally dead."
+  },
+  {
+    "relation": "Scale invariance",
+    "status": "PASS",
+    "values": {
+      "base_pred_cases": 171,
+      "scaled_pred_cases": 345
+    },
+    "reason": "Predictions shifted with doubled input",
+    "explanation": "Checks if model predictions scale with case inputs. A purely autoregressive model or neural network might ignore scale if improperly normalized, running without error but producing nonsensical forecasts. Crash detection misses this silent semantic failure."
+  },
+  {
+    "relation": "Temporal order permutation",
+    "status": "PASS",
+    "values": {
+      "ordered_pred_cases": 4830,
+      "shuffled_pred_cases": 2392
+    },
+    "reason": "Predictions altered by shuffling temporal order",
+    "explanation": "Validates that the model distinguishes between rising vs falling trajectories. Crash detectors cannot tell if a model just averages lag features rather than treating them as an ordered time series."
+  },
+  {
+    "relation": "Degenerate variance sweep",
+    "status": "PASS",
+    "values": {
+      "Maharashtra_ICU": 626,
+      "Maharashtra_General": 3366,
+      "Maharashtra_Emergency": 2042,
+      "Maharashtra_Maternity": 2254,
+      "Karnataka_ICU": 245
+    },
+    "reason": "Produced 16 distinct predictions across sweep",
+    "explanation": "Ensures the model hasn't collapsed into predicting a single constant value. A degenerate model that predicts the global mean for every input won't crash, but it is completely useless in production."
+  }
+]

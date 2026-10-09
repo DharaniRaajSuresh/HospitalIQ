@@ -35,9 +35,10 @@ STATE_BEDS = meta.get("state_beds", {})
 DISEASE_PARAMS = meta.get("disease_params", {})
 covid_params = DISEASE_PARAMS.get("COVID-19", {"cfr": 0.5808505681238239, "r0": 0.9560405420944372})
 
-# Load raw authentic data
-df = pd.read_csv(os.path.join(RAW_DIR, "outbreak_real.csv"), parse_dates=["date"])
-covid = df[(df["source"] == "COVID19-India API") & (df["state"].notna())].copy()
+# Load authentic external surveillance data
+AUTH_CSV = os.path.join(HOSPI, "data", "external_verified", "authentic_covid_surveillance.csv")
+df = pd.read_csv(AUTH_CSV, parse_dates=["date"])
+covid = df[df["state"].notna()].copy()
 covid = covid.sort_values(["state", "date"]).reset_index(drop=True)
 
 # Authentic window: March 2020 to July 2021

@@ -1,0 +1,20 @@
+{
+  "version": "forecast_cases_20260722_205310",
+  "timestamp": "20260722_205310",
+  "model_name": "forecast_cases",
+  "metrics": {
+    "train_mape": 9.852340099731762,
+    "test_mape": 11.224184982988696
+  },
+  "params": {
+    "best_params": {
+      "colsample_bytree": 0.7,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_child_weight": 3,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5.0,
+      "subsample": 0.8
+    }
+  }
+}

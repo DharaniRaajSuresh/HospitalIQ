@@ -1,0 +1,21 @@
+{
+  "version": "risk_model_20260614_102744",
+  "timestamp": "20260614_102744",
+  "model_name": "risk_model",
+  "metrics": {
+    "train_r2": 0.9941555439679638,
+    "test_r2": 0.9748416754167759,
+    "cv_r2_mean": 0.9705500998150326,
+    "cv_r2_std": 0.013021152222707288
+  },
+  "params": {
+    "best_params": {
+      "max_depth": 8,
+      "max_features": "log2",
+      "min_samples_leaf": 2,
+      "n_estimators": 100
+    },
+    "feature_count": 12,
+    "train_samples": 153
+  }
+}

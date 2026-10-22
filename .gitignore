@@ -1,0 +1,93 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Environment
+.env
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+vite_log.txt
+backend_out.log
+backend_err.log
+.coverage
+
+# LaTeX / Manuscript (Keep private, never push to GitHub)
+paper/
+*.aux
+*.out
+*.synctex*
+*.toc
+*.bbl
+*.blg
+
+# Temp research scratch
+scratch/
+extracted_manuscript.txt
+manuscript_pages/
+Main Manuscript_v2.pdf
+
+# Database
+*.db
+*.sqlite
+test_*.db
+*.db-wal
+*.db-shm
+
+# ML Pipeline artifacts
+*.pkl
+!ml_pipeline/data/models/r0_model.pkl
+!ml_pipeline/data/models/r0_metadata.pkl
+!ml_pipeline/data/models/hospital_rf_model.pkl
+!ml_pipeline/data/models/bed_model.pkl
+ml_pipeline/data/raw/
+ml_pipeline/data/processed/
+ml_pipeline/data/models/*_[0-9]*.pkl
+ml_pipeline/data/models/patient_risk_model.pkl
+!ml_pipeline/data/models/*.json
+mlruns/
+
+# Java / Maven
+patient-service/target/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Docker
+.docker/
+
+# Output
+.vite/
+test_bed_output.json
+target/
+*.class
+eval_v2/work/
+eval_v2/scratch/
+eval_v2/*.out
+eval_v2/__pycache__/
+
+apache-maven-3.9.6/
+ml_pipeline/data/models/patient_risk_model.pkl

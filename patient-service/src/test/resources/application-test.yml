@@ -1,0 +1,32 @@
+# Test profile configuration — used by PatientServiceIntegrationTest (@SpringBootTest)
+# Overrides application.yml to use H2 in-memory database for fast, isolated integration tests.
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    show-sql: false
+  # Disable scheduling in tests — @Scheduled tasks should not fire during test runs
+  task:
+    scheduling:
+      pool:
+        size: 1   # Must be ≥ 1 (Spring Boot requires this); @Scheduled methods run but are benign in tests
+
+# Dummy JWT secret for tests (must be ≥ 32 chars for HS256)
+jwt:
+  secret: integration-test-secret-key-at-least-32chars-padding
+
+# CORS — localhost only for tests
+cors:
+  allowed-origins: http://localhost:8510
+

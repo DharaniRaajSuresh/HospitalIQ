@@ -1,0 +1,266 @@
+"""
+train_patient_risk.py — Trains individual patient pandemic risk models.
+Predicts risk_score, hospitalization_prob, mortality_prob from patient
+demographics, medical history, and virus characteristics.
+
+Uses 3 separate RandomForestRegressors (one per target), stored as a dict
+for backward compatibility with PatientRiskPredictor.
+"""
+
+import logging
+import os
+import pickle
+import sys
+
+import numpy as np
+import pandas as pd
+import xgboost as xgb
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.model_selection import train_test_split
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+try:
+    from ml_utils import MODEL_DIR
+except ImportError:
+    sys.path.insert(0, os.path.dirname(__file__))
+
+# Resolve to absolute path — MODEL_DIR is relative, running from ml_pipeline/
+# creates double-nesting. Use a fixed absolute path.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODELS_DIR = os.path.join(os.path.dirname(SCRIPT_DIR), "ml_pipeline", "data", "models")
+os.makedirs(MODELS_DIR, exist_ok=True)
+
+FEATURE_NAMES = [
+    "age", "blood_group", "gender_male",
+    "num_preexisting", "num_doses", "has_covid_vaccine",
+    "last_vaccine_days", "recent_travel", "num_trips",
+    "fam_high_risk", "fam_total",
+    "virus_fatality", "virus_reproductive",
+    "vaccine_available", "vaccine_effectiveness",
+]
+
+TARGET_NAMES = ["risk_score", "hospitalization_prob", "mortality_prob"]
+
+BLOOD_GROUP_MAP = {"A+": 0, "A-": 1, "B+": 2, "B-": 3, "AB+": 4, "AB-": 5, "O+": 6, "O-": 7}
+HIGH_RISK_CONDITIONS = [
+    "Diabetes", "Hypertension", "Asthma", "Heart Disease",
+    "Kidney Disease", "Liver Disease", "Immunocompromised", "Obesity",
+]
+
+
+def compute_risk_labels(row):
+    age = row.get("age", 30)
+    num_preexisting = row.get("num_preexisting", 0)
+    num_doses = row.get("num_doses", 0)
+    last_vaccine_days = row.get("last_vaccine_days", 9999)
+    recent_travel = row.get("recent_travel", 0)
+    num_trips = row.get("num_trips", 0)
+    fam_high_risk = row.get("fam_high_risk", 0)
+    virus_fatality = row.get("virus_fatality", 0.05)
+    virus_reproductive = row.get("virus_reproductive", 2.0)
+    vaccine_available = row.get("vaccine_available", 1)
+    vaccine_effectiveness = row.get("vaccine_effectiveness", 0.8)
+
+    # Age risk (0 at age 10, 1.0 at age 80)
+    age_risk = min(1.0, max(0, age - 10) / 70)
+
+    # Pre-existing conditions (4 conditions = 1.0)
+    condition_risk = min(1.0, num_preexisting / 4)
+
+    # Vaccination protection
+    if vaccine_available and vaccine_effectiveness > 0:
+        dose_protection = min(1.0, num_doses * 0.4)
+        waning = max(0, 1 - last_vaccine_days / 730)
+        vax_protection = dose_protection * waning * vaccine_effectiveness
+    else:
+        vax_protection = 0
+
+    # Travel exposure
+    travel_risk = min(1.0, recent_travel * (1 + num_trips * 0.2))
+
+    # Family history
+    family_risk = min(1.0, fam_high_risk * 0.4)
+
+    # Virus virulence
+    virus_risk = min(1.0, virus_fatality * 5 + (virus_reproductive - 1) * 0.3)
+
+    # Composite risk score — weights sum to 1.20 so high-risk factors compound
+    # rather than average out; min(1.0) caps extremes at 100%.
+    risk_score = min(1.0, (
+        condition_risk * 0.40 +
+        age_risk * 0.25 +
+        travel_risk * 0.15 +
+        family_risk * 0.10 +
+        virus_risk * 0.10 +
+        (1 - vax_protection) * 0.20
+    ))
+
+    # Hospitalization probability (~0.1 to 0.9)
+    hosp_prob = min(0.9, max(0.1, risk_score * 0.8 + condition_risk * 0.15 + age_risk * 0.05))
+
+    # Mortality probability (~0.01 to 0.5)
+    mort_prob = min(0.5, max(0.01, risk_score * virus_fatality * 2 + condition_risk * 0.1))
+
+    return risk_score, hosp_prob, mort_prob
+
+
+def generate_synthetic_data(n_patients=5000, n_viruses=6):
+    np.random.seed(42)
+    viruses = [
+        {"name": "COVID-19", "fatality": 0.03, "reproductive": 3.2, "vaccine": True, "vax_eff": 0.85},
+        {"name": "Ebola", "fatality": 0.50, "reproductive": 1.8, "vaccine": True, "vax_eff": 0.76},
+        {"name": "H1N1", "fatality": 0.01, "reproductive": 1.5, "vaccine": True, "vax_eff": 0.70},
+        {"name": "Marburg", "fatality": 0.50, "reproductive": 1.8, "vaccine": False, "vax_eff": 0},
+        {"name": "Nipah", "fatality": 0.55, "reproductive": 1.2, "vaccine": False, "vax_eff": 0},
+        {"name": "SARS", "fatality": 0.12, "reproductive": 3.0, "vaccine": True, "vax_eff": 0.75},
+    ]
+    blood_groups = list(BLOOD_GROUP_MAP.keys())
+
+    records = []
+    for pid in range(n_patients):
+        # Wider age distribution: ~30% under 30, ~30% 30-60, ~40% 60+
+        age_bucket = np.random.choice([0, 1, 2], p=[0.30, 0.30, 0.40])
+        if age_bucket == 0:
+            age = np.random.randint(1, 30)
+        elif age_bucket == 1:
+            age = np.random.randint(30, 60)
+        else:
+            age = np.random.randint(60, 101)
+
+        # Conditions more likely with age
+        if age < 30:
+            num_preexisting = np.random.choice([0, 0, 0, 0, 1])
+        elif age < 60:
+            num_preexisting = np.random.choice([0, 0, 1, 1, 2, 3])
+        else:
+            num_preexisting = np.random.choice([0, 1, 2, 3, 4, 5])
+
+        # Travel more likely for working-age adults
+        if 20 <= age < 60:
+            recent_travel = np.random.choice([0, 0, 1])
+        else:
+            recent_travel = np.random.choice([0, 0, 0, 1])
+
+        patient = {
+            "age": age,
+            "blood_group": BLOOD_GROUP_MAP[np.random.choice(blood_groups)],
+            "gender_male": np.random.randint(0, 2),
+            "num_preexisting": num_preexisting,
+            "num_doses": np.random.choice([0, 0, 0, 1, 1, 2, 2, 3]),
+            "has_covid_vaccine": np.random.randint(0, 2),
+            "last_vaccine_days": np.random.randint(30, 730) if np.random.random() > 0.2 else 9999,
+            "recent_travel": recent_travel,
+            "num_trips": np.random.randint(0, 5) if recent_travel else 0,
+            "fam_high_risk": np.random.randint(0, 4),
+            "fam_total": np.random.randint(2, 8),
+        }
+
+        for virus in viruses:
+            row = {**patient,
+                "virus_fatality": virus["fatality"],
+                "virus_reproductive": virus["reproductive"],
+                "vaccine_available": 1 if virus["vaccine"] else 0,
+                "vaccine_effectiveness": virus["vax_eff"],
+            }
+            rs, hp, mp = compute_risk_labels(row)
+            records.append({
+                **row,
+                "risk_score": rs,
+                "hospitalization_prob": hp,
+                "mortality_prob": mp,
+            })
+
+    df = pd.DataFrame(records)
+    logger.info(f"Generated {len(df)} training records from {n_patients} patients x {n_viruses} viruses")
+    return df
+
+
+def train_patient_risk_models():
+    logger.info("=" * 60)
+    logger.info("PATIENT RISK: Individual Risk Model Training")
+    logger.info("=" * 60)
+
+    df = generate_synthetic_data(n_patients=5000)
+
+    X = df[FEATURE_NAMES].values
+    targets = {}
+    for t in TARGET_NAMES:
+        targets[t] = df[t].values
+
+    X_train, X_test, y_train, y_test = {}, {}, {}, {}
+    splits = {}
+    for t in TARGET_NAMES:
+        X_train[t], X_test[t], y_train[t], y_test[t] = train_test_split(
+            X, targets[t], test_size=0.2, random_state=42
+        )
+
+    models = {}
+    metrics = {}
+    for t in TARGET_NAMES:
+        logger.info(f"Training {t}...")
+
+        # 3-model ensemble: XGBoost + RandomForest + GradientBoosting
+        xgb_model = xgb.XGBRegressor(
+            n_estimators=300, max_depth=8, learning_rate=0.1,
+            subsample=0.8, colsample_bytree=0.8,
+            random_state=42, n_jobs=-1,
+        )
+        rf_model = RandomForestRegressor(
+            n_estimators=200, max_depth=15,
+            min_samples_leaf=3, random_state=42, n_jobs=-1,
+        )
+        gb_model = GradientBoostingRegressor(
+            n_estimators=200, max_depth=6, learning_rate=0.1,
+            min_samples_leaf=3, random_state=42,
+        )
+
+        xgb_model.fit(X_train[t], y_train[t])
+        rf_model.fit(X_train[t], y_train[t])
+        gb_model.fit(X_train[t], y_train[t])
+
+        pred_train = (xgb_model.predict(X_train[t]) + rf_model.predict(X_train[t]) + gb_model.predict(X_train[t])) / 3
+        pred_test = (xgb_model.predict(X_test[t]) + rf_model.predict(X_test[t]) + gb_model.predict(X_test[t])) / 3
+
+        from sklearn.metrics import r2_score
+        train_r2 = r2_score(y_train[t], pred_train)
+        test_r2 = r2_score(y_test[t], pred_test)
+        logger.info(f"  {t}: Train R²={train_r2:.4f}, Test R²={test_r2:.4f}")
+
+        # Store as dict with individual models + ensemble predict fn
+        models[t] = {
+            "xgb": xgb_model,
+            "rf": rf_model,
+            "gb": gb_model,
+        }
+        metrics[t] = {"train_r2": float(train_r2), "test_r2": float(test_r2)}
+
+    # Save as dict with ensemble structure
+    output_path = os.path.join(MODELS_DIR, "patient_risk_model.pkl")
+    with open(output_path, "wb") as f:
+        pickle.dump(models, f)
+
+    metadata = {
+        "feature_names": FEATURE_NAMES,
+        "target_names": TARGET_NAMES,
+        "n_patients": 5000,
+        "n_records": len(df),
+        "model_type": "ensemble_xgb_rf_gb",
+        "blood_group_map": BLOOD_GROUP_MAP,
+        "high_risk_conditions": HIGH_RISK_CONDITIONS,
+        "blood_groups": list(BLOOD_GROUP_MAP.keys()),
+        "model_version": "v2",
+    }
+    meta_path = os.path.join(MODELS_DIR, "patient_risk_metadata.pkl")
+    with open(meta_path, "wb") as f:
+        pickle.dump(metadata, f)
+
+    logger.info(f"Saved model ({len(models)} targets) to {output_path}")
+    logger.info(f"Saved metadata to {meta_path}")
+    logger.info("Patient risk training complete!")
+    return metrics
+
+
+if __name__ == "__main__":
+    train_patient_risk_models()

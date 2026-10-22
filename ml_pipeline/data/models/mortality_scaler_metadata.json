@@ -1,0 +1,9 @@
+{
+  "version": "mortality_scaler_20260623_130936",
+  "timestamp": "20260623_130936",
+  "model_name": "mortality_scaler",
+  "metrics": {},
+  "params": {
+    "name": "StandardScaler"
+  }
+}

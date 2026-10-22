@@ -1,0 +1,601 @@
+date,disease,country,state,confirmed_cases,deaths,source,is_real
+2020-03-01,COVID-19,India,Andhra Pradesh,44,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Andhra Pradesh,1359,31,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Andhra Pradesh,2168,31,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Andhra Pradesh,11024,125,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Andhra Pradesh,126338,1162,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Andhra Pradesh,293838,2620,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Andhra Pradesh,258713,1859,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Andhra Pradesh,129864,862,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Andhra Pradesh,44716,302,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Andhra Pradesh,14222,116,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Andhra Pradesh,5550,45,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Andhra Pradesh,2080,16,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Andhra Pradesh,12073,48,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Andhra Pradesh,199701,775,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Andhra Pradesh,591395,2938,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Andhra Pradesh,196428,1776,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Andhra Pradesh,76662,671,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Andhra Pradesh,47941,480,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Andhra Pradesh,36208,319,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Andhra Pradesh,16126,197,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Arunachal Pradesh,0,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Arunachal Pradesh,1,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Arunachal Pradesh,3,0,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Arunachal Pradesh,187,1,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Arunachal Pradesh,1400,2,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Arunachal Pradesh,2521,4,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Arunachal Pradesh,5684,9,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Arunachal Pradesh,5056,21,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Arunachal Pradesh,1430,17,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Arunachal Pradesh,437,2,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Arunachal Pradesh,109,0,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Arunachal Pradesh,8,0,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Arunachal Pradesh,9,0,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Arunachal Pradesh,1575,3,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Arunachal Pradesh,8853,56,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Arunachal Pradesh,8585,57,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Arunachal Pradesh,12265,57,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Arunachal Pradesh,4909,31,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Arunachal Pradesh,1595,16,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Arunachal Pradesh,529,4,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Assam,1,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Assam,42,1,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Assam,1297,2,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Assam,6966,8,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Assam,31862,91,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Assam,68771,208,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Assam,71770,391,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Assam,25540,233,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Assam,6425,52,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Assam,3435,64,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Assam,930,37,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Assam,396,10,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Assam,875,13,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Assam,34711,202,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Assam,158093,2058,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Assam,97268,1174,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Assam,57714,721,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Assam,23228,400,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Assam,12737,213,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Assam,8482,124,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Bihar,21,1,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Bihar,404,1,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Bihar,3382,21,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Bihar,6181,45,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Bihar,40999,230,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Bihar,85350,396,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Bihar,46569,210,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Bihar,33858,186,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Bihar,18852,174,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Bihar,17176,133,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Bihar,7927,104,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Bihar,1815,40,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Bihar,2993,35,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Bihar,204790,984,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Bihar,236444,2603,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Bihar,15153,4425,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Bihar,2921,55,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Bihar,873,10,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Bihar,250,8,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Bihar,140,0,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Chhattisgarh,9,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Chhattisgarh,31,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Chhattisgarh,458,1,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Chhattisgarh,2360,12,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Chhattisgarh,6334,41,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Chhattisgarh,22311,223,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Chhattisgarh,82099,680,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Chhattisgarh,73668,1144,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Chhattisgarh,50052,760,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Chhattisgarh,42253,510,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Chhattisgarh,25792,330,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Chhattisgarh,7193,134,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Chhattisgarh,36627,335,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Chhattisgarh,379513,4411,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Chhattisgarh,242763,4467,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Chhattisgarh,23017,391,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Chhattisgarh,7528,85,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Chhattisgarh,2443,31,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Chhattisgarh,906,11,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Chhattisgarh,695,11,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Delhi,120,2,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Delhi,3395,57,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Delhi,16329,414,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Delhi,67516,2269,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Delhi,48238,1221,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Delhi,39150,481,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Delhi,104967,917,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Delhi,106991,1150,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Delhi,183668,2663,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Delhi,54995,1362,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Delhi,9727,317,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Delhi,4193,57,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Delhi,23141,117,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Delhi,486903,5120,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Delhi,276907,8090,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Delhi,7948,740,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Delhi,2077,76,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Delhi,1499,29,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Delhi,1104,5,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Delhi,1002,4,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Goa,5,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Goa,2,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Goa,64,0,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Goa,1244,3,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Goa,4598,42,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Goa,11505,147,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Goa,16000,236,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Goa,10208,176,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Goa,4337,84,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Goa,3103,51,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Goa,2343,29,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Goa,1577,27,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Goa,3053,35,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Goa,33013,338,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Goa,64614,1481,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Goa,11023,405,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Goa,4457,93,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Goa,2809,54,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Goa,2476,113,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Goa,1677,50,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Gujarat,74,6,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Gujarat,4321,208,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Gujarat,12399,824,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Gujarat,15849,810,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Gujarat,28795,592,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Gujarat,34997,581,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Gujarat,40959,431,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Gujarat,35549,266,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Gujarat,36836,270,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Gujarat,35258,317,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Gujarat,16502,81,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Gujarat,8349,23,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Gujarat,37809,109,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Gujarat,260079,2664,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Gujarat,241392,2650,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Gujarat,14354,226,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Gujarat,1354,17,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Gujarat,545,5,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Gujarat,514,1,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Gujarat,641,7,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Haryana,43,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Haryana,296,4,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Haryana,1752,16,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Haryana,12457,216,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Haryana,20417,185,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Haryana,29767,268,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Haryana,63867,693,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Haryana,38611,407,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Haryana,66916,639,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Haryana,28199,477,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Haryana,5572,113,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Haryana,2887,30,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Haryana,20016,107,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Haryana,197178,1061,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Haryana,268657,4087,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Haryana,12004,1128,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Haryana,1274,204,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Haryana,573,42,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Haryana,386,197,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Haryana,380,175,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Himachal Pradesh,3,1,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Himachal Pradesh,37,1,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Himachal Pradesh,291,4,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Himachal Pradesh,622,3,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Himachal Pradesh,1611,4,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Himachal Pradesh,3552,24,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Himachal Pradesh,8860,144,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Himachal Pradesh,7083,131,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Himachal Pradesh,18459,323,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Himachal Pradesh,14759,287,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Himachal Pradesh,2259,45,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Himachal Pradesh,1109,15,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Himachal Pradesh,4960,53,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Himachal Pradesh,35682,449,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Himachal Pradesh,91043,1643,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Himachal Pradesh,11793,336,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Himachal Pradesh,3904,42,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Himachal Pradesh,7521,77,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Himachal Pradesh,5513,78,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Himachal Pradesh,5045,78,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Jammu and Kashmir,55,2,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Jammu and Kashmir,559,6,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Jammu and Kashmir,1832,20,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Jammu and Kashmir,5051,73,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Jammu and Kashmir,12862,276,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Jammu and Kashmir,17339,326,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Jammu and Kashmir,37372,478,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Jammu and Kashmir,19715,297,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Jammu and Kashmir,15439,216,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Jammu and Kashmir,10747,189,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Jammu and Kashmir,3535,53,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Jammu and Kashmir,1935,21,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Jammu and Kashmir,4519,37,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Jammu and Kashmir,45123,289,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Jammu and Kashmir,114382,1624,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Jammu and Kashmir,25197,416,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Jammu and Kashmir,5800,55,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Jammu and Kashmir,3957,30,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Jammu and Kashmir,4011,14,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Jammu and Kashmir,2819,10,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Jharkhand,1,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Jharkhand,109,3,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Jharkhand,525,2,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Jharkhand,1855,10,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Jharkhand,8824,91,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Jharkhand,30317,311,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Jharkhand,41995,296,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Jharkhand,18110,171,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Jharkhand,7390,80,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Jharkhand,5962,66,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Jharkhand,3579,42,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Jharkhand,1257,18,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Jharkhand,4252,23,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Jharkhand,109209,1547,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Jharkhand,104363,2331,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Jharkhand,7836,122,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Jharkhand,1563,15,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Jharkhand,694,4,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Jharkhand,359,3,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Jharkhand,538,3,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Karnataka,101,3,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Karnataka,464,19,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Karnataka,2656,29,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Karnataka,12021,197,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Karnataka,108873,2073,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Karnataka,218308,3388,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Karnataka,259344,3162,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Karnataka,221645,2304,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Karnataka,61485,610,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Karnataka,34599,312,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Karnataka,19891,127,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Karnataka,11864,114,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Karnataka,45753,236,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Karnataka,526138,2956,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Karnataka,1081289,13567,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Karnataka,239379,5950,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Karnataka,61314,1522,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Karnataka,44321,756,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Karnataka,26555,476,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Karnataka,12333,288,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Kerala,241,2,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Kerala,257,2,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Kerala,772,6,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Kerala,3173,15,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Kerala,19171,49,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Kerala,51771,221,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Kerala,120722,448,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Kerala,236999,742,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Kerala,169877,760,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Kerala,157951,828,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Kerala,168245,671,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Kerala,130225,454,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Kerala,65181,424,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Kerala,446599,687,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Kerala,955396,3507,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Kerala,397586,4420,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Kerala,466595,3546,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Kerala,666472,4007,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Kerala,623625,4299,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Kerala,287799,6594,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Madhya Pradesh,66,5,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Madhya Pradesh,2559,133,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Madhya Pradesh,5464,213,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Madhya Pradesh,5504,222,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Madhya Pradesh,18213,295,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Madhya Pradesh,32159,527,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Madhya Pradesh,64082,922,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Madhya Pradesh,43312,635,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Madhya Pradesh,34769,309,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Madhya Pradesh,35663,346,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Madhya Pradesh,13321,204,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Madhya Pradesh,6654,54,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Madhya Pradesh,33745,122,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Madhya Pradesh,267816,1630,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Madhya Pradesh,216703,2451,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Madhya Pradesh,9774,902,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Madhya Pradesh,2024,1544,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Madhya Pradesh,347,3,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Madhya Pradesh,356,6,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Madhya Pradesh,323,2,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Maharashtra,302,10,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Maharashtra,10196,448,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Maharashtra,57157,1827,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Maharashtra,107106,5569,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Maharashtra,247357,7139,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Maharashtra,370423,9589,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Maharashtra,591905,12079,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Maharashtra,293960,7249,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Maharashtra,145490,3240,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Maharashtra,108216,2370,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Maharashtra,94287,1561,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Maharashtra,128671,1072,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Maharashtra,657910,2495,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Maharashtra,1789492,14164,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Maharashtra,1144420,26531,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Maharashtra,314512,26601,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Maharashtra,242311,10846,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Maharashtra,161161,4522,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Maharashtra,85980,1754,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Maharashtra,60222,1149,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Manipur,1,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Manipur,1,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Manipur,69,0,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Manipur,1163,0,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Manipur,1387,5,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Manipur,3631,23,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Manipur,4731,39,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Manipur,7519,101,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Manipur,6543,113,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Manipur,3143,74,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Manipur,880,16,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Manipur,203,2,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Manipur,123,1,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Manipur,2186,31,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Manipur,19165,402,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Manipur,19039,343,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Manipur,28709,406,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Manipur,15434,226,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Manipur,6651,73,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Manipur,3147,66,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Meghalaya,0,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Meghalaya,12,1,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Meghalaya,15,0,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Meghalaya,26,0,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Meghalaya,770,4,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Meghalaya,1545,5,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Meghalaya,3271,39,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Meghalaya,3765,39,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Meghalaya,2358,23,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Meghalaya,1598,28,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Meghalaya,356,7,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Meghalaya,198,2,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Meghalaya,103,2,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Meghalaya,2781,21,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Meghalaya,18752,407,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Meghalaya,13915,260,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Meghalaya,15487,247,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Meghalaya,10836,226,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Meghalaya,5454,93,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Meghalaya,2337,46,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Mizoram,1,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Mizoram,0,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Mizoram,0,0,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Mizoram,159,0,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Mizoram,248,0,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Mizoram,603,0,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Mizoram,975,0,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Mizoram,736,1,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Mizoram,1103,4,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Mizoram,379,3,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Mizoram,168,1,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Mizoram,51,1,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Mizoram,50,1,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Mizoram,1546,4,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Mizoram,6068,25,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Mizoram,7988,53,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Mizoram,17989,55,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Mizoram,21055,69,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Mizoram,34541,92,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Mizoram,27699,123,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Nagaland,0,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Nagaland,0,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Nagaland,43,0,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Nagaland,416,0,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Nagaland,1234,4,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Nagaland,2257,4,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Nagaland,2213,4,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Nagaland,2847,21,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Nagaland,2139,25,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Nagaland,741,15,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Nagaland,167,9,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Nagaland,106,3,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Nagaland,140,0,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Nagaland,1636,13,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Nagaland,7704,259,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Nagaland,3559,132,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Nagaland,2633,71,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Nagaland,2211,54,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Nagaland,1161,45,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Nagaland,598,20,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Odisha,4,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Odisha,139,1,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Odisha,1805,8,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Odisha,5117,23,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Odisha,24812,182,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Odisha,71659,331,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Odisha,115583,350,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Odisha,70997,478,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Odisha,28609,419,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Odisha,10896,134,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Odisha,5451,33,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Odisha,2119,10,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Odisha,3726,5,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Odisha,103277,122,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Odisha,320803,711,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Odisha,144803,1264,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Odisha,67468,1884,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Odisha,30482,2067,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Odisha,18726,229,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Odisha,14981,135,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Punjab,42,4,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Punjab,438,16,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Punjab,1783,25,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Punjab,3305,99,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Punjab,10551,242,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Punjab,37873,1067,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Punjab,59894,1953,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Punjab,19772,797,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Punjab,18433,604,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Punjab,14431,534,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Punjab,6754,274,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Punjab,8900,217,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Punjab,57558,1036,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Punjab,131239,2154,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Punjab,196634,5528,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Punjab,28002,1502,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Punjab,3495,241,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Punjab,1510,138,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Punjab,1021,85,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Punjab,766,43,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Rajasthan,93,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Rajasthan,2491,58,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Rajasthan,6247,136,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Rajasthan,9177,219,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Rajasthan,24075,267,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Rajasthan,39610,376,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Rajasthan,53599,430,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Rajasthan,61701,421,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Rajasthan,71070,405,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Rajasthan,40180,384,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Rajasthan,9248,70,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Rajasthan,2845,21,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Rajasthan,12813,31,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Rajasthan,264852,1421,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Rajasthan,341957,4146,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Rajasthan,12464,536,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Rajasthan,1245,33,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Rajasthan,428,0,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Rajasthan,232,0,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Rajasthan,102,0,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Sikkim,0,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Sikkim,0,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Sikkim,1,0,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Sikkim,87,0,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Sikkim,564,1,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Sikkim,1013,2,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Sikkim,1279,34,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Sikkim,1009,31,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Sikkim,1051,41,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Sikkim,899,18,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Sikkim,201,6,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Sikkim,55,2,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Sikkim,90,0,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Sikkim,1717,12,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Sikkim,7365,106,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Sikkim,5227,54,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Sikkim,6004,37,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Sikkim,3330,26,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Sikkim,1573,17,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Sikkim,528,9,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Tamil Nadu,124,1,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Tamil Nadu,2199,26,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Tamil Nadu,20010,149,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Tamil Nadu,67834,1025,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Tamil Nadu,155692,2734,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Tamil Nadu,182182,3387,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Tamil Nadu,169561,2198,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Tamil Nadu,126920,1602,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Tamil Nadu,57393,590,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Tamil Nadu,36099,410,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Tamil Nadu,20326,234,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Tamil Nadu,13202,140,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Tamil Nadu,35131,223,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Tamil Nadu,280083,1327,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Tamil Nadu,929760,10186,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Tamil Nadu,383180,8387,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Tamil Nadu,79901,1457,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Tamil Nadu,55275,845,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Tamil Nadu,48917,657,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Tamil Nadu,38834,538,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Telangana,97,6,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Telangana,941,22,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Telangana,1660,54,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Telangana,13641,178,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Telangana,46364,259,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Telangana,61750,308,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Telangana,66423,300,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Telangana,47246,209,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Telangana,31184,122,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Telangana,16538,83,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Telangana,8115,58,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Telangana,4338,35,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Telangana,9082,63,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Telangana,127717,564,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Telangana,142745,1020,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Telangana,45159,380,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Telangana,21441,141,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Telangana,13103,71,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Telangana,7909,45,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Telangana,5500,38,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Tripura,0,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Tripura,3,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Tripura,313,0,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Tripura,1077,1,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Tripura,3603,20,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Tripura,6648,82,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Tripura,14087,171,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Tripura,4983,69,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Tripura,1978,24,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Tripura,569,15,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Tripura,86,6,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Tripura,57,0,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Tripura,86,1,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Tripura,1676,4,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Tripura,15964,117,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Tripura,14637,164,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Tripura,12591,78,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Tripura,4501,45,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Tripura,1265,13,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Tripura,344,3,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Uttar Pradesh,104,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Uttar Pradesh,2107,40,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Uttar Pradesh,5864,177,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Uttar Pradesh,15417,480,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Uttar Pradesh,61969,933,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Uttar Pradesh,144953,1856,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Uttar Pradesh,168668,2298,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Uttar Pradesh,82781,1241,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Uttar Pradesh,62025,736,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Uttar Pradesh,41078,591,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Uttar Pradesh,15333,306,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Uttar Pradesh,3228,66,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Uttar Pradesh,13667,87,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Uttar Pradesh,635130,3759,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Uttar Pradesh,439164,7927,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Uttar Pradesh,14619,2094,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Uttar Pradesh,2334,165,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Uttar Pradesh,894,67,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Uttar Pradesh,465,69,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Uttar Pradesh,368,8,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,Uttarakhand,7,0,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,Uttarakhand,50,0,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,Uttarakhand,850,5,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,Uttarakhand,1974,36,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,Uttarakhand,4302,39,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,Uttarakhand,12644,189,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,Uttarakhand,29173,342,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,Uttarakhand,13328,412,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,Uttarakhand,12467,208,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,Uttarakhand,16125,278,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,Uttarakhand,5209,135,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,Uttarakhand,863,48,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,Uttarakhand,3419,25,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,Uttarakhand,80110,907,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,Uttarakhand,148973,3828,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,Uttarakhand,10761,864,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,Uttarakhand,1884,46,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,Uttarakhand,837,25,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,Uttarakhand,561,7,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,Uttarakhand,359,6,MoHFW_COVID19India_Verified,True
+2020-03-01,COVID-19,India,West Bengal,37,3,MoHFW_COVID19India_Verified,True
+2020-04-01,COVID-19,India,West Bengal,721,30,MoHFW_COVID19India_Verified,True
+2020-05-01,COVID-19,India,West Bengal,4743,284,MoHFW_COVID19India_Verified,True
+2020-06-01,COVID-19,India,West Bengal,13058,351,MoHFW_COVID19India_Verified,True
+2020-07-01,COVID-19,India,West Bengal,51629,913,MoHFW_COVID19India_Verified,True
+2020-08-01,COVID-19,India,West Bengal,92590,1647,MoHFW_COVID19India_Verified,True
+2020-09-01,COVID-19,India,West Bengal,94271,1730,MoHFW_COVID19India_Verified,True
+2020-10-01,COVID-19,India,West Bengal,116615,1883,MoHFW_COVID19India_Verified,True
+2020-11-01,COVID-19,India,West Bengal,109820,1583,MoHFW_COVID19India_Verified,True
+2020-12-01,COVID-19,India,West Bengal,68579,1288,MoHFW_COVID19India_Verified,True
+2021-01-01,COVID-19,India,West Bengal,17935,461,MoHFW_COVID19India_Verified,True
+2021-02-01,COVID-19,India,West Bengal,5120,95,MoHFW_COVID19India_Verified,True
+2021-03-01,COVID-19,India,West Bengal,11797,61,MoHFW_COVID19India_Verified,True
+2021-04-01,COVID-19,India,West Bengal,241451,1015,MoHFW_COVID19India_Verified,True
+2021-05-01,COVID-19,India,West Bengal,548011,4197,MoHFW_COVID19India_Verified,True
+2021-06-01,COVID-19,India,West Bengal,123406,2167,MoHFW_COVID19India_Verified,True
+2021-07-01,COVID-19,India,West Bengal,28236,428,MoHFW_COVID19India_Verified,True
+2021-08-01,COVID-19,India,West Bengal,20585,311,MoHFW_COVID19India_Verified,True
+2021-09-01,COVID-19,India,West Bengal,20466,346,MoHFW_COVID19India_Verified,True
+2021-10-01,COVID-19,India,West Bengal,23838,348,MoHFW_COVID19India_Verified,True

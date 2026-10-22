@@ -1,0 +1,12 @@
+{
+  "version": "mortality_kmeans_model_20260624_124157",
+  "timestamp": "20260624_124157",
+  "model_name": "mortality_kmeans_model",
+  "metrics": {
+    "clusters": 4
+  },
+  "params": {
+    "n_clusters": 4,
+    "random_state": 42
+  }
+}
